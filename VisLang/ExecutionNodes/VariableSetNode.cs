@@ -16,7 +16,7 @@ public class VariableSetNode : ExecutionNode
     {
         if (Interpreter == null)
         {
-            throw new NullReferenceException("Intepreter system is null");
+            throw new NullReferenceException("Interpreter system is null");
         }
         if (Interpreter?.VisSystemMemory[Name] == null)
         {

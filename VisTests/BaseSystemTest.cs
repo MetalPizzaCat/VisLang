@@ -2,7 +2,7 @@ using VisLang;
 namespace VisTests;
 
 [TestClass]
-public class UnitTest1
+public class BasicSystemTest
 {
     /// <summary>
     /// Test if execution system even works
@@ -54,5 +54,24 @@ public class UnitTest1
         system.Execute();
         Assert.AreNotEqual(69f, system.VisSystemMemory["i"].Value.Data);
         Assert.AreEqual(85f, system.VisSystemMemory["i"].Value.Data);
+    }
+
+    /// <summary>
+    /// Test if we can print value of created variable
+    /// </summary>
+    [TestMethod]
+    public void TestVariablePrint()
+    {
+        VisSystem system = new VisSystem();
+        system.VisSystemMemory.CreateVariable("i", VariableType.Number, 99f);
+        Assert.IsNotNull(system.VisSystemMemory["i"]);
+        Assert.AreEqual(99f, system.VisSystemMemory["i"].Value.Data);
+        PrintNode printer = new PrintNode(system);
+        printer.Inputs.Add(new VariableGetNode(system) { Name = "i" });
+        system.Entrance = printer;
+
+        system.Execute();
+        Assert.AreEqual(1, system.Output.Count);
+        Assert.AreEqual(99f.ToString(), system.Output.First());
     }
 }
