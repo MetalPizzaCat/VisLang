@@ -11,7 +11,7 @@ public class MathTests
     public void TestAddConst()
     {
         VisSystem system = new VisSystem();
-        system.VisSystemMemory.CreateVariable("i", VariableType.Number, 0);
+        system.VisSystemMemory.CreateVariable("i", VisLang.ValueType.Number, 0);
         Assert.IsNotNull(system.VisSystemMemory["i"]);
         Assert.AreEqual(0, system.VisSystemMemory["i"].Value.Data);
         VariableSetNode setter = new VariableSetNode(system) { Name = "i", DefaultValue = 69f };
@@ -31,8 +31,8 @@ public class MathTests
     public void TestAddVariableConst()
     {
         VisSystem system = new VisSystem();
-        system.VisSystemMemory.CreateVariable("i", VariableType.Number, 0);
-        system.VisSystemMemory.CreateVariable("a", VariableType.Number, 6f);
+        system.VisSystemMemory.CreateVariable("i", VisLang.ValueType.Number, 0);
+        system.VisSystemMemory.CreateVariable("a", VisLang.ValueType.Number, 6f);
         Assert.IsNotNull(system.VisSystemMemory["i"]);
         Assert.IsNotNull(system.VisSystemMemory["a"]);
         Assert.AreEqual(0, system.VisSystemMemory["i"].Value.Data);
@@ -56,9 +56,9 @@ public class MathTests
     public void TestAddVariableVariable()
     {
         VisSystem system = new VisSystem();
-        system.VisSystemMemory.CreateVariable("i", VariableType.Number, 0);
-        system.VisSystemMemory.CreateVariable("a", VariableType.Number, 6f);
-        system.VisSystemMemory.CreateVariable("b", VariableType.Number, 6f);
+        system.VisSystemMemory.CreateVariable("i", VisLang.ValueType.Number, 0);
+        system.VisSystemMemory.CreateVariable("a", VisLang.ValueType.Number, 6f);
+        system.VisSystemMemory.CreateVariable("b", VisLang.ValueType.Number, 6f);
         Assert.IsNotNull(system.VisSystemMemory["i"]);
         Assert.IsNotNull(system.VisSystemMemory["a"]);
         Assert.IsNotNull(system.VisSystemMemory["b"]);
@@ -85,7 +85,7 @@ public class MathTests
     public void TestAddVariableSelf()
     {
         VisSystem system = new VisSystem();
-        system.VisSystemMemory.CreateVariable("i", VariableType.Number, 1f);
+        system.VisSystemMemory.CreateVariable("i", VisLang.ValueType.Number, 1f);
         Assert.IsNotNull(system.VisSystemMemory["i"]);
         Assert.AreEqual(1f, system.VisSystemMemory["i"].Value.Data);
         VariableSetNode setter = new VariableSetNode(system) { Name = "i", DefaultValue = 69f };

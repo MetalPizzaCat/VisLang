@@ -8,9 +8,11 @@ public class ExecutionNode : VisNode
     }
 
 
-    public ExecutionNode? Next { get; set; } = null;
+    public virtual ExecutionNode? GetNext() => null;
 
     public List<DataNode> Inputs { get; set; } = new();
+
+    public List<DataNode> Outputs { get; set; } = new();
 
     public virtual void Execute()
     {

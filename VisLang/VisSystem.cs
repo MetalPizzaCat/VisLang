@@ -3,80 +3,6 @@ using System.Linq;
 
 namespace VisLang;
 
-public enum VariableType
-{
-    Bool,
-    Char,
-    Number,
-    String
-}
-
-public class Value
-{
-    public VariableType VariableType { get; set; } = VariableType.Bool;
-
-    public bool IsArray { get; set; } = false;
-
-    /// <summary>
-    /// The actual data stored in the value
-    /// </summary>
-    private object? _data = null;
-
-    /// <summary>
-    /// The actual data stored in the value
-    /// </summary>
-    public object? Data
-    {
-        get => _data;
-        set
-        {
-            switch (VariableType)
-            {
-                case VariableType.Bool:
-                    if (value.GetType() != typeof(bool))
-                    {
-                        throw new Exception($"Value type mismatch. Expected bool got {value.GetType()}");
-                    }
-                    break;
-                case VariableType.Char:
-                    if (value.GetType() != typeof(char))
-                    {
-                        throw new Exception($"Value type mismatch. Expected char got {value.GetType()}");
-                    }
-                    break;
-                case VariableType.Number:
-                    if (value.GetType() != typeof(float))
-                    {
-                        throw new Exception($"Value type mismatch. Expected float got {value.GetType()}");
-                    }
-                    break;
-                case VariableType.String:
-                    if (value.GetType() != typeof(string))
-                    {
-                        throw new Exception($"Value type mismatch. Expected string got {value.GetType()}");
-                    }
-                    break;
-            }
-            _data = value;
-        }
-    }
-
-    public Value(VariableType variableType, bool isArray, object? data)
-    {
-        VariableType = variableType;
-        IsArray = isArray;
-        _data = data;
-    }
-
-    public Value()
-    {
-    }
-
-    public string? AsString() => _data?.ToString();
-
-    public float? AsNumber() => _data != null ? Convert.ToSingle(_data) : null;
-}
-
 public class Variable
 {
     public Variable(string name, Value value)
@@ -96,7 +22,7 @@ public class VisSystemMemory
 
     public Variable? this[string name] => Variables.FirstOrDefault(p => p.Name == name);
 
-    public bool CreateVariable(string name, VariableType type, object? value = null)
+    public bool CreateVariable(string name, ValueType type, object? value = null)
     {
         if (this[name] != null)
         {
@@ -135,11 +61,11 @@ public class VisSystem
     public void Execute()
     {
         Entrance?.Execute();
-        ExecutionNode? next = Entrance?.Next;
+        ExecutionNode? next = Entrance?.GetNext();
         while (next != null)
         {
             next.Execute();
-            next = next.Next;
+            next = next.GetNext();
         }
     }
 }
