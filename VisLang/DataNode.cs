@@ -9,11 +9,4 @@ public class DataNode : VisNode
     public DataNode(VisSystem? interpreter) : base(interpreter)
     {
     }
-
-    public List<DataNode> Inputs { get; set; } = new();
-    
-    public virtual Value? GetValue()
-    {
-        return null;
-    }
 }

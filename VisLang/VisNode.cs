@@ -7,5 +7,12 @@ public class VisNode
         Interpreter = interpreter;
     }
 
+    public List<VisNode> Inputs { get; set; } = new();
+
     public VisSystem? Interpreter { get; set; } = null;
+
+    public virtual Value? GetValue()
+    {
+        return null;
+    }
 }

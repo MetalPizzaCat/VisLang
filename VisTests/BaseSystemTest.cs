@@ -92,7 +92,7 @@ public class BasicSystemTest
 
         EqualsNode eq = new EqualsNode(system)
         {
-            Inputs = new List<DataNode>()
+            Inputs = new List<VisNode>()
             {
                  new VariableGetNode(system) { Name = "a" },
                  new VariableGetNode(system) { Name = "b" }
@@ -103,7 +103,7 @@ public class BasicSystemTest
         {
             SuccessNext = new VariableSetNode(system) { Name = "result", DefaultValue = 1f },
             FailureNext = new VariableSetNode(system) { Name = "result", DefaultValue = 0f },
-            Inputs = new List<DataNode>() { eq }
+            Inputs = new List<VisNode>() { eq }
         };
         system.Entrance = cond;
         system.Execute();
@@ -164,7 +164,7 @@ public class BasicSystemTest
         VariableSetNode setAddr = new VariableSetNode(system)
         {
             Name = "i_ptr",
-            Inputs = new List<DataNode>()
+            Inputs = new List<VisNode>()
             {
                  new VariableGetAddressNode(system) { Name = "i" }
             }
@@ -182,5 +182,34 @@ public class BasicSystemTest
         Assert.AreEqual(1, system.Output.Count);
         Assert.AreEqual(1.ToString(), system.Output.First());
         Assert.AreEqual(system.VisSystemMemory["i"].Address, system.VisSystemMemory["i_ptr"].Data);
+    }
+
+    /// <summary>
+    /// Create a dynamic value and print it's address and value
+    /// </summary>
+    [TestMethod]
+    public void TestAllocate()
+    {
+        VisSystem system = new VisSystem();
+        PrintNode printer = new PrintNode(system);
+        VariableAllocateNode alloc = new VariableAllocateNode(system)
+        {
+            ValueType = VisLang.ValueType.String,
+            DefaultValue = "your mom",
+            DefaultNext = printer
+        };
+        printer.Inputs.Add(new ValueGetDereferencedNode(system)
+        {
+            Inputs = new List<VisNode>()
+            {
+                alloc
+            }
+        });
+        system.Entrance = alloc;
+
+        system.Execute();
+        Assert.IsTrue(system.VisSystemMemory.Memory.ContainsKey(1));
+        Assert.AreEqual(1, system.Output.Count);
+        Assert.AreEqual("your mom", system.Output.First());
     }
 }
