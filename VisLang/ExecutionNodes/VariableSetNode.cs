@@ -22,6 +22,6 @@ public class VariableSetNode : ExecutionNode
         {
             throw new Interpreter.MissingVariableException($"No variable with name {Name} found");
         }
-        Interpreter.VisSystemMemory[Name].Value.Data = Value;
+        Interpreter.VisSystemMemory[Name].Data = Value;
     }
 }

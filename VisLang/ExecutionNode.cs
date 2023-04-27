@@ -7,8 +7,9 @@ public class ExecutionNode : VisNode
     {
     }
 
+    public ExecutionNode? DefaultNext { get; set; } = null;
 
-    public virtual ExecutionNode? GetNext() => null;
+    public virtual ExecutionNode? GetNext() => DefaultNext;
 
     public List<DataNode> Inputs { get; set; } = new();
 
