@@ -212,4 +212,46 @@ public class BasicSystemTest
         Assert.AreEqual(1, system.Output.Count);
         Assert.AreEqual("your mom", system.Output.First());
     }
+
+    /// <summary>
+    /// Test if we can print value of created variable
+    /// </summary>
+    [TestMethod]
+    public void TestGetAddress()
+    {
+        VisSystem system = new VisSystem();
+        system.VisSystemMemory.CreateVariable("i", VisLang.ValueType.Address, 0);
+        Assert.IsNotNull(system.VisSystemMemory["i"]);
+        Assert.AreEqual(0, system.VisSystemMemory["i"].Data);
+        PrintNode printer = new PrintNode(system);
+        VariableAllocateNode alloc = new VariableAllocateNode(system)
+        {
+            ValueType = VisLang.ValueType.String,
+            DefaultValue = "your mom",
+            DefaultNext = printer
+        };
+        printer.Inputs.Add(new ValueGetDereferencedNode(system)
+        {
+            Inputs = new List<VisNode>()
+            {
+                alloc
+            }
+        });
+        VariableSetNode setAddr = new VariableSetNode(system)
+        {
+            Name = "i",
+            Inputs = new()
+            {
+                alloc
+            }
+        };
+        printer.DefaultNext = setAddr;
+        system.Entrance = alloc;
+
+        system.Execute();
+        Assert.IsTrue(system.VisSystemMemory.Memory.ContainsKey(1));
+        Assert.AreEqual(1, system.Output.Count);
+        Assert.AreEqual(2u, system.VisSystemMemory["i"].Data);
+        Assert.AreEqual("your mom", system.Output.First());
+    }
 }

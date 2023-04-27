@@ -3,9 +3,9 @@ namespace VisLang;
 /// <summary>
 /// Returns value of the variable stored in the system memory
 /// </summary>
-public class ValueGetDereferencedNode : DataNode
+public class ValueGetAddressNode : DataNode
 {
-    public ValueGetDereferencedNode(VisSystem? interpreter) : base(interpreter)
+    public ValueGetAddressNode(VisSystem? interpreter) : base(interpreter)
     {
     }
 
@@ -23,6 +23,6 @@ public class ValueGetDereferencedNode : DataNode
         {
             return null;
         }
-        return Interpreter?.VisSystemMemory.Memory[(uint)Inputs.FirstOrDefault().GetValue().Data];
+        return new Value(ValueType.Address, false, (uint)(Inputs.FirstOrDefault().GetValue().Address ?? 0));
     }
 }
