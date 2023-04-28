@@ -1,0 +1,52 @@
+[gd_scene load_steps=3 format=3 uid="uid://osjihadr7boh"]
+
+[ext_resource type="Script" path="res://Script/NodeInput.cs" id="1_gf17q"]
+[ext_resource type="Texture2D" uid="uid://d0vsau6vks6tu" path="res://icon.svg" id="1_kq2ae"]
+
+[node name="NodeInput" type="Node2D" node_paths=PackedStringArray("InputNameLabel", "StringInput", "NumberInput", "BoolInput")]
+script = ExtResource("1_gf17q")
+InputNameLabel = NodePath("InputName")
+StringInput = NodePath("ManualInputControls/StringInput")
+NumberInput = NodePath("ManualInputControls/NumberInput")
+BoolInput = NodePath("ManualInputControls/BoolInput")
+
+[node name="Icon" type="Sprite2D" parent="."]
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("1_kq2ae")
+
+[node name="InputName" type="Label" parent="."]
+offset_left = -128.0
+offset_top = -16.0
+offset_right = -34.0
+offset_bottom = 10.0
+text = "NAMENAME"
+
+[node name="ManualInputControls" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="StringInput" type="LineEdit" parent="ManualInputControls"]
+visible = false
+layout_mode = 0
+offset_left = 32.0
+offset_top = -16.0
+offset_right = 128.0
+offset_bottom = 15.0
+
+[node name="NumberInput" type="SpinBox" parent="ManualInputControls"]
+visible = false
+layout_mode = 0
+offset_left = 32.0
+offset_top = -16.0
+offset_right = 128.0
+offset_bottom = 15.0
+
+[node name="BoolInput" type="CheckBox" parent="ManualInputControls"]
+visible = false
+layout_mode = 0
+offset_left = 32.0
+offset_top = -8.0
+offset_right = 56.0
+offset_bottom = 16.0

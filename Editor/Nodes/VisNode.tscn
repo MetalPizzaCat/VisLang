@@ -1,0 +1,16 @@
+[gd_scene load_steps=4 format=3 uid="uid://c7ytdksqfqbhc"]
+
+[ext_resource type="Script" path="res://Script/VisNode.cs" id="1_2foni"]
+[ext_resource type="Texture2D" uid="uid://d0vsau6vks6tu" path="res://icon.svg" id="2_mp3hn"]
+[ext_resource type="PackedScene" uid="uid://osjihadr7boh" path="res://Nodes/NodeInput.tscn" id="2_vfm24"]
+
+[node name="VisNode" type="Node2D" node_paths=PackedStringArray("NodeInputAnchor")]
+script = ExtResource("1_2foni")
+NodeInputPrefab = ExtResource("2_vfm24")
+NodeInputAnchor = NodePath("NodeInputAnchor")
+
+[node name="Icon" type="Sprite2D" parent="."]
+texture = ExtResource("2_mp3hn")
+
+[node name="NodeInputAnchor" type="Node2D" parent="."]
+position = Vector2(-104, -56)
