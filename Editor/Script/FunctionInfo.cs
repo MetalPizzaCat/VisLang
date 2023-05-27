@@ -14,14 +14,17 @@ public class FunctionInfo
 
     public VisLang.ValueType? Output = null;
 
-    public FunctionInfo(bool isExecutable, Dictionary<string, VisLang.ValueType> inputs, VisLang.ValueType? output)
+    public string NodeType { get; set; } = "VisLang.ExecutionNode";
+
+    public FunctionInfo()
+    {
+    }
+
+    public FunctionInfo(bool isExecutable, Dictionary<string, VisLang.ValueType> inputs, VisLang.ValueType? output, string nodeType)
     {
         IsExecutable = isExecutable;
         Inputs = inputs;
         Output = output;
-    }
-
-    public FunctionInfo()
-    {
+        NodeType = nodeType;
     }
 }
