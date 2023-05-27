@@ -14,4 +14,3 @@ placeholder_text = "Variable name"
 
 [node name="OptionButton" type="OptionButton" parent="."]
 layout_mode = 2
-selected = 0

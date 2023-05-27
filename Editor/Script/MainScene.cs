@@ -43,13 +43,15 @@ public partial class MainScene : Node2D
                 system.VisSystemMemory.CreateVariable(va.VariableName, va.VariableType);
             }
         }
-        VisLang.VisNode? node = (VisLang.VisNode?)Activator.CreateInstance("VisLang", TestNode.FunctionInfo.NodeType)?.Unwrap();
+        VisLang.VisNode? node = TestNode.CreateNode(system);
         if (node == null)
         {
             GD.PrintErr("Created node is not correct");
             return;
         }
-        node.Interpreter = system;
+		(node as VisLang.VariableSetNode).Name = VariableManager.Variables[0].VariableName; 
+        system.Entrance = (node as VisLang.VariableSetNode);
         system.Execute();
+		GD.Print(system.VisSystemMemory[VariableManager.Variables[0].VariableName].Data);
     }
 }
