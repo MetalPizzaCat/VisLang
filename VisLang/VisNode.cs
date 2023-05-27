@@ -2,6 +2,10 @@ namespace VisLang;
 
 public class VisNode
 {
+    public VisNode()
+    {
+    }
+
     public VisNode(VisSystem? interpreter)
     {
         Interpreter = interpreter;

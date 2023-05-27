@@ -12,6 +12,10 @@ public class VariableSetNode : ExecutionNode
     {
     }
 
+    public VariableSetNode()
+    {
+    }
+
     public override void Execute()
     {
         if (Interpreter == null)

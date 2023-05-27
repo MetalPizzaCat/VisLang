@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Collections.ObjectModel;
 
 namespace VisLang;
 
@@ -62,6 +63,9 @@ public class VisSystemMemory
 /// </summary>
 public class VisSystem
 {
+    public delegate void OutputAddedEventHandler(string output);
+    public event OutputAddedEventHandler? OnOutputAdded;
+
     public List<ExecutionNode> Code { get; set; } = new();
 
     public VisSystemMemory VisSystemMemory { get; set; } = new();
@@ -79,6 +83,7 @@ public class VisSystem
 
     public void AddOutput(string output)
     {
+        OnOutputAdded?.Invoke(output);
         Output.Add(output);
     }
 

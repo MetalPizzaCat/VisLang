@@ -7,6 +7,10 @@ public class ExecutionNode : VisNode
     {
     }
 
+    public ExecutionNode()
+    {
+    }
+
     public ExecutionNode? DefaultNext { get; set; } = null;
 
     public virtual ExecutionNode? GetNext() => DefaultNext;

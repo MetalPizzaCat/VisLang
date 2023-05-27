@@ -6,6 +6,10 @@ namespace VisLang;
 /// </summary>
 public class DataNode : VisNode
 {
+    public DataNode()
+    {
+    }
+
     public DataNode(VisSystem? interpreter) : base(interpreter)
     {
     }
