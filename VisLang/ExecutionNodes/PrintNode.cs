@@ -2,7 +2,7 @@ namespace VisLang;
 
 public class PrintNode : ExecutionNode
 {
-    
+    public PrintNode() { }
     public PrintNode(VisSystem? interpreter) : base(interpreter)
     {
     }

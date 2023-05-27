@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://c67wh757rx8s3"]
+
+[node name="RichTextLabel" type="RichTextLabel"]
+size_flags_vertical = 3
+bbcode_enabled = true
+text = "[color=red]Variable with invalid name[/color]"
