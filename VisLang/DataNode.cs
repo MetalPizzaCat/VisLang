@@ -6,14 +6,11 @@ namespace VisLang;
 /// </summary>
 public class DataNode : VisNode
 {
-    public DataNode(VisSystem? interpreter) : base(interpreter)
+    public DataNode()
     {
     }
 
-    public List<DataNode> Inputs { get; set; } = new();
-    
-    public virtual Value? GetValue()
+    public DataNode(VisSystem? interpreter) : base(interpreter)
     {
-        return null;
     }
 }

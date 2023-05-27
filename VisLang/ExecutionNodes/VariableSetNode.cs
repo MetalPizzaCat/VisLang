@@ -12,6 +12,10 @@ public class VariableSetNode : ExecutionNode
     {
     }
 
+    public VariableSetNode()
+    {
+    }
+
     public override void Execute()
     {
         if (Interpreter == null)
@@ -22,6 +26,6 @@ public class VariableSetNode : ExecutionNode
         {
             throw new Interpreter.MissingVariableException($"No variable with name {Name} found");
         }
-        Interpreter.VisSystemMemory[Name].Value.Data = Value;
+        Interpreter.VisSystemMemory[Name].Data = Value;
     }
 }

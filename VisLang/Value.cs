@@ -5,11 +5,13 @@ public enum ValueType
     Bool,
     Char,
     Number,
-    String
+    String,
+    Address
 }
 
 public class Value
 {
+    public uint? Address { get; }
     public ValueType ValueType { get; set; } = ValueType.Bool;
 
     public bool IsArray { get; set; } = false;
@@ -63,15 +65,31 @@ public class Value
         }
     }
 
+    public Value(ValueType variableType, uint address, bool isArray, object? data)
+    {
+        ValueType = variableType;
+        IsArray = isArray;
+        _data = data;
+        Address = address;
+    }
+
+    public Value(uint address)
+    {
+        Address = address;
+    }
+
+
     public Value(ValueType variableType, bool isArray, object? data)
     {
         ValueType = variableType;
         IsArray = isArray;
         _data = data;
+        Address = null;
     }
 
     public Value()
     {
+        Address = null;
     }
 
     /// <summary>

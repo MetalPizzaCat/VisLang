@@ -1,0 +1,17 @@
+[gd_scene load_steps=2 format=3 uid="uid://cjc6nifn3qyy7"]
+
+[ext_resource type="Script" path="res://Script/UI/VariableControl.cs" id="1_yt57h"]
+
+[node name="VariableControl" type="HBoxContainer" node_paths=PackedStringArray("NameEdit", "TypeOptionButton")]
+script = ExtResource("1_yt57h")
+NameEdit = NodePath("LineEdit")
+TypeOptionButton = NodePath("OptionButton")
+
+[node name="LineEdit" type="LineEdit" parent="."]
+custom_minimum_size = Vector2(125, 0)
+layout_mode = 2
+placeholder_text = "Variable name"
+
+[node name="OptionButton" type="OptionButton" parent="."]
+layout_mode = 2
+selected = 0
