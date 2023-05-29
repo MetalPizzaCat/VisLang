@@ -36,10 +36,12 @@ public partial class VisNode : Node2D
         if (InputExecNode != null)
         {
             InputExecNode.Selected += InputExecSelected;
+            InputExecNode.OwningNode = this;
         }
         if (OutputExecNode != null)
         {
             OutputExecNode.Selected += OutputExecSelected;
+            OutputExecNode.OwningNode = this;
         }
     }
 
@@ -50,6 +52,15 @@ public partial class VisNode : Node2D
         {
             throw new NullReferenceException("Unable to create node from description because input node was not provided");
         }
+
+
+        foreach (NodeInput input in Inputs)
+        {
+            input.QueueFree();
+        }
+        Inputs.Clear();
+
+
         float currentInputOffset = 0;
         foreach ((string name, VisLang.ValueType arg) in info.Inputs)
         {
@@ -68,9 +79,15 @@ public partial class VisNode : Node2D
         }
     }
 
-    public VisLang.VisNode? CreateNode(VisLang.VisSystem? interpreter)
+    protected virtual void ApplyAdditionalDataToNode<NodeType>(NodeType node) where NodeType : VisLang.VisNode
     {
-        VisLang.VisNode? node = (VisLang.VisNode?)Activator.CreateInstance("VisLang", FunctionInfo.NodeType)?.Unwrap();
+        // implement in this child to set whatever extra data you want :3
+        // for example SetterNode should implement to have variable name setting here
+    }
+
+    public NodeType? CreateNode<NodeType>(VisLang.VisSystem? interpreter) where NodeType : VisLang.VisNode
+    {
+        NodeType? node = (NodeType?)Activator.CreateInstance("VisLang", FunctionInfo.NodeType)?.Unwrap();
         if (node == null)
         {
             return null;
@@ -81,6 +98,7 @@ public partial class VisNode : Node2D
             // TODO: Add connection check once node connection will be implemented
             node?.Inputs.Add(new VisLang.VariableGetConstNode(interpreter) { Value = new VisLang.Value(input.InputType, false, input.Data) });
         }
+        ApplyAdditionalDataToNode(node);
         return node;
     }
 

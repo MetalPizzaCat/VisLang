@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3 uid="uid://dk8u81wibm8ol"]
+
+[ext_resource type="PackedScene" uid="uid://bqtugitvy6nko" path="res://Nodes/vis_node_exectuable.tscn" id="1_rtlte"]
+[ext_resource type="Script" path="res://Script/Nodes/SetterNode.cs" id="2_al5mc"]
+
+[node name="VisNodeSetter" node_paths=PackedStringArray("Variables") instance=ExtResource("1_rtlte")]
+script = ExtResource("2_al5mc")
+Variables = NodePath("OptionButton")
+
+[node name="OptionButton" type="OptionButton" parent="." index="5"]
+offset_left = -56.0
+offset_top = -40.0
+offset_right = 56.0
+offset_bottom = -20.0
+
+[connection signal="item_selected" from="OptionButton" to="." method="VariableOptionSelected"]

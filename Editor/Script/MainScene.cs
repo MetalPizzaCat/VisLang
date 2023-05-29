@@ -68,6 +68,7 @@ public partial class MainScene : Node2D
         },
         VisLang.ValueType.Number, "VisLang.VariableSetNode", "Set"));
 
+        VariableManager.VariableListChanged += (TestNode as SetterNode).VariableListUpdated;
         TestNode.ExecNodeSelected += ExecConnectionSelected;
 
         TestNode2.GenerateFunction(new FunctionInfo(false, new()
@@ -147,12 +148,41 @@ public partial class MainScene : Node2D
         RuntimeVariableInformation?.DisplayInformation(_debugger.System.VisSystemMemory);
     }
 
-    private void PrepareForExecution()
+    /// <summary>
+    /// This simply traverses the line from root node and till the last available node. This does not generate data nodes
+    /// </summary>
+    /// <param name="root">Start editor node</param>
+    /// <param name="interpreter">Interpreter system itself</param>
+    /// <returns>Resulting root node with child nodes attached or null if generation failed</returns>
+    private VisLang.VisNode? GenerateExecutionTree(VisNode root, VisLang.VisSystem interpreter)
+    {
+        VisLang.ExecutionNode? node = root.CreateNode<VisLang.ExecutionNode>(interpreter);
+        if (node == null)
+        {
+            return null;
+        }
+
+        if (root.OutputExecNode != null && root.OutputExecNode.Connection != null && root.OutputExecNode.Connection.OwningNode != null)
+        {
+            VisLang.VisNode? next = GenerateExecutionTree(root.OutputExecNode.Connection.OwningNode, interpreter);
+            if (next != null)
+            {
+                // any node that is connected to exec line is by definition an exec node
+                // right????
+                // TODO: Actually check if i'm right >_>
+                node.DefaultNext = (next as VisLang.ExecutionNode);
+            }
+        }
+        return node;
+    }
+
+    private bool PrepareForExecution()
     {
         _debugger.InitNewSystem();
         if (_debugger.System == null)
         {
-            return;
+            GD.PrintErr("Failed to initialize debug system");
+            return false;
         }
         if (VariableManager != null)
         {
@@ -165,24 +195,19 @@ public partial class MainScene : Node2D
                 _debugger.System.VisSystemMemory.CreateVariable(va.VariableName, va.VariableType);
             }
         }
-        //TODO: remove below code cause it's shit and was made for testing only
-        VisLang.VisNode? node = TestNode.CreateNode(_debugger.System);
-        if (node == null)
+        if (EntranceInput.Connection == null || EntranceInput.Connection.OwningNode == null)
         {
-            GD.PrintErr("Created node is not correct");
-            return;
+            return false;
         }
-
-        VisLang.VisNode? print = TestNode2.CreateNode(_debugger.System);
-        if (print == null)
+        VisLang.VisNode? root = GenerateExecutionTree(EntranceInput.Connection.OwningNode, _debugger.System);
+        if (root == null)
         {
-            GD.PrintErr("Can't create print node");
-            return;
+            GD.PrintErr("No root node is available");
+            return false;
         }
-        (node as VisLang.VariableSetNode).Name = VariableManager.Variables[0].VariableName;
-        (node as VisLang.ExecutionNode).DefaultNext = print as VisLang.ExecutionNode;
-        _debugger.System.Entrance = (node as VisLang.VariableSetNode);
+        _debugger.System.Entrance = (root as VisLang.ExecutionNode);
         _debugger.StartExecution();
+        return true;
     }
 
     private void Execute()

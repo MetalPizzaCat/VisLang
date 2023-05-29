@@ -1,9 +1,10 @@
-[gd_scene load_steps=11 format=3 uid="uid://bml2vknkym6vv"]
+[gd_scene load_steps=12 format=3 uid="uid://bml2vknkym6vv"]
 
 [ext_resource type="Script" path="res://Script/MainScene.cs" id="1_w4485"]
 [ext_resource type="Script" path="res://Script/UI/CanvasControl.cs" id="3_iy83l"]
 [ext_resource type="PackedScene" uid="uid://cjc6nifn3qyy7" path="res://UI/variable_control.tscn" id="3_jx1hi"]
 [ext_resource type="Script" path="res://Script/UI/VariableManager.cs" id="3_vtslo"]
+[ext_resource type="PackedScene" uid="uid://dk8u81wibm8ol" path="res://Nodes/vis_node_setter.tscn" id="5_i8iu4"]
 [ext_resource type="PackedScene" uid="uid://c67wh757rx8s3" path="res://UI/message_label.tscn" id="5_xfi40"]
 [ext_resource type="Script" path="res://Script/UI/RuntimeVariableInformationControl.cs" id="6_km71b"]
 [ext_resource type="PackedScene" uid="uid://dd2ewu3al55co" path="res://Nodes/ExecNodeInput.tscn" id="7_ealpf"]
@@ -19,7 +20,7 @@ MessageTextLabelPrefab = ExtResource("5_xfi40")
 RuntimeVariableInformation = NodePath("UI/RuntimeVariableInformation")
 EntranceInput = NodePath("NodeInput")
 ConnectionManager = NodePath("ConnectionManager")
-TestNode = NodePath("VisNodeExectuable")
+TestNode = NodePath("VisNodeSetter")
 TestNode2 = NodePath("VisNodeExectuable2")
 
 [node name="Camera2D" type="Camera2D" parent="."]
@@ -33,11 +34,11 @@ script = ExtResource("3_iy83l")
 DebugInfoLabel = NodePath("../../UI/MousePoseDebugLabel")
 metadata/_edit_use_anchors_ = true
 
-[node name="VisNodeExectuable" parent="." instance=ExtResource("7_xst2a")]
-position = Vector2(-80, -64)
-
 [node name="VisNodeExectuable2" parent="." instance=ExtResource("7_xst2a")]
 position = Vector2(328, 0)
+
+[node name="VisNodeSetter" parent="." instance=ExtResource("5_i8iu4")]
+position = Vector2(-88, -112)
 
 [node name="NodeInput" parent="." instance=ExtResource("7_ealpf")]
 position = Vector2(-544, -80)

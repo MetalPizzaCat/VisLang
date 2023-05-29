@@ -14,3 +14,6 @@ placeholder_text = "Variable name"
 
 [node name="OptionButton" type="OptionButton" parent="."]
 layout_mode = 2
+
+[connection signal="text_changed" from="LineEdit" to="." method="ChangeName"]
+[connection signal="item_selected" from="OptionButton" to="." method="SelectType"]

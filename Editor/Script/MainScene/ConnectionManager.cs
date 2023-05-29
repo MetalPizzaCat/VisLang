@@ -79,6 +79,7 @@ public partial class ConnectionManager : Node
 
         line.Start = input.GlobalPosition;
         line.End = output.GlobalPosition;
+        output.Connection = input;
         _connections.Add(line);
         Canvas.AddChild(line);
 
