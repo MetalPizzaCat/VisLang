@@ -4,13 +4,21 @@
 [ext_resource type="Texture2D" uid="uid://d0vsau6vks6tu" path="res://icon.svg" id="2_mp3hn"]
 [ext_resource type="PackedScene" uid="uid://osjihadr7boh" path="res://Nodes/NodeInput.tscn" id="2_vfm24"]
 
-[node name="VisNode" type="Node2D" node_paths=PackedStringArray("NodeInputAnchor")]
+[node name="VisNode" type="Node2D" node_paths=PackedStringArray("NodeInputAnchor", "NodeNameLabel")]
 script = ExtResource("1_2foni")
 NodeInputPrefab = ExtResource("2_vfm24")
 NodeInputAnchor = NodePath("NodeInputAnchor")
+NodeNameLabel = NodePath("Label")
 
 [node name="Icon" type="Sprite2D" parent="."]
 texture = ExtResource("2_mp3hn")
 
 [node name="NodeInputAnchor" type="Node2D" parent="."]
-position = Vector2(-104, -56)
+position = Vector2(-104, -24)
+
+[node name="Label" type="Label" parent="."]
+offset_left = -64.0
+offset_top = -88.0
+offset_right = 66.0
+offset_bottom = -62.0
+text = "Node name here"

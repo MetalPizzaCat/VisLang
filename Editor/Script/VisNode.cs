@@ -5,6 +5,9 @@ using System.Collections.Generic;
 
 public partial class VisNode : Node2D
 {
+    public delegate void ExecNodeSelectedEventHandler(ExecInput node);
+    public event ExecNodeSelectedEventHandler? ExecNodeSelected;
+
     public FunctionInfo? FunctionInfo { get; set; } = null;
 
     [Export]
@@ -13,6 +16,15 @@ public partial class VisNode : Node2D
     [Export]
     public Node2D NodeInputAnchor { get; set; }
 
+    [Export]
+    public Label? NodeNameLabel { get; set; }
+
+    [ExportGroup("Exec")]
+    [Export]
+    public ExecInput? InputExecNode { get; set; }
+    [Export]
+    public ExecInput? OutputExecNode { get; set; }
+
     public List<NodeInput> Inputs { get; set; } = new List<NodeInput>();
 
     public override void _Ready()
@@ -20,6 +32,14 @@ public partial class VisNode : Node2D
         if (FunctionInfo != null)
         {
             GenerateFunction(FunctionInfo);
+        }
+        if (InputExecNode != null)
+        {
+            InputExecNode.Selected += InputExecSelected;
+        }
+        if (OutputExecNode != null)
+        {
+            OutputExecNode.Selected += OutputExecSelected;
         }
     }
 
@@ -39,23 +59,38 @@ public partial class VisNode : Node2D
             Inputs.Add(input);
             NodeInputAnchor.AddChild(input);
             input.Position = new Vector2(0, currentInputOffset);
-            currentInputOffset += 64f;
+            //TODO: make this constant dynamic to avoid recompiling code each time you feel like making ui pretty
+            currentInputOffset += 32f;
+        }
+        if (NodeNameLabel != null)
+        {
+            NodeNameLabel.Text = info.Name;
         }
     }
 
     public VisLang.VisNode? CreateNode(VisLang.VisSystem? interpreter)
     {
         VisLang.VisNode? node = (VisLang.VisNode?)Activator.CreateInstance("VisLang", FunctionInfo.NodeType)?.Unwrap();
-		if(node == null)
-		{
-			return null;
-		}
-		node.Interpreter = interpreter;
+        if (node == null)
+        {
+            return null;
+        }
+        node.Interpreter = interpreter;
         foreach (NodeInput input in Inputs)
         {
             // TODO: Add connection check once node connection will be implemented
             node?.Inputs.Add(new VisLang.VariableGetConstNode(interpreter) { Value = new VisLang.Value(input.InputType, false, input.Data) });
         }
         return node;
+    }
+
+    public void InputExecSelected(ExecInput exec)
+    {
+        ExecNodeSelected?.Invoke(exec);
+    }
+
+    public void OutputExecSelected(ExecInput exec)
+    {
+        ExecNodeSelected?.Invoke(exec);
     }
 }

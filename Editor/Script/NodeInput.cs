@@ -1,12 +1,16 @@
 using Godot;
 using System;
 
+/// <summary>
+/// Object that allows user to either input values by hand or connect to other inputs
+/// </summary>
 public partial class NodeInput : Node2D
 {
 
     [Export]
     public Label InputNameLabel { get; set; }
 
+    [ExportGroup("Input fields")]
     [Export]
     public LineEdit StringInput { get; set; }
     [Export]
@@ -14,6 +18,7 @@ public partial class NodeInput : Node2D
     [Export]
     public CheckBox BoolInput { get; set; }
 
+    public VisNode? OwningNode { get; set; } = null;
 
     public string InputName
     {
@@ -35,6 +40,10 @@ public partial class NodeInput : Node2D
         }
     }
 
+    /// <summary>
+    /// Get current value stored in the input. Resulting value will depend on InputType
+    /// </summary>
+    /// <value></value>
     public object Data
     {
         get
@@ -44,22 +53,12 @@ public partial class NodeInput : Node2D
                 case VisLang.ValueType.Bool:
                     return BoolInput.ButtonPressed;
                 case VisLang.ValueType.Number:
-					// using float because i said so >:(
+                    // using float because i said so >:(
                     return (float)NumberInput.Value;
                 case VisLang.ValueType.String:
                     return StringInput.Text;
             }
-			return 0;
+            return 0;
         }
-    }
-
-    // Called when the node enters the scene tree for the first time.
-    public override void _Ready()
-    {
-    }
-
-    // Called every frame. 'delta' is the elapsed time since the previous frame.
-    public override void _Process(double delta)
-    {
     }
 }

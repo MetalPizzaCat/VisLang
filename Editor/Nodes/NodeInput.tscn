@@ -11,7 +11,7 @@ NumberInput = NodePath("ManualInputControls/NumberInput")
 BoolInput = NodePath("ManualInputControls/BoolInput")
 
 [node name="Icon" type="Sprite2D" parent="."]
-scale = Vector2(0.5, 0.5)
+scale = Vector2(0.1875, 0.1875)
 texture = ExtResource("1_kq2ae")
 
 [node name="InputName" type="Label" parent="."]

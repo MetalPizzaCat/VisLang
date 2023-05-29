@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3 uid="uid://dpw6l4ftfkiy7"]
+
+[ext_resource type="Script" path="res://Script/EditorObjects/ConnectorLine.cs" id="1_1plyq"]
+
+[node name="ConnectorLine" type="Node2D" node_paths=PackedStringArray("Line")]
+script = ExtResource("1_1plyq")
+Line = NodePath("Line2D")
+
+[node name="Line2D" type="Line2D" parent="."]
+points = PackedVector2Array(0, 0, 0, 0)

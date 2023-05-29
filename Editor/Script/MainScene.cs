@@ -7,6 +7,28 @@ using System.Reflection;
 public partial class MainScene : Node2D
 {
 
+    [Export]
+    public VariableManager? VariableManager { get; set; }
+
+    [Export]
+    public VBoxContainer? OutputTextList { get; set; }
+    [Export]
+    public PackedScene? MessageTextLabelPrefab { get; set; }
+    private List<RichTextLabel> _outputMessages = new();
+    [Export]
+    public RuntimeVariableInformationControl? RuntimeVariableInformation { get; set; }
+
+    /// <summary>
+    /// Node connected to this input will be the first node to execute</para>
+    /// Not having this as proper node will mean no code will be able to execute
+    /// </summary>
+    [Export]
+    public ExecInput EntranceInput { get; set; }
+
+    [Export]
+    public ConnectionManager ConnectionManager { get; set; }
+
+    [ExportGroup("Debug")]
     /// <summary>
     /// Node meant for testing
     /// </summary>
@@ -20,17 +42,6 @@ public partial class MainScene : Node2D
     /// <value></value>
     [Export]
     public VisNode TestNode2 { get; set; }
-
-    [Export]
-    public VariableManager? VariableManager { get; set; }
-
-    [Export]
-    public VBoxContainer? OutputTextList { get; set; }
-    [Export]
-    public PackedScene? MessageTextLabelPrefab { get; set; }
-    private List<RichTextLabel> _outputMessages = new();
-    [Export]
-    public RuntimeVariableInformationControl? RuntimeVariableInformation { get; set; }
     private Debugger _debugger = new Debugger();
     private bool _isExecuting = false;
     public bool IsExecuting
@@ -55,14 +66,25 @@ public partial class MainScene : Node2D
             {"b", VisLang.ValueType.Bool},
             {"banana", VisLang.ValueType.String}
         },
-        VisLang.ValueType.Number, "VisLang.VariableSetNode"));
+        VisLang.ValueType.Number, "VisLang.VariableSetNode", "Set"));
+
+        TestNode.ExecNodeSelected += ExecConnectionSelected;
 
         TestNode2.GenerateFunction(new FunctionInfo(false, new()
         {
             {"Text", VisLang.ValueType.String}
         },
-        VisLang.ValueType.Number, "VisLang.PrintNode"));
+        VisLang.ValueType.Number, "VisLang.PrintNode", "Print"));
+
+        TestNode2.ExecNodeSelected += ExecConnectionSelected;
+        EntranceInput.Selected += ExecConnectionSelected;
+
         _debugger.SystemOutput.CollectionChanged += OutputTextChanged;
+    }
+
+    private void ExecConnectionSelected(ExecInput input)
+    {
+        ConnectionManager.SelectExecConnector(input);
     }
 
     private void OutputTextChanged(object? sender, NotifyCollectionChangedEventArgs e)
@@ -160,7 +182,7 @@ public partial class MainScene : Node2D
         (node as VisLang.VariableSetNode).Name = VariableManager.Variables[0].VariableName;
         (node as VisLang.ExecutionNode).DefaultNext = print as VisLang.ExecutionNode;
         _debugger.System.Entrance = (node as VisLang.VariableSetNode);
-		_debugger.StartExecution();
+        _debugger.StartExecution();
     }
 
     private void Execute()
