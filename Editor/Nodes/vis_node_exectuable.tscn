@@ -1,15 +1,45 @@
-[gd_scene load_steps=3 format=3 uid="uid://bqtugitvy6nko"]
+[gd_scene load_steps=4 format=3 uid="uid://bqtugitvy6nko"]
 
 [ext_resource type="PackedScene" uid="uid://c7ytdksqfqbhc" path="res://Nodes/VisNode.tscn" id="1_1ivh7"]
 [ext_resource type="PackedScene" uid="uid://dd2ewu3al55co" path="res://Nodes/ExecNodeInput.tscn" id="2_4xqwt"]
 
+[sub_resource type="LabelSettings" id="LabelSettings_jybab"]
+font_color = Color(0, 0, 0, 1)
+
 [node name="VisNodeExectuable" node_paths=PackedStringArray("InputExecNode", "OutputExecNode") instance=ExtResource("1_1ivh7")]
 InputExecNode = NodePath("NodeInput")
 OutputExecNode = NodePath("NodeOutput")
+
+[node name="NodeBasicStyleExec" parent="." index="0"]
+position = Vector2(7.62939e-06, -84)
+
+[node name="NodeBasicStyleExecBase" parent="." index="1"]
+position = Vector2(-0.83898, -4)
+scale = Vector2(0.256188, 0.288136)
+
+[node name="Label" parent="." index="2"]
+offset_top = -96.0
+offset_bottom = -70.0
 
 [node name="NodeInput" parent="." index="3" instance=ExtResource("2_4xqwt")]
 position = Vector2(-104, -56)
 IsInput = true
 
 [node name="NodeOutput" parent="." index="4" instance=ExtResource("2_4xqwt")]
-position = Vector2(96, -56)
+position = Vector2(104, -56)
+
+[node name="Label2" type="Label" parent="." index="7"]
+offset_left = -88.0
+offset_top = -64.0
+offset_right = -48.0
+offset_bottom = -38.0
+text = "Exec"
+label_settings = SubResource("LabelSettings_jybab")
+
+[node name="Label3" type="Label" parent="." index="8"]
+offset_left = 48.0
+offset_top = -64.0
+offset_right = 88.0
+offset_bottom = -38.0
+text = "Exec"
+label_settings = SubResource("LabelSettings_jybab")

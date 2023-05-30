@@ -35,7 +35,7 @@ DebugInfoLabel = NodePath("../../UI/MousePoseDebugLabel")
 metadata/_edit_use_anchors_ = true
 
 [node name="VisNodeExectuable2" parent="." instance=ExtResource("7_xst2a")]
-position = Vector2(328, 0)
+position = Vector2(-408, 192)
 
 [node name="VisNodeSetter" parent="." instance=ExtResource("5_i8iu4")]
 position = Vector2(-88, -112)

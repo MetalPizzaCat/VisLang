@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://osjihadr7boh"]
 
 [ext_resource type="Script" path="res://Script/NodeInput.cs" id="1_gf17q"]
-[ext_resource type="Texture2D" uid="uid://d0vsau6vks6tu" path="res://icon.svg" id="1_kq2ae"]
+[ext_resource type="Texture2D" uid="uid://bgqiirjom5845" path="res://Assets/data_connector.svg" id="2_yhm0m"]
 
 [node name="NodeInput" type="Node2D" node_paths=PackedStringArray("InputNameLabel", "StringInput", "NumberInput", "BoolInput")]
 script = ExtResource("1_gf17q")
@@ -11,8 +11,8 @@ NumberInput = NodePath("ManualInputControls/NumberInput")
 BoolInput = NodePath("ManualInputControls/BoolInput")
 
 [node name="Icon" type="Sprite2D" parent="."]
-scale = Vector2(0.1875, 0.1875)
-texture = ExtResource("1_kq2ae")
+scale = Vector2(0.360417, 0.360417)
+texture = ExtResource("2_yhm0m")
 
 [node name="InputName" type="Label" parent="."]
 offset_left = -128.0

@@ -1,8 +1,13 @@
-[gd_scene load_steps=4 format=3 uid="uid://c7ytdksqfqbhc"]
+[gd_scene load_steps=7 format=3 uid="uid://c7ytdksqfqbhc"]
 
 [ext_resource type="Script" path="res://Script/VisNode.cs" id="1_2foni"]
 [ext_resource type="Texture2D" uid="uid://d0vsau6vks6tu" path="res://icon.svg" id="2_mp3hn"]
 [ext_resource type="PackedScene" uid="uid://osjihadr7boh" path="res://Nodes/NodeInput.tscn" id="2_vfm24"]
+[ext_resource type="Texture2D" uid="uid://csuobr08jgr0j" path="res://Assets/node_basic_style_exec.svg" id="4_lplx8"]
+[ext_resource type="Texture2D" uid="uid://c7xrcd3acougr" path="res://Assets/node_basic_style_exec_base.svg" id="5_fn204"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_qu6ij"]
+font_color = Color(0, 0, 0, 1)
 
 [node name="VisNode" type="Node2D" node_paths=PackedStringArray("NodeInputAnchor", "NodeNameLabel")]
 script = ExtResource("1_2foni")
@@ -10,15 +15,29 @@ NodeInputPrefab = ExtResource("2_vfm24")
 NodeInputAnchor = NodePath("NodeInputAnchor")
 NodeNameLabel = NodePath("Label")
 
+[node name="NodeBasicStyleExec" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(9.53674e-06, -52)
+scale = Vector2(0.253968, 0.315789)
+texture = ExtResource("4_lplx8")
+
+[node name="NodeBasicStyleExecBase" type="Sprite2D" parent="."]
+position = Vector2(-0.83898, 12)
+scale = Vector2(0.256188, 0.220339)
+texture = ExtResource("5_fn204")
+
+[node name="Label" type="Label" parent="."]
+offset_left = -96.0
+offset_top = -64.0
+offset_right = 96.0
+offset_bottom = -38.0
+text = "Node name here"
+label_settings = SubResource("LabelSettings_qu6ij")
+horizontal_alignment = 1
+
 [node name="Icon" type="Sprite2D" parent="."]
+visible = false
 texture = ExtResource("2_mp3hn")
 
 [node name="NodeInputAnchor" type="Node2D" parent="."]
-position = Vector2(-104, -24)
-
-[node name="Label" type="Label" parent="."]
-offset_left = -64.0
-offset_top = -88.0
-offset_right = 66.0
-offset_bottom = -62.0
-text = "Node name here"
+position = Vector2(-104, -16)

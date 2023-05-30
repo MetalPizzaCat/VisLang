@@ -7,10 +7,17 @@
 script = ExtResource("2_al5mc")
 Variables = NodePath("OptionButton")
 
+[node name="Label" parent="." index="2"]
+offset_left = -64.0
+offset_right = 66.0
+
 [node name="OptionButton" type="OptionButton" parent="." index="5"]
 offset_left = -56.0
-offset_top = -40.0
+offset_top = -64.0
 offset_right = 56.0
-offset_bottom = -20.0
+offset_bottom = -44.0
+
+[node name="NodeInputAnchor" parent="." index="7"]
+position = Vector2(-104, -24)
 
 [connection signal="item_selected" from="OptionButton" to="." method="VariableOptionSelected"]
