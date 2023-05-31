@@ -254,4 +254,31 @@ public class BasicSystemTest
         Assert.AreEqual(2u, system.VisSystemMemory["i"].Data);
         Assert.AreEqual("your mom", system.Output.First());
     }
+
+    [TestMethod]
+    public void TestProcedureCallPrint()
+    {
+        VisSystem system = new VisSystem();
+        system.Procedures.Add(new VisProcedure()
+        {
+            Name = "TestLolYourMom",
+            Arguments = new(),
+            OutputValueType = null,
+            ProcedureNodesRoot = new PrintNode()
+            {
+                Inputs = new List<VisNode>()
+                {
+                    new VariableGetConstNode()
+                    {
+                        Value = new Value(VisLang.ValueType.String,false,"Print inside procedure!")
+                    }
+                }
+            }
+        });
+        Assert.IsNotNull(system.GetProcedure("TestLolYourMom"));
+        system.Entrance = new ProcedureCallNode(system) { ProcedureName = "TestLolYourMom" };
+        system.Execute();
+        Assert.AreEqual(1, system.Output.Count);
+        Assert.AreEqual("Print inside procedure!", system.Output.FirstOrDefault());
+    }
 }

@@ -6,9 +6,12 @@ namespace VisLang;
 /// </summary>
 public class VariableGetConstNode : DataNode
 {
-    public VariableGetConstNode(VisSystem? interpreter) : base(interpreter)
-    {
-    }
+
+    /// <summary>
+    /// Creates new const node. There is no need for this object to have reference to interpreter system because 
+    /// it should *never* access it as value is written at preprocessing stage
+    /// </summary>
+    public VariableGetConstNode() { }
 
     public string Name { get; set; } = "Default";
     public Value Value { get; set; } = new Value(ValueType.Number, false, 0);

@@ -69,6 +69,15 @@ public class VisSystem
     public List<ExecutionNode> Code { get; set; } = new();
 
     public VisSystemMemory VisSystemMemory { get; set; } = new();
+
+    /// <summary>
+    /// All of the procedures loaded in the memory that can be referenced by nodes inside this system
+    /// </summary>
+    /// <returns></returns>
+    public List<VisProcedure> Procedures { get; set; } = new();
+
+    public VisProcedure? GetProcedure(string name) => Procedures.FirstOrDefault(p => p.Name == name);
+
     /// <summary>
     /// Output produced during the execution by Execution nodes
     /// </summary>
