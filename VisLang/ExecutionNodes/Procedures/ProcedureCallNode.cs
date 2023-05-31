@@ -29,7 +29,7 @@ public class ProcedureCallNode : ExecutionNode
         }
        
         VisSystem subSystem = proc.SubSystem;
-        subSystem.Reset();
+        proc.Reset();
 
         // to pass arguments we also use a simple solution of just creating variables inside new system
         // this is done to ensure that we don't need to create special handling for when code is run from procedure
@@ -37,7 +37,7 @@ public class ProcedureCallNode : ExecutionNode
         int currentArgumentId = 0;
         foreach ((string argName, ValueType argType) in proc.Arguments)
         {
-            subSystem.VisSystemMemory.CreateVariable(argName, argType, Inputs.ElementAtOrDefault(currentArgumentId));
+            subSystem.VisSystemMemory.CreateVariable(argName, argType, Inputs.ElementAtOrDefault(currentArgumentId)?.GetValue()?.Data);
             // this solution could cause issues if arguments are messed up and don't match function signature
             // but will make editors and parsers deal with this problem :3
             currentArgumentId++;

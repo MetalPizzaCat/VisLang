@@ -25,7 +25,7 @@ public class VisSystemMemory
     /// Starts with 1 because like in C 0 means null
     /// </summary>
     private uint _memoryCounter = 1;
-    
+
     /// <summary>
     /// All of the allocated variables in the system
     /// </summary>
@@ -88,6 +88,10 @@ public class VisSystem
     public List<VisProcedure> Procedures { get; set; } = new();
 
     public VisProcedure? GetProcedure(string name) => Procedures.FirstOrDefault(p => p.Name == name);
+
+    public List<VisFunction> Functions { get; set; } = new();
+
+    public VisFunction? GetFunction(string name) => Functions.FirstOrDefault(p => p.Name == name);
 
     /// <summary>
     /// Output produced during the execution by Execution nodes
