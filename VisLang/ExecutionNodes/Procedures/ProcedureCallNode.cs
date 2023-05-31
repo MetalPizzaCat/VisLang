@@ -27,14 +27,13 @@ public class ProcedureCallNode : ExecutionNode
         {
             throw new NullReferenceException("Interpreter system does not contain a function with a given name");
         }
-        // to make it simpler to deal with local variables we just create a sub-interpreter and run procedure inside
-        // this is a bit weird but prevents name collisions
-        VisSystem subSystem = new VisSystem();
-        // simply connect output of procedure to write text to main interpreter using this 
-        // beautiful and amazing lambda c:
-        subSystem.OnOutputAdded += (string text) => { Interpreter.AddOutput(text); };
+       
+        VisSystem subSystem = proc.SubSystem;
+        subSystem.Reset();
+
         // to pass arguments we also use a simple solution of just creating variables inside new system
         // this is done to ensure that we don't need to create special handling for when code is run from procedure
+        // the reason why it is done inside caller instead of the Procedure itself is so we could pass the argument values
         int currentArgumentId = 0;
         foreach ((string argName, ValueType argType) in proc.Arguments)
         {

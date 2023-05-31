@@ -259,26 +259,27 @@ public class BasicSystemTest
     public void TestProcedureCallPrint()
     {
         VisSystem system = new VisSystem();
-        system.Procedures.Add(new VisProcedure()
+        system.Procedures.Add(new VisProcedure(system)
         {
             Name = "TestLolYourMom",
             Arguments = new(),
             OutputValueType = null,
-            ProcedureNodesRoot = new PrintNode()
-            {
-                Inputs = new List<VisNode>()
+        });
+        VisProcedure? proc = system.GetProcedure("TestLolYourMom");
+        Assert.IsNotNull(proc);
+        proc.ProcedureNodesRoot = new PrintNode(proc.SubSystem)
+        {
+            Inputs = new List<VisNode>()
                 {
                     new VariableGetConstNode()
                     {
                         Value = new Value(VisLang.ValueType.String,false,"Print inside procedure!")
                     }
                 }
-            }
-        });
-        Assert.IsNotNull(system.GetProcedure("TestLolYourMom"));
-        system.Entrance = new ProcedureCallNode(system) { ProcedureName = "TestLolYourMom" };
+        };
+        system.Entrance = new ProcedureCallNode(system) { ProcedureName = "TestLolYourMom", DefaultNext = new ProcedureCallNode(system) { ProcedureName = "TestLolYourMom" } };
         system.Execute();
-        Assert.AreEqual(1, system.Output.Count);
+        Assert.AreEqual(2, system.Output.Count);
         Assert.AreEqual("Print inside procedure!", system.Output.FirstOrDefault());
     }
 }

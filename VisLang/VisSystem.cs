@@ -25,6 +25,7 @@ public class VisSystemMemory
     /// Starts with 1 because like in C 0 means null
     /// </summary>
     private uint _memoryCounter = 1;
+    
     /// <summary>
     /// All of the allocated variables in the system
     /// </summary>
@@ -55,6 +56,16 @@ public class VisSystemMemory
         uint addr = AllocateValue(type, value);
         Variables.Add(name, addr);
         return true;
+    }
+
+    /// <summary>
+    /// Resets all storage and counters to default values. Does not actually check if data is in use or if data is actually destroyed
+    /// </summary>
+    public void Clear()
+    {
+        Memory.Clear();
+        Variables.Clear();
+        _memoryCounter = 1;
     }
 }
 
@@ -105,5 +116,13 @@ public class VisSystem
             next.Execute();
             next = next.GetNext();
         }
+    }
+
+    /// <summary>
+    /// Clears all of the functions and variables from system
+    /// </summary>
+    public void Reset()
+    {
+        VisSystemMemory.Clear();
     }
 }
