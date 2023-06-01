@@ -25,6 +25,7 @@ public class VisSystemMemory
     /// Starts with 1 because like in C 0 means null
     /// </summary>
     private uint _memoryCounter = 1;
+
     /// <summary>
     /// All of the allocated variables in the system
     /// </summary>
@@ -56,6 +57,16 @@ public class VisSystemMemory
         Variables.Add(name, addr);
         return true;
     }
+
+    /// <summary>
+    /// Resets all storage and counters to default values. Does not actually check if data is in use or if data is actually destroyed
+    /// </summary>
+    public void Clear()
+    {
+        Memory.Clear();
+        Variables.Clear();
+        _memoryCounter = 1;
+    }
 }
 
 /// <summary>
@@ -69,6 +80,19 @@ public class VisSystem
     public List<ExecutionNode> Code { get; set; } = new();
 
     public VisSystemMemory VisSystemMemory { get; set; } = new();
+
+    /// <summary>
+    /// All of the procedures loaded in the memory that can be referenced by nodes inside this system
+    /// </summary>
+    /// <returns></returns>
+    public List<VisProcedure> Procedures { get; set; } = new();
+
+    public VisProcedure? GetProcedure(string name) => Procedures.FirstOrDefault(p => p.Name == name);
+
+    public List<VisFunction> Functions { get; set; } = new();
+
+    public VisFunction? GetFunction(string name) => Functions.FirstOrDefault(p => p.Name == name);
+
     /// <summary>
     /// Output produced during the execution by Execution nodes
     /// </summary>
@@ -96,5 +120,13 @@ public class VisSystem
             next.Execute();
             next = next.GetNext();
         }
+    }
+
+    /// <summary>
+    /// Clears all of the functions and variables from system
+    /// </summary>
+    public void Reset()
+    {
+        VisSystemMemory.Clear();
     }
 }

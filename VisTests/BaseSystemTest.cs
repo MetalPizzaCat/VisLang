@@ -254,4 +254,149 @@ public class BasicSystemTest
         Assert.AreEqual(2u, system.VisSystemMemory["i"].Data);
         Assert.AreEqual("your mom", system.Output.First());
     }
+
+    [TestMethod]
+    public void TestProcedureCallPrint()
+    {
+        VisSystem system = new VisSystem();
+        system.Procedures.Add(new VisProcedure(system)
+        {
+            Name = "TestLolYourMom",
+            Arguments = new(),
+            OutputValueType = null,
+        });
+        VisProcedure? proc = system.GetProcedure("TestLolYourMom");
+        Assert.IsNotNull(proc);
+        proc.ProcedureNodesRoot = new PrintNode(proc.SubSystem)
+        {
+            Inputs = new List<VisNode>()
+                {
+                    new VariableGetConstNode()
+                    {
+                        Value = new Value(VisLang.ValueType.String,false,"Print inside procedure!")
+                    }
+                }
+        };
+        system.Entrance = new ProcedureCallNode(system) { ProcedureName = "TestLolYourMom", DefaultNext = new ProcedureCallNode(system) { ProcedureName = "TestLolYourMom" } };
+        system.Execute();
+        Assert.AreEqual(2, system.Output.Count);
+        Assert.AreEqual("Print inside procedure!", system.Output.FirstOrDefault());
+    }
+
+    [TestMethod]
+    public void TestProcedureCallPrintArgument()
+    {
+        VisSystem system = new VisSystem();
+        system.Procedures.Add(new VisProcedure(system)
+        {
+            Name = "TestLolYourMom",
+            Arguments = new() { { "arg_text", VisLang.ValueType.String } },
+            OutputValueType = null,
+        });
+        VisProcedure? proc = system.GetProcedure("TestLolYourMom");
+        Assert.IsNotNull(proc);
+        proc.ProcedureNodesRoot = new PrintNode(proc.SubSystem)
+        {
+            Inputs = new List<VisNode>()
+                {
+                    new VariableGetNode(proc.SubSystem)
+                    {
+                        Name = "arg_text"
+                    }
+                }
+        };
+        system.Entrance = new ProcedureCallNode(system)
+        {
+            ProcedureName = "TestLolYourMom",
+            Inputs = new() { new VariableGetConstNode() { Value = new Value(VisLang.ValueType.String, false, "Basinga!") } },
+            DefaultNext = new ProcedureCallNode(system)
+            {
+                ProcedureName = "TestLolYourMom",
+                Inputs = new() { new VariableGetConstNode() { Value = new Value(VisLang.ValueType.String, false, "Lol no") } },
+            }
+        };
+        system.Execute();
+        Assert.AreEqual(2, system.Output.Count);
+        Assert.AreEqual("Basinga!", system.Output.FirstOrDefault());
+        Assert.AreEqual("Lol no", system.Output.ElementAtOrDefault(1));
+    }
+
+    [TestMethod]
+    public void TestProcedureCustomDataNode()
+    {
+        VisSystem system = new VisSystem();
+        system.Procedures.Add(new VisProcedure(system)
+        {
+            Name = "AddOne",
+            Arguments = new() { { "arg_num", VisLang.ValueType.Number } },
+            OutputValueType = null,
+        });
+        VisProcedure? proc = system.GetProcedure("AddOne");
+        Assert.IsNotNull(proc);
+        proc.ProcedureNodesRoot = new PrintNode(proc.SubSystem)
+        {
+            Inputs = new List<VisNode>()
+                {
+                    new VariableGetNode(proc.SubSystem)
+                    {
+                        Name = "arg_num"
+                    }
+                }
+        };
+        system.Entrance = new ProcedureCallNode(system)
+        {
+            ProcedureName = proc.Name,
+            Inputs = new() { new VariableGetConstNode() { Value = new Value(VisLang.ValueType.String, false, "Basinga!") } },
+            DefaultNext = new ProcedureCallNode(system)
+            {
+                ProcedureName = proc.Name,
+                Inputs = new() { new VariableGetConstNode() { Value = new Value(VisLang.ValueType.String, false, "Lol no") } },
+            }
+        };
+        system.Execute();
+        Assert.AreEqual(2, system.Output.Count);
+        Assert.AreEqual("Basinga!", system.Output.FirstOrDefault());
+        Assert.AreEqual("Lol no", system.Output.ElementAtOrDefault(1));
+    }
+
+    [TestMethod]
+    public void TestFunctionDoMathWithArgument()
+    {
+        VisSystem system = new VisSystem();
+        system.Functions.Add(new VisFunction(system)
+        {
+            Name = "CoolMath",
+            Arguments = new() { { "arg", VisLang.ValueType.Number } },
+            OutputValueType = VisLang.ValueType.Number
+        });
+
+        VisFunction? func = system.GetFunction("CoolMath");
+        Assert.IsNotNull(func);
+        func.Root = new AdditionNode(func.SubSystem)
+        {
+            Inputs = new()
+            {
+                new VariableGetNode(func.SubSystem){Name = "arg"},
+                new VariableGetNode(func.SubSystem){Name = "arg"}
+            }
+        };
+        system.Entrance = new PrintNode(system)
+        {
+            Inputs = new()
+            {
+                new FunctionCallNode(system)
+                {
+                    FunctionName = "CoolMath",
+                    Inputs = new()
+                    {
+                        new VariableGetConstNode(){Value = new Value(VisLang.ValueType.Number,false,3)}
+                    }
+                }
+            }
+        };
+        system.Execute();
+        Assert.AreEqual(1, system.Output.Count);
+        Assert.AreEqual("6", system.Output.FirstOrDefault());
+    }
+
 }

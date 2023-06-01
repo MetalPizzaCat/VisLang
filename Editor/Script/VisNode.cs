@@ -96,7 +96,7 @@ public partial class VisNode : Node2D
         foreach (NodeInput input in Inputs)
         {
             // TODO: Add connection check once node connection will be implemented
-            node?.Inputs.Add(new VisLang.VariableGetConstNode(interpreter) { Value = new VisLang.Value(input.InputType, false, input.Data) });
+            node?.Inputs.Add(new VisLang.VariableGetConstNode() { Value = new VisLang.Value(input.InputType, false, input.Data) });
         }
         ApplyAdditionalDataToNode(node);
         return node;
