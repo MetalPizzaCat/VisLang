@@ -71,7 +71,7 @@ public partial class ConnectionManager : Node
 
     private void CreateExecConnection(ExecInput input, ExecInput output)
     {
-        if (ConnectorPrefab == null || Canvas == null)
+        if (ConnectorPrefab == null || Canvas == null || !input.CanConnect(output))
         {
             return;
         }
@@ -79,7 +79,11 @@ public partial class ConnectionManager : Node
 
         line.Start = input.GlobalPosition;
         line.End = output.GlobalPosition;
+        line.StartNode = input;
+        line.EndNode = output;
+        // because this is exec connection both output and input can only be connected to one other node
         output.Connection = input;
+        input.Connection = output;
         _connections.Add(line);
         Canvas.AddChild(line);
 

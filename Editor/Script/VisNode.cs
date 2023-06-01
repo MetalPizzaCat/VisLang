@@ -8,6 +8,18 @@ public partial class VisNode : Node2D
     public delegate void ExecNodeSelectedEventHandler(ExecInput node);
     public event ExecNodeSelectedEventHandler? ExecNodeSelected;
 
+    public delegate void GrabbedEventHandler(VisNode node);
+    /// <summary>
+    /// Invoked when user selects a node by pressing on it 
+    /// </summary>
+    public event GrabbedEventHandler? Grabbed;
+
+    public delegate void ReleasedEventHandler(VisNode node);
+    /// <summary>
+    /// Invoked when user stops pressing on a node
+    /// </summary>
+    public event ReleasedEventHandler? Released;
+
     public FunctionInfo? FunctionInfo { get; set; } = null;
 
     [Export]
@@ -110,5 +122,15 @@ public partial class VisNode : Node2D
     public void OutputExecSelected(ExecInput exec)
     {
         ExecNodeSelected?.Invoke(exec);
+    }
+
+    private void GrabNode()
+    {
+        Grabbed?.Invoke(this);
+    }
+
+    private void ReleaseNode()
+    {
+        Released?.Invoke(this);
     }
 }

@@ -22,4 +22,9 @@ public partial class ExecInput : Node2D
         // we instead just send an event to who ever listens and hope it will start/finish connections
         Selected?.Invoke(this);
     }
+
+    public bool CanConnect(ExecInput other)
+    {
+        return !(Connection != null || other.OwningNode == OwningNode || other.IsInput == IsInput);
+    }
 }

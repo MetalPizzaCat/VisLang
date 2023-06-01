@@ -27,6 +27,8 @@ public partial class MainScene : Node2D
 
     [Export]
     public ConnectionManager ConnectionManager { get; set; }
+    [Export]
+    public NodeMovementManager MovementManager { get; set; }
 
     [ExportGroup("Debug")]
     /// <summary>
@@ -79,6 +81,11 @@ public partial class MainScene : Node2D
 
         TestNode2.ExecNodeSelected += ExecConnectionSelected;
         EntranceInput.Selected += ExecConnectionSelected;
+
+        TestNode.Grabbed += NodeGrabbed;
+        TestNode.Released += NodeReleased;
+        TestNode2.Grabbed += NodeGrabbed;
+        TestNode2.Released += NodeReleased;
 
         _debugger.SystemOutput.CollectionChanged += OutputTextChanged;
     }
@@ -216,5 +223,18 @@ public partial class MainScene : Node2D
         PrepareForExecution();
         _debugger.Execute();
         GD.Print(_debugger.System.VisSystemMemory[VariableManager.Variables[0].VariableName].Data);
+    }
+
+    private void NodeGrabbed(VisNode node)
+    {
+        MovementManager.SelectedNode = node;
+    }
+
+    private void NodeReleased(VisNode node)
+    {
+        if(MovementManager.SelectedNode == node)
+        {
+            MovementManager.SelectedNode = null;
+        }
     }
 }

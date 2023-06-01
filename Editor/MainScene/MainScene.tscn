@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://bml2vknkym6vv"]
+[gd_scene load_steps=13 format=3 uid="uid://bml2vknkym6vv"]
 
 [ext_resource type="Script" path="res://Script/MainScene.cs" id="1_w4485"]
 [ext_resource type="Script" path="res://Script/UI/CanvasControl.cs" id="3_iy83l"]
@@ -11,8 +11,9 @@
 [ext_resource type="PackedScene" uid="uid://bqtugitvy6nko" path="res://Nodes/vis_node_exectuable.tscn" id="7_xst2a"]
 [ext_resource type="Script" path="res://Script/MainScene/ConnectionManager.cs" id="8_ykfng"]
 [ext_resource type="PackedScene" uid="uid://dpw6l4ftfkiy7" path="res://Nodes/connector_line.tscn" id="9_csoc2"]
+[ext_resource type="Script" path="res://Script/MainScene/NodeMovementManager.cs" id="12_vyifh"]
 
-[node name="MainScene" type="Node2D" node_paths=PackedStringArray("VariableManager", "OutputTextList", "RuntimeVariableInformation", "EntranceInput", "ConnectionManager", "TestNode", "TestNode2")]
+[node name="MainScene" type="Node2D" node_paths=PackedStringArray("VariableManager", "OutputTextList", "RuntimeVariableInformation", "EntranceInput", "ConnectionManager", "MovementManager", "TestNode", "TestNode2")]
 script = ExtResource("1_w4485")
 VariableManager = NodePath("UI/VariableControl")
 OutputTextList = NodePath("UI/Control/TabContainer/Output/VBoxContainer")
@@ -20,6 +21,7 @@ MessageTextLabelPrefab = ExtResource("5_xfi40")
 RuntimeVariableInformation = NodePath("UI/RuntimeVariableInformation")
 EntranceInput = NodePath("NodeInput")
 ConnectionManager = NodePath("ConnectionManager")
+MovementManager = NodePath("NodeMovementManager")
 TestNode = NodePath("VisNodeSetter")
 TestNode2 = NodePath("VisNodeExectuable2")
 
@@ -174,6 +176,10 @@ ConnectorPrefab = ExtResource("9_csoc2")
 ConnectionPreview = NodePath("../ConnectorLine")
 CanvasControl = NodePath("../Camera2D/Control")
 Canvas = NodePath("..")
+
+[node name="NodeMovementManager" type="Node" parent="." node_paths=PackedStringArray("CanvasControl")]
+script = ExtResource("12_vyifh")
+CanvasControl = NodePath("../Camera2D/Control")
 
 [node name="ConnectorLine" parent="." instance=ExtResource("9_csoc2")]
 
