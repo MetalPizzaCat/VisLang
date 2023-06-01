@@ -13,7 +13,7 @@
 [ext_resource type="PackedScene" uid="uid://dpw6l4ftfkiy7" path="res://Nodes/connector_line.tscn" id="9_csoc2"]
 [ext_resource type="Script" path="res://Script/MainScene/NodeMovementManager.cs" id="12_vyifh"]
 
-[node name="MainScene" type="Node2D" node_paths=PackedStringArray("VariableManager", "OutputTextList", "RuntimeVariableInformation", "EntranceInput", "ConnectionManager", "MovementManager", "TestNode", "TestNode2")]
+[node name="MainScene" type="Node2D" node_paths=PackedStringArray("VariableManager", "OutputTextList", "RuntimeVariableInformation", "EntranceInput", "ConnectionManager", "MovementManager", "TestNode", "TestNode2", "TemplateSaveDialog")]
 script = ExtResource("1_w4485")
 VariableManager = NodePath("UI/VariableControl")
 OutputTextList = NodePath("UI/Control/TabContainer/Output/VBoxContainer")
@@ -24,6 +24,7 @@ ConnectionManager = NodePath("ConnectionManager")
 MovementManager = NodePath("NodeMovementManager")
 TestNode = NodePath("VisNodeSetter")
 TestNode2 = NodePath("VisNodeExectuable2")
+TemplateSaveDialog = NodePath("UI/FileDialog")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 
@@ -60,6 +61,13 @@ offset_top = 16.0
 offset_right = 77.0
 offset_bottom = 47.0
 text = "Execute"
+
+[node name="GenerateTemplate" type="Button" parent="UI"]
+offset_left = 8.0
+offset_top = 56.0
+offset_right = 77.0
+offset_bottom = 87.0
+text = "Generate function signature template"
 
 [node name="StepButton" type="Button" parent="UI"]
 editor_description = "what are you doing step button :o"
@@ -170,6 +178,9 @@ offset_top = 272.0
 offset_right = 792.0
 offset_bottom = 295.0
 
+[node name="FileDialog" type="FileDialog" parent="UI"]
+access = 2
+
 [node name="ConnectionManager" type="Node" parent="." node_paths=PackedStringArray("ConnectionPreview", "CanvasControl", "Canvas")]
 script = ExtResource("8_ykfng")
 ConnectorPrefab = ExtResource("9_csoc2")
@@ -184,6 +195,8 @@ CanvasControl = NodePath("../Camera2D/Control")
 [node name="ConnectorLine" parent="." instance=ExtResource("9_csoc2")]
 
 [connection signal="pressed" from="UI/ExecuteButton" to="." method="Execute"]
+[connection signal="pressed" from="UI/GenerateTemplate" to="." method="GenerateTemplate"]
 [connection signal="pressed" from="UI/StepButton" to="." method="StepExecution"]
 [connection signal="pressed" from="UI/StopButton" to="." method="StopExecution"]
 [connection signal="pressed" from="UI/VariableControl/Button" to="UI/VariableControl" method="AddVariable"]
+[connection signal="file_selected" from="UI/FileDialog" to="." method="SaveFunctionInfoTemplate"]

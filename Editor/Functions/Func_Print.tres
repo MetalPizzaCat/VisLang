@@ -1,0 +1,13 @@
+[gd_resource type="Resource" load_steps=3 format=3 uid="uid://dpkha8n5rkowh"]
+
+[ext_resource type="Resource" uid="uid://b887hwfx2lvrr" path="res://Functions/Arguments/Func_Print_Arg.tres" id="1_57xg5"]
+[ext_resource type="Script" path="res://Script/Function/FunctionInfo.cs" id="1_dbq3v"]
+
+[resource]
+script = ExtResource("1_dbq3v")
+FunctionName = "Print"
+IsExecutable = true
+Inputs = [ExtResource("1_57xg5")]
+_output = 0
+HasOutput = false
+NodeType = "VisLang.PrintNode"

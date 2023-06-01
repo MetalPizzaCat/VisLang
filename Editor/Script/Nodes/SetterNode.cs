@@ -33,10 +33,10 @@ public partial class SetterNode : VisNode
         {
             return;
         }
-        GenerateFunction(new FunctionInfo(true, new Dictionary<string, VisLang.ValueType>()
+        GenerateFunction(new FunctionInfo("Set", true, new Godot.Collections.Array<FunctionInputInfo>()
         {
-             {"Value", val.ValueType}
-        }, null, "VisLang.VariableSetNode", "Set"));
+             new FunctionInputInfo("Value", val.ValueType)
+        }, "VisLang.VariableSetNode", false));
     }
 
     /// <summary>
@@ -74,7 +74,7 @@ public partial class SetterNode : VisNode
     protected override void ApplyAdditionalDataToNode<NodeType>(NodeType node)
     {
         base.ApplyAdditionalDataToNode(node);
-        if(node is VisLang.VariableSetNode set && CurrentVariable != null)
+        if (node is VisLang.VariableSetNode set && CurrentVariable != null)
         {
             set.Name = CurrentVariable.Name;
         }

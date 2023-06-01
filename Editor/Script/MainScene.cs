@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Reflection;
+using System.IO;
 
 public partial class MainScene : Node2D
 {
@@ -44,6 +45,11 @@ public partial class MainScene : Node2D
     /// <value></value>
     [Export]
     public VisNode TestNode2 { get; set; }
+
+    [ExportGroup("Editor helper")]
+    [Export]
+    public FileDialog? TemplateSaveDialog { get; set; }
+
     private Debugger _debugger = new Debugger();
     private bool _isExecuting = false;
     public bool IsExecuting
@@ -62,22 +68,22 @@ public partial class MainScene : Node2D
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
-        TestNode.GenerateFunction(new FunctionInfo(false, new()
+        TestNode.GenerateFunction(new FunctionInfo("Set", false, new()
         {
-            {"a", VisLang.ValueType.Number},
-            {"b", VisLang.ValueType.Bool},
-            {"banana", VisLang.ValueType.String}
+            new FunctionInputInfo("a", VisLang.ValueType.Number),
+            new FunctionInputInfo("b", VisLang.ValueType.Bool),
+            new FunctionInputInfo("banana", VisLang.ValueType.String)
         },
-        VisLang.ValueType.Number, "VisLang.VariableSetNode", "Set"));
+       "VisLang.VariableSetNode", false));
 
         VariableManager.VariableListChanged += (TestNode as SetterNode).VariableListUpdated;
         TestNode.ExecNodeSelected += ExecConnectionSelected;
 
-        TestNode2.GenerateFunction(new FunctionInfo(false, new()
+        TestNode2.GenerateFunction(new FunctionInfo("Print", false, new()
         {
-            {"Text", VisLang.ValueType.String}
+            new FunctionInputInfo("Text", VisLang.ValueType.String)
         },
-        VisLang.ValueType.Number, "VisLang.PrintNode", "Print"));
+        "VisLang.PrintNode", false));
 
         TestNode2.ExecNodeSelected += ExecConnectionSelected;
         EntranceInput.Selected += ExecConnectionSelected;
@@ -232,9 +238,20 @@ public partial class MainScene : Node2D
 
     private void NodeReleased(VisNode node)
     {
-        if(MovementManager.SelectedNode == node)
+        if (MovementManager.SelectedNode == node)
         {
             MovementManager.SelectedNode = null;
         }
+    }
+
+    private void GenerateTemplate()
+    {
+        TemplateSaveDialog?.Show();
+    }
+
+    private void SaveFunctionInfoTemplate(string path)
+    {
+        FunctionInfo info = new FunctionInfo();
+        File.WriteAllText(path, Newtonsoft.Json.JsonConvert.SerializeObject(info));
     }
 }
