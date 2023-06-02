@@ -1,0 +1,25 @@
+[gd_scene load_steps=3 format=3 uid="uid://uiwt6rhnaqgc"]
+
+[ext_resource type="Texture2D" uid="uid://d0vsau6vks6tu" path="res://icon.svg" id="1_kdc1y"]
+[ext_resource type="Script" path="res://Script/UI/NodeCreationButton.cs" id="1_xrttj"]
+
+[node name="Button" type="Button" node_paths=PackedStringArray("FunctionNameLabel")]
+tooltip_text = "Your mom"
+text = "Print"
+alignment = 0
+script = ExtResource("1_xrttj")
+FunctionNameLabel = NodePath("HBoxContainer/NameLabel")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Icon" type="TextureRect" parent="HBoxContainer"]
+layout_mode = 2
+texture = ExtResource("1_kdc1y")
+expand_mode = 3
+
+[node name="NameLabel" type="Label" parent="HBoxContainer"]
+layout_mode = 2
+text = "Print"

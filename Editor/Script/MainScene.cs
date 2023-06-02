@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Reflection;
+using System.IO;
 
 public partial class MainScene : Node2D
 {
@@ -30,20 +31,27 @@ public partial class MainScene : Node2D
     [Export]
     public NodeMovementManager MovementManager { get; set; }
 
-    [ExportGroup("Debug")]
-    /// <summary>
-    /// Node meant for testing
-    /// </summary>
-    /// <value></value>
     [Export]
-    public VisNode TestNode { get; set; }
+    public NodeCreationMenu NodeCreationMenu { get; set; }
 
-    /// <summary>
-    /// Node also meant for testing(this time for printing)
-    /// </summary>
-    /// <value></value>
+    public List<VisNode> Nodes { get; set; } = new();
+
+    [ExportGroup("Runtime creation")]
     [Export]
-    public VisNode TestNode2 { get; set; }
+    public CanvasControl? CanvasControl { get; set; }
+    [ExportSubgroup("Prefabs")]
+    [Export]
+    public PackedScene? VisNodePrefab { get; set; }
+    [Export]
+    public PackedScene? ExecNodePrefab { get; set; }
+
+
+    public Vector2 MouseLocation => (CanvasControl?.MousePosition - (CanvasControl?.DefaultViewportSize ?? Vector2.Zero) / 2f) ?? Vector2.Zero;
+
+    [ExportGroup("Editor helper")]
+    [Export]
+    public FileDialog? TemplateSaveDialog { get; set; }
+
     private Debugger _debugger = new Debugger();
     private bool _isExecuting = false;
     public bool IsExecuting
@@ -62,32 +70,42 @@ public partial class MainScene : Node2D
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
-        TestNode.GenerateFunction(new FunctionInfo(false, new()
-        {
-            {"a", VisLang.ValueType.Number},
-            {"b", VisLang.ValueType.Bool},
-            {"banana", VisLang.ValueType.String}
-        },
-        VisLang.ValueType.Number, "VisLang.VariableSetNode", "Set"));
-
-        VariableManager.VariableListChanged += (TestNode as SetterNode).VariableListUpdated;
-        TestNode.ExecNodeSelected += ExecConnectionSelected;
-
-        TestNode2.GenerateFunction(new FunctionInfo(false, new()
-        {
-            {"Text", VisLang.ValueType.String}
-        },
-        VisLang.ValueType.Number, "VisLang.PrintNode", "Print"));
-
-        TestNode2.ExecNodeSelected += ExecConnectionSelected;
-        EntranceInput.Selected += ExecConnectionSelected;
-
-        TestNode.Grabbed += NodeGrabbed;
-        TestNode.Released += NodeReleased;
-        TestNode2.Grabbed += NodeGrabbed;
-        TestNode2.Released += NodeReleased;
-
         _debugger.SystemOutput.CollectionChanged += OutputTextChanged;
+        EntranceInput.Selected += ExecConnectionSelected;
+        NodeCreationMenu.FunctionSelected += CreateNode;
+    }
+
+    /// <summary>
+    /// Creates node at mouse location
+    /// </summary>
+    /// <param name="info">Function signature</param>
+    private void CreateNode(FunctionInfo info)
+    {
+        VisNode? node = null;
+        if (info.IsExecutable)
+        {
+            node = ExecNodePrefab?.InstantiateOrNull<VisNode>();
+        }
+        else
+        {
+            node = VisNodePrefab?.InstantiateOrNull<VisNode>();
+        }
+
+        if (node == null)
+        {
+            return;
+        }
+        if (info.IsExecutable)
+        {
+            node.ExecNodeSelected += ExecConnectionSelected;
+        }
+        node.Grabbed += NodeGrabbed;
+        node.Released += NodeReleased;
+
+        node.GlobalPosition = MouseLocation;
+        node.GenerateFunction(info);
+        AddChild(node);
+        Nodes.Add(node);
     }
 
     private void ExecConnectionSelected(ExecInput input)
@@ -232,7 +250,7 @@ public partial class MainScene : Node2D
 
     private void NodeReleased(VisNode node)
     {
-        if(MovementManager.SelectedNode == node)
+        if (MovementManager.SelectedNode == node)
         {
             MovementManager.SelectedNode = null;
         }

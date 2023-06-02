@@ -74,11 +74,11 @@ public partial class VisNode : Node2D
 
 
         float currentInputOffset = 0;
-        foreach ((string name, VisLang.ValueType arg) in info.Inputs)
+        foreach (FunctionInputInfo argument in info.Inputs)
         {
             NodeInput input = NodeInputPrefab.InstantiateOrNull<NodeInput>();
-            input.InputName = name;
-            input.InputType = arg;
+            input.InputName = argument.InputName;
+            input.InputType = argument.InputType;
             Inputs.Add(input);
             NodeInputAnchor.AddChild(input);
             input.Position = new Vector2(0, currentInputOffset);
@@ -87,7 +87,7 @@ public partial class VisNode : Node2D
         }
         if (NodeNameLabel != null)
         {
-            NodeNameLabel.Text = info.Name;
+            NodeNameLabel.Text = info.FunctionName;
         }
     }
 
