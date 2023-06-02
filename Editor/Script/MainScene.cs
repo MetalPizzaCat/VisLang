@@ -178,34 +178,6 @@ public partial class MainScene : Node2D
         RuntimeVariableInformation?.DisplayInformation(_debugger.System.VisSystemMemory);
     }
 
-    /// <summary>
-    /// This simply traverses the line from root node and till the last available node. This does not generate data nodes
-    /// </summary>
-    /// <param name="root">Start editor node</param>
-    /// <param name="interpreter">Interpreter system itself</param>
-    /// <returns>Resulting root node with child nodes attached or null if generation failed</returns>
-    private VisLang.VisNode? GenerateExecutionTree(VisNode root, VisLang.VisSystem interpreter)
-    {
-        VisLang.ExecutionNode? node = root.CreateNode<VisLang.ExecutionNode>(interpreter);
-        if (node == null)
-        {
-            return null;
-        }
-
-        if (root.OutputExecNode != null && root.OutputExecNode.Connection != null && root.OutputExecNode.Connection.OwningNode != null)
-        {
-            VisLang.VisNode? next = GenerateExecutionTree(root.OutputExecNode.Connection.OwningNode, interpreter);
-            if (next != null)
-            {
-                // any node that is connected to exec line is by definition an exec node
-                // right????
-                // TODO: Actually check if i'm right >_>
-                node.DefaultNext = (next as VisLang.ExecutionNode);
-            }
-        }
-        return node;
-    }
-
     private bool PrepareForExecution()
     {
         _debugger.InitNewSystem();
@@ -229,7 +201,8 @@ public partial class MainScene : Node2D
         {
             return false;
         }
-        VisLang.VisNode? root = GenerateExecutionTree(EntranceInput.Connection.OwningNode, _debugger.System);
+        NodeParser parser = new NodeParser(EntranceInput.Connection.OwningNode, _debugger.System);
+        VisLang.VisNode? root = parser.Parse();
         if (root == null)
         {
             GD.PrintErr("No root node is available");
@@ -245,7 +218,6 @@ public partial class MainScene : Node2D
         StopExecution();
         PrepareForExecution();
         _debugger.Execute();
-        GD.Print(_debugger.System.VisSystemMemory[VariableManager.Variables[0].VariableName].Data);
     }
 
     private void NodeGrabbed(VisNode node)

@@ -87,6 +87,7 @@ public partial class VisNode : Node2D
             NodeInput input = NodeInputPrefab.InstantiateOrNull<NodeInput>();
             input.OwningNode = this;
             input.InputName = argument.InputName;
+            input.AllowsAny = argument.AllowAnyType;
             input.InputType = argument.InputType;
             input.Selected += (NodeInput input) => { InputNodeSelected?.Invoke(input); };
             Inputs.Add(input);
@@ -120,11 +121,6 @@ public partial class VisNode : Node2D
             return null;
         }
         node.Interpreter = interpreter;
-        foreach (NodeInput input in Inputs)
-        {
-            // TODO: Add connection check once node connection will be implemented
-            node?.Inputs.Add(new VisLang.VariableGetConstNode() { Value = new VisLang.Value(input.InputType, false, input.Data) });
-        }
         ApplyAdditionalDataToNode(node);
         return node;
     }
