@@ -6,6 +6,7 @@
 [resource]
 script = ExtResource("1_dbq3v")
 FunctionName = "Print"
+FunctionDescription = "Prints a string into the output window"
 IsExecutable = true
 Inputs = [ExtResource("1_57xg5")]
 _output = 0

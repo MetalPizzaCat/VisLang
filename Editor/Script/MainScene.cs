@@ -31,6 +31,24 @@ public partial class MainScene : Node2D
     [Export]
     public NodeMovementManager MovementManager { get; set; }
 
+    [Export]
+    public NodeCreationMenu NodeCreationMenu { get; set; }
+
+    public List<VisNode> Nodes { get; set; } = new();
+
+    [ExportGroup("Runtime creation")]
+    [Export]
+    public CanvasControl? CanvasControl { get; set; }
+    [ExportSubgroup("Prefabs")]
+    [Export]
+    public PackedScene? VisNodePrefab { get; set; }
+    [Export]
+    public PackedScene? ExecNodePrefab { get; set; }
+
+
+    public Vector2 MouseLocation => (CanvasControl?.MousePosition - (CanvasControl?.DefaultViewportSize ?? Vector2.Zero) / 2f) ?? Vector2.Zero;
+
+
     [ExportGroup("Debug")]
     /// <summary>
     /// Node meant for testing
@@ -94,6 +112,41 @@ public partial class MainScene : Node2D
         TestNode2.Released += NodeReleased;
 
         _debugger.SystemOutput.CollectionChanged += OutputTextChanged;
+
+        NodeCreationMenu.FunctionSelected += CreateNode;
+    }
+
+    /// <summary>
+    /// Creates node at mouse location
+    /// </summary>
+    /// <param name="info">Function signature</param>
+    private void CreateNode(FunctionInfo info)
+    {
+        VisNode? node = null;
+        if (info.IsExecutable)
+        {
+            node = ExecNodePrefab?.InstantiateOrNull<VisNode>();
+        }
+        else
+        {
+            node = VisNodePrefab?.InstantiateOrNull<VisNode>();
+        }
+
+        if (node == null)
+        {
+            return;
+        }
+        if (info.IsExecutable)
+        {
+            node.ExecNodeSelected += ExecConnectionSelected;
+        }
+        node.Grabbed += NodeGrabbed;
+        node.Released += NodeReleased;
+
+        node.GlobalPosition = MouseLocation;
+        node.GenerateFunction(info);
+        AddChild(node);
+        Nodes.Add(node);
     }
 
     private void ExecConnectionSelected(ExecInput input)
@@ -242,16 +295,5 @@ public partial class MainScene : Node2D
         {
             MovementManager.SelectedNode = null;
         }
-    }
-
-    private void GenerateTemplate()
-    {
-        TemplateSaveDialog?.Show();
-    }
-
-    private void SaveFunctionInfoTemplate(string path)
-    {
-        FunctionInfo info = new FunctionInfo();
-        File.WriteAllText(path, Newtonsoft.Json.JsonConvert.SerializeObject(info));
     }
 }

@@ -1,8 +1,9 @@
-[gd_scene load_steps=13 format=3 uid="uid://bml2vknkym6vv"]
+[gd_scene load_steps=19 format=3 uid="uid://bml2vknkym6vv"]
 
 [ext_resource type="Script" path="res://Script/MainScene.cs" id="1_w4485"]
 [ext_resource type="Script" path="res://Script/UI/CanvasControl.cs" id="3_iy83l"]
 [ext_resource type="PackedScene" uid="uid://cjc6nifn3qyy7" path="res://UI/variable_control.tscn" id="3_jx1hi"]
+[ext_resource type="PackedScene" uid="uid://c7ytdksqfqbhc" path="res://Nodes/VisNode.tscn" id="3_kaxs0"]
 [ext_resource type="Script" path="res://Script/UI/VariableManager.cs" id="3_vtslo"]
 [ext_resource type="PackedScene" uid="uid://dk8u81wibm8ol" path="res://Nodes/vis_node_setter.tscn" id="5_i8iu4"]
 [ext_resource type="PackedScene" uid="uid://c67wh757rx8s3" path="res://UI/message_label.tscn" id="5_xfi40"]
@@ -11,20 +12,52 @@
 [ext_resource type="PackedScene" uid="uid://bqtugitvy6nko" path="res://Nodes/vis_node_exectuable.tscn" id="7_xst2a"]
 [ext_resource type="Script" path="res://Script/MainScene/ConnectionManager.cs" id="8_ykfng"]
 [ext_resource type="PackedScene" uid="uid://dpw6l4ftfkiy7" path="res://Nodes/connector_line.tscn" id="9_csoc2"]
+[ext_resource type="Script" path="res://Script/MainScene/CanvasUiControl.cs" id="10_2je7w"]
+[ext_resource type="PackedScene" uid="uid://cuw6xf1wlf0ag" path="res://UI/node_creation_menu.tscn" id="11_rgm21"]
 [ext_resource type="Script" path="res://Script/MainScene/NodeMovementManager.cs" id="12_vyifh"]
+[ext_resource type="Script" path="res://Script/MainScene/FunctionSignatureManager.cs" id="13_a8e7i"]
+[ext_resource type="Resource" uid="uid://migjfmdltwbc" path="res://Functions/Func_Add.tres" id="14_ue0gx"]
+[ext_resource type="Resource" uid="uid://dpkha8n5rkowh" path="res://Functions/Func_Print.tres" id="15_d1s18"]
 
-[node name="MainScene" type="Node2D" node_paths=PackedStringArray("VariableManager", "OutputTextList", "RuntimeVariableInformation", "EntranceInput", "ConnectionManager", "MovementManager", "TestNode", "TestNode2", "TemplateSaveDialog")]
+[node name="MainScene" type="Node2D" node_paths=PackedStringArray("VariableManager", "OutputTextList", "RuntimeVariableInformation", "EntranceInput", "ConnectionManager", "MovementManager", "NodeCreationMenu", "CanvasControl", "TestNode", "TestNode2", "TemplateSaveDialog")]
 script = ExtResource("1_w4485")
-VariableManager = NodePath("UI/VariableControl")
-OutputTextList = NodePath("UI/Control/TabContainer/Output/VBoxContainer")
+VariableManager = NodePath("UiControls/VariableControl")
+OutputTextList = NodePath("UiControls/Control/TabContainer/Output/VBoxContainer")
 MessageTextLabelPrefab = ExtResource("5_xfi40")
-RuntimeVariableInformation = NodePath("UI/RuntimeVariableInformation")
-EntranceInput = NodePath("NodeInput")
+RuntimeVariableInformation = NodePath("UiControls/RuntimeVariableInformation")
+EntranceInput = NodePath("NodeLayer/NodeInput")
 ConnectionManager = NodePath("ConnectionManager")
 MovementManager = NodePath("NodeMovementManager")
-TestNode = NodePath("VisNodeSetter")
-TestNode2 = NodePath("VisNodeExectuable2")
+NodeCreationMenu = NodePath("UI/PopupPanel")
+CanvasControl = NodePath("Camera2D/Control")
+VisNodePrefab = ExtResource("3_kaxs0")
+ExecNodePrefab = ExtResource("7_xst2a")
+TestNode = NodePath("NodeLayer/VisNodeSetter")
+TestNode2 = NodePath("NodeLayer/VisNodeExectuable2")
 TemplateSaveDialog = NodePath("UI/FileDialog")
+
+[node name="UI" type="CanvasLayer" parent="."]
+layer = 0
+
+[node name="CanvasUiControl" type="Control" parent="UI" node_paths=PackedStringArray("NodeCreationPopup", "CanvasControl")]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 1344.0
+offset_bottom = 744.0
+mouse_filter = 1
+script = ExtResource("10_2je7w")
+NodeCreationPopup = NodePath("../PopupPanel")
+CanvasControl = NodePath("../../Camera2D/Control")
+
+[node name="FileDialog" type="FileDialog" parent="UI"]
+size = Vector2i(632, 162)
+access = 2
+
+[node name="PopupPanel" parent="UI" node_paths=PackedStringArray("Functions") instance=ExtResource("11_rgm21")]
+size = Vector2i(255, 350)
+mouse_passthrough_polygon = PackedVector2Array(0, 0, 255, 0, 255, 350, 0, 350)
+unresizable = false
+Functions = NodePath("../../Functions")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 
@@ -33,43 +66,59 @@ layout_mode = 3
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
+mouse_filter = 2
 script = ExtResource("3_iy83l")
-DebugInfoLabel = NodePath("../../UI/MousePoseDebugLabel")
+DebugInfoLabel = NodePath("../../UiControls/MousePoseDebugLabel")
 metadata/_edit_use_anchors_ = true
 
-[node name="VisNodeExectuable2" parent="." instance=ExtResource("7_xst2a")]
-position = Vector2(-408, 192)
+[node name="ConnectionManager" type="Node" parent="." node_paths=PackedStringArray("ConnectionPreview", "CanvasControl", "Canvas")]
+script = ExtResource("8_ykfng")
+ConnectorPrefab = ExtResource("9_csoc2")
+ConnectionPreview = NodePath("../NodeLayer/ConnectorLine")
+CanvasControl = NodePath("../Camera2D/Control")
+Canvas = NodePath("..")
 
-[node name="VisNodeSetter" parent="." instance=ExtResource("5_i8iu4")]
+[node name="NodeMovementManager" type="Node" parent="." node_paths=PackedStringArray("CanvasControl")]
+script = ExtResource("12_vyifh")
+CanvasControl = NodePath("../Camera2D/Control")
+
+[node name="Functions" type="Node" parent="."]
+script = ExtResource("13_a8e7i")
+Functions = [ExtResource("14_ue0gx"), ExtResource("15_d1s18")]
+
+[node name="NodeLayer" type="CanvasLayer" parent="."]
+layer = 2
+follow_viewport_enabled = true
+
+[node name="VisNodeSetter" parent="NodeLayer" instance=ExtResource("5_i8iu4")]
 position = Vector2(-88, -112)
 
-[node name="NodeInput" parent="." instance=ExtResource("7_ealpf")]
+[node name="NodeInput" parent="NodeLayer" instance=ExtResource("7_ealpf")]
 position = Vector2(-544, -80)
 
-[node name="Label" type="Label" parent="NodeInput"]
+[node name="Label" type="Label" parent="NodeLayer/NodeInput"]
 offset_left = -16.0
 offset_top = -40.0
 offset_right = 24.0
 offset_bottom = -14.0
 text = "Exec"
 
-[node name="UI" type="CanvasLayer" parent="."]
+[node name="ConnectorLine" parent="NodeLayer" instance=ExtResource("9_csoc2")]
 
-[node name="ExecuteButton" type="Button" parent="UI"]
+[node name="VisNodeExectuable2" parent="NodeLayer" instance=ExtResource("7_xst2a")]
+position = Vector2(-408, 192)
+
+[node name="UiControls" type="CanvasLayer" parent="."]
+layer = 2
+
+[node name="ExecuteButton" type="Button" parent="UiControls"]
 offset_left = 8.0
 offset_top = 16.0
 offset_right = 77.0
 offset_bottom = 47.0
 text = "Execute"
 
-[node name="GenerateTemplate" type="Button" parent="UI"]
-offset_left = 8.0
-offset_top = 56.0
-offset_right = 77.0
-offset_bottom = 87.0
-text = "Generate function signature template"
-
-[node name="StepButton" type="Button" parent="UI"]
+[node name="StepButton" type="Button" parent="UiControls"]
 editor_description = "what are you doing step button :o"
 offset_left = 80.0
 offset_top = 16.0
@@ -77,7 +126,7 @@ offset_right = 149.0
 offset_bottom = 47.0
 text = "Step"
 
-[node name="StopButton" type="Button" parent="UI"]
+[node name="StopButton" type="Button" parent="UiControls"]
 editor_description = "what are you doing step button :o"
 offset_left = 152.0
 offset_top = 16.0
@@ -85,7 +134,7 @@ offset_right = 221.0
 offset_bottom = 47.0
 text = "Stop"
 
-[node name="VariableControl" type="Control" parent="UI" node_paths=PackedStringArray("Container")]
+[node name="VariableControl" type="Control" parent="UiControls" node_paths=PackedStringArray("Container")]
 layout_mode = 3
 anchors_preset = 0
 offset_left = 1344.0
@@ -96,28 +145,28 @@ script = ExtResource("3_vtslo")
 VariableControlPlaceholder = ExtResource("3_jx1hi")
 Container = NodePath("ScrollContainer/VBoxContainer")
 
-[node name="ColorRect" type="ColorRect" parent="UI/VariableControl"]
+[node name="ColorRect" type="ColorRect" parent="UiControls/VariableControl"]
 layout_mode = 0
 offset_right = 256.0
 offset_bottom = 320.0
 color = Color(0, 0, 0, 0.435294)
 
-[node name="ScrollContainer" type="ScrollContainer" parent="UI/VariableControl"]
+[node name="ScrollContainer" type="ScrollContainer" parent="UiControls/VariableControl"]
 layout_mode = 0
 offset_top = 24.0
 offset_right = 256.0
 offset_bottom = 320.0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="UI/VariableControl/ScrollContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="UiControls/VariableControl/ScrollContainer"]
 layout_mode = 2
 
-[node name="Button" type="Button" parent="UI/VariableControl"]
+[node name="Button" type="Button" parent="UiControls/VariableControl"]
 layout_mode = 0
 offset_right = 8.0
 offset_bottom = 8.0
 text = "Add variable"
 
-[node name="RuntimeVariableInformation" type="Control" parent="UI" node_paths=PackedStringArray("InformationContainer")]
+[node name="RuntimeVariableInformation" type="Control" parent="UiControls" node_paths=PackedStringArray("InformationContainer")]
 layout_mode = 3
 anchors_preset = 0
 offset_left = 1344.0
@@ -127,76 +176,60 @@ offset_bottom = 744.0
 script = ExtResource("6_km71b")
 InformationContainer = NodePath("ScrollContainer/VBoxContainer")
 
-[node name="ColorRect" type="ColorRect" parent="UI/RuntimeVariableInformation"]
+[node name="ColorRect" type="ColorRect" parent="UiControls/RuntimeVariableInformation"]
 layout_mode = 0
 offset_right = 256.0
 offset_bottom = 392.0
 color = Color(0, 0, 0, 0.435294)
 
-[node name="ScrollContainer" type="ScrollContainer" parent="UI/RuntimeVariableInformation"]
+[node name="ScrollContainer" type="ScrollContainer" parent="UiControls/RuntimeVariableInformation"]
 layout_mode = 0
 offset_right = 256.0
 offset_bottom = 392.0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="UI/RuntimeVariableInformation/ScrollContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="UiControls/RuntimeVariableInformation/ScrollContainer"]
 layout_mode = 2
 
-[node name="Control" type="Control" parent="UI"]
+[node name="Control" type="Control" parent="UiControls"]
 layout_mode = 3
 anchors_preset = 0
 offset_top = 768.0
 offset_right = 1600.0
 offset_bottom = 896.0
 
-[node name="TabContainer" type="TabContainer" parent="UI/Control"]
+[node name="TabContainer" type="TabContainer" parent="UiControls/Control"]
 layout_mode = 0
 offset_top = -56.0
 offset_right = 1600.0
 offset_bottom = 128.0
 
-[node name="Output" type="ScrollContainer" parent="UI/Control/TabContainer"]
+[node name="Output" type="ScrollContainer" parent="UiControls/Control/TabContainer"]
 layout_mode = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="UI/Control/TabContainer/Output"]
+[node name="VBoxContainer" type="VBoxContainer" parent="UiControls/Control/TabContainer/Output"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="RichTextLabel" parent="UI/Control/TabContainer/Output/VBoxContainer" instance=ExtResource("5_xfi40")]
+[node name="RichTextLabel" parent="UiControls/Control/TabContainer/Output/VBoxContainer" instance=ExtResource("5_xfi40")]
 layout_mode = 2
 
-[node name="Errors" type="ScrollContainer" parent="UI/Control/TabContainer"]
+[node name="Errors" type="ScrollContainer" parent="UiControls/Control/TabContainer"]
 visible = false
 layout_mode = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="UI/Control/TabContainer/Errors"]
+[node name="VBoxContainer" type="VBoxContainer" parent="UiControls/Control/TabContainer/Errors"]
 layout_mode = 2
 
-[node name="MousePoseDebugLabel" type="Label" parent="UI"]
+[node name="MousePoseDebugLabel" type="Label" parent="UiControls"]
 offset_left = 752.0
 offset_top = 272.0
 offset_right = 792.0
 offset_bottom = 295.0
 
-[node name="FileDialog" type="FileDialog" parent="UI"]
-access = 2
-
-[node name="ConnectionManager" type="Node" parent="." node_paths=PackedStringArray("ConnectionPreview", "CanvasControl", "Canvas")]
-script = ExtResource("8_ykfng")
-ConnectorPrefab = ExtResource("9_csoc2")
-ConnectionPreview = NodePath("../ConnectorLine")
-CanvasControl = NodePath("../Camera2D/Control")
-Canvas = NodePath("..")
-
-[node name="NodeMovementManager" type="Node" parent="." node_paths=PackedStringArray("CanvasControl")]
-script = ExtResource("12_vyifh")
-CanvasControl = NodePath("../Camera2D/Control")
-
-[node name="ConnectorLine" parent="." instance=ExtResource("9_csoc2")]
-
-[connection signal="pressed" from="UI/ExecuteButton" to="." method="Execute"]
-[connection signal="pressed" from="UI/GenerateTemplate" to="." method="GenerateTemplate"]
-[connection signal="pressed" from="UI/StepButton" to="." method="StepExecution"]
-[connection signal="pressed" from="UI/StopButton" to="." method="StopExecution"]
-[connection signal="pressed" from="UI/VariableControl/Button" to="UI/VariableControl" method="AddVariable"]
-[connection signal="file_selected" from="UI/FileDialog" to="." method="SaveFunctionInfoTemplate"]
+[connection signal="mouse_entered" from="UI/CanvasUiControl" to="UI/CanvasUiControl" method="EnableContextMenuClick"]
+[connection signal="mouse_exited" from="UI/CanvasUiControl" to="UI/CanvasUiControl" method="DisableContextMenuClick"]
+[connection signal="pressed" from="UiControls/ExecuteButton" to="." method="Execute"]
+[connection signal="pressed" from="UiControls/StepButton" to="." method="StepExecution"]
+[connection signal="pressed" from="UiControls/StopButton" to="." method="StopExecution"]
+[connection signal="pressed" from="UiControls/VariableControl/Button" to="UiControls/VariableControl" method="AddVariable"]

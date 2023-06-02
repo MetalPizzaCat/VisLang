@@ -6,6 +6,7 @@
 [resource]
 script = ExtResource("2_t1pe6")
 FunctionName = "Add"
+FunctionDescription = "Adds two numbers together"
 IsExecutable = false
 Inputs = [ExtResource("1_hnnj1"), ExtResource("1_hnnj1")]
 _output = 2

@@ -14,6 +14,9 @@ public partial class FunctionInfo : Resource
     [Export]
     public string FunctionName { get; set; } = "Invalid node name :3";
 
+    [Export(PropertyHint.MultilineText)]
+    public string FunctionDescription {get;set;} = "Never gonna give you up";
+
     /// <summary>
     /// If true a special executable node prefab will be spawned 
     /// </summary>
