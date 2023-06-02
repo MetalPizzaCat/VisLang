@@ -1,11 +1,10 @@
-[gd_scene load_steps=19 format=3 uid="uid://bml2vknkym6vv"]
+[gd_scene load_steps=18 format=3 uid="uid://bml2vknkym6vv"]
 
 [ext_resource type="Script" path="res://Script/MainScene.cs" id="1_w4485"]
 [ext_resource type="Script" path="res://Script/UI/CanvasControl.cs" id="3_iy83l"]
 [ext_resource type="PackedScene" uid="uid://cjc6nifn3qyy7" path="res://UI/variable_control.tscn" id="3_jx1hi"]
 [ext_resource type="PackedScene" uid="uid://c7ytdksqfqbhc" path="res://Nodes/VisNode.tscn" id="3_kaxs0"]
 [ext_resource type="Script" path="res://Script/UI/VariableManager.cs" id="3_vtslo"]
-[ext_resource type="PackedScene" uid="uid://dk8u81wibm8ol" path="res://Nodes/vis_node_setter.tscn" id="5_i8iu4"]
 [ext_resource type="PackedScene" uid="uid://c67wh757rx8s3" path="res://UI/message_label.tscn" id="5_xfi40"]
 [ext_resource type="Script" path="res://Script/UI/RuntimeVariableInformationControl.cs" id="6_km71b"]
 [ext_resource type="PackedScene" uid="uid://dd2ewu3al55co" path="res://Nodes/ExecNodeInput.tscn" id="7_ealpf"]
@@ -19,7 +18,7 @@
 [ext_resource type="Resource" uid="uid://migjfmdltwbc" path="res://Functions/Func_Add.tres" id="14_ue0gx"]
 [ext_resource type="Resource" uid="uid://dpkha8n5rkowh" path="res://Functions/Func_Print.tres" id="15_d1s18"]
 
-[node name="MainScene" type="Node2D" node_paths=PackedStringArray("VariableManager", "OutputTextList", "RuntimeVariableInformation", "EntranceInput", "ConnectionManager", "MovementManager", "NodeCreationMenu", "CanvasControl", "TestNode", "TestNode2", "TemplateSaveDialog")]
+[node name="MainScene" type="Node2D" node_paths=PackedStringArray("VariableManager", "OutputTextList", "RuntimeVariableInformation", "EntranceInput", "ConnectionManager", "MovementManager", "NodeCreationMenu", "CanvasControl", "TemplateSaveDialog")]
 script = ExtResource("1_w4485")
 VariableManager = NodePath("UiControls/VariableControl")
 OutputTextList = NodePath("UiControls/Control/TabContainer/Output/VBoxContainer")
@@ -32,8 +31,6 @@ NodeCreationMenu = NodePath("UI/PopupPanel")
 CanvasControl = NodePath("Camera2D/Control")
 VisNodePrefab = ExtResource("3_kaxs0")
 ExecNodePrefab = ExtResource("7_xst2a")
-TestNode = NodePath("NodeLayer/VisNodeSetter")
-TestNode2 = NodePath("NodeLayer/VisNodeExectuable2")
 TemplateSaveDialog = NodePath("UI/FileDialog")
 
 [node name="UI" type="CanvasLayer" parent="."]
@@ -90,9 +87,6 @@ Functions = [ExtResource("14_ue0gx"), ExtResource("15_d1s18")]
 layer = 2
 follow_viewport_enabled = true
 
-[node name="VisNodeSetter" parent="NodeLayer" instance=ExtResource("5_i8iu4")]
-position = Vector2(-88, -112)
-
 [node name="NodeInput" parent="NodeLayer" instance=ExtResource("7_ealpf")]
 position = Vector2(-544, -80)
 
@@ -104,9 +98,6 @@ offset_bottom = -14.0
 text = "Exec"
 
 [node name="ConnectorLine" parent="NodeLayer" instance=ExtResource("9_csoc2")]
-
-[node name="VisNodeExectuable2" parent="NodeLayer" instance=ExtResource("7_xst2a")]
-position = Vector2(-408, 192)
 
 [node name="UiControls" type="CanvasLayer" parent="."]
 layer = 2

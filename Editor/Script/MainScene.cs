@@ -48,22 +48,6 @@ public partial class MainScene : Node2D
 
     public Vector2 MouseLocation => (CanvasControl?.MousePosition - (CanvasControl?.DefaultViewportSize ?? Vector2.Zero) / 2f) ?? Vector2.Zero;
 
-
-    [ExportGroup("Debug")]
-    /// <summary>
-    /// Node meant for testing
-    /// </summary>
-    /// <value></value>
-    [Export]
-    public VisNode TestNode { get; set; }
-
-    /// <summary>
-    /// Node also meant for testing(this time for printing)
-    /// </summary>
-    /// <value></value>
-    [Export]
-    public VisNode TestNode2 { get; set; }
-
     [ExportGroup("Editor helper")]
     [Export]
     public FileDialog? TemplateSaveDialog { get; set; }
@@ -86,33 +70,8 @@ public partial class MainScene : Node2D
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
-        TestNode.GenerateFunction(new FunctionInfo("Set", false, new()
-        {
-            new FunctionInputInfo("a", VisLang.ValueType.Number),
-            new FunctionInputInfo("b", VisLang.ValueType.Bool),
-            new FunctionInputInfo("banana", VisLang.ValueType.String)
-        },
-       "VisLang.VariableSetNode", false));
-
-        VariableManager.VariableListChanged += (TestNode as SetterNode).VariableListUpdated;
-        TestNode.ExecNodeSelected += ExecConnectionSelected;
-
-        TestNode2.GenerateFunction(new FunctionInfo("Print", false, new()
-        {
-            new FunctionInputInfo("Text", VisLang.ValueType.String)
-        },
-        "VisLang.PrintNode", false));
-
-        TestNode2.ExecNodeSelected += ExecConnectionSelected;
-        EntranceInput.Selected += ExecConnectionSelected;
-
-        TestNode.Grabbed += NodeGrabbed;
-        TestNode.Released += NodeReleased;
-        TestNode2.Grabbed += NodeGrabbed;
-        TestNode2.Released += NodeReleased;
-
         _debugger.SystemOutput.CollectionChanged += OutputTextChanged;
-
+        EntranceInput.Selected += ExecConnectionSelected;
         NodeCreationMenu.FunctionSelected += CreateNode;
     }
 
