@@ -7,8 +7,13 @@ using System;
 public partial class NodeInput : Node2D
 {
 
+    public delegate void SelectedEventHandler(NodeInput input);
+    public event SelectedEventHandler? Selected;
     [Export]
     public Label InputNameLabel { get; set; }
+
+    [Export]
+    public bool IsInput { get; set; } = true;
 
     [ExportGroup("Input fields")]
     [Export]
@@ -19,6 +24,11 @@ public partial class NodeInput : Node2D
     public CheckBox BoolInput { get; set; }
 
     public VisNode? OwningNode { get; set; } = null;
+
+    /// <summary>
+    /// Other side of the connection node
+    /// </summary>
+    public NodeInput? Connection { get; set; } = null;
 
     public string InputName
     {
@@ -33,9 +43,9 @@ public partial class NodeInput : Node2D
         get => _inputType;
         set
         {
-            StringInput.Visible = value == VisLang.ValueType.String;
-            NumberInput.Visible = value == VisLang.ValueType.Number;
-            BoolInput.Visible = value == VisLang.ValueType.Bool;
+            StringInput.Visible = value == VisLang.ValueType.String && IsInput;
+            NumberInput.Visible = value == VisLang.ValueType.Number && IsInput;
+            BoolInput.Visible = value == VisLang.ValueType.Bool && IsInput;
             _inputType = value;
         }
     }
@@ -60,5 +70,20 @@ public partial class NodeInput : Node2D
             }
             return 0;
         }
+    }
+
+    private void Pressed()
+    {
+        Selected?.Invoke(this);
+    }
+
+    /// <summary>
+    /// Can this node connect to other node
+    /// </summary>
+    public bool CanConnect(NodeInput other)
+    {   
+        // output can have as many connections as it wants, since it doesn't store any information about them
+        bool connected = IsInput ? (Connection != null) : false;
+        return !(connected || other.OwningNode == OwningNode || other.IsInput == IsInput || other.InputType != InputType);
     }
 }

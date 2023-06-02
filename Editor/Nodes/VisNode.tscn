@@ -9,10 +9,11 @@
 [sub_resource type="LabelSettings" id="LabelSettings_qu6ij"]
 font_color = Color(0, 0, 0, 1)
 
-[node name="VisNode" type="Node2D" node_paths=PackedStringArray("NodeInputAnchor", "NodeNameLabel")]
+[node name="VisNode" type="Node2D" node_paths=PackedStringArray("NodeInputAnchor", "NodeOutput", "NodeNameLabel")]
 script = ExtResource("1_2foni")
 NodeInputPrefab = ExtResource("2_vfm24")
 NodeInputAnchor = NodePath("NodeInputAnchor")
+NodeOutput = NodePath("NodeInput")
 NodeNameLabel = NodePath("Label")
 
 [node name="Button" type="Button" parent="."]
@@ -47,6 +48,11 @@ texture = ExtResource("2_mp3hn")
 
 [node name="NodeInputAnchor" type="Node2D" parent="."]
 position = Vector2(-104, -16)
+
+[node name="NodeInput" parent="." instance=ExtResource("2_vfm24")]
+visible = false
+position = Vector2(112, 8)
+IsInput = false
 
 [connection signal="button_down" from="Button" to="." method="GrabNode"]
 [connection signal="button_up" from="Button" to="." method="ReleaseNode"]

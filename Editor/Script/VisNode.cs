@@ -20,6 +20,9 @@ public partial class VisNode : Node2D
     /// </summary>
     public event ReleasedEventHandler? Released;
 
+    public delegate void InputNodeSelectedEventHandler(NodeInput input);
+    public event InputNodeSelectedEventHandler? InputNodeSelected;
+
     public FunctionInfo? FunctionInfo { get; set; } = null;
 
     [Export]
@@ -27,6 +30,9 @@ public partial class VisNode : Node2D
 
     [Export]
     public Node2D NodeInputAnchor { get; set; }
+
+    [Export]
+    public NodeInput NodeOutput { get; set; }
 
     [Export]
     public Label? NodeNameLabel { get; set; }
@@ -55,6 +61,8 @@ public partial class VisNode : Node2D
             OutputExecNode.Selected += OutputExecSelected;
             OutputExecNode.OwningNode = this;
         }
+        NodeOutput.Selected += (NodeInput input) => { InputNodeSelected?.Invoke(input); };
+        NodeOutput.OwningNode = this;
     }
 
     public void GenerateFunction(FunctionInfo info)
@@ -77,13 +85,20 @@ public partial class VisNode : Node2D
         foreach (FunctionInputInfo argument in info.Inputs)
         {
             NodeInput input = NodeInputPrefab.InstantiateOrNull<NodeInput>();
+            input.OwningNode = this;
             input.InputName = argument.InputName;
             input.InputType = argument.InputType;
+            input.Selected += (NodeInput input) => { InputNodeSelected?.Invoke(input); };
             Inputs.Add(input);
             NodeInputAnchor.AddChild(input);
             input.Position = new Vector2(0, currentInputOffset);
             //TODO: make this constant dynamic to avoid recompiling code each time you feel like making ui pretty
             currentInputOffset += 32f;
+        }
+        if(info.HasOutput)
+        {
+            NodeOutput.Visible = true;
+            NodeOutput.InputType = info.OutputType ?? VisLang.ValueType.Bool;
         }
         if (NodeNameLabel != null)
         {

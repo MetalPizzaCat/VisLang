@@ -10,6 +10,12 @@ StringInput = NodePath("ManualInputControls/StringInput")
 NumberInput = NodePath("ManualInputControls/NumberInput")
 BoolInput = NodePath("ManualInputControls/BoolInput")
 
+[node name="Button" type="Button" parent="."]
+offset_left = -16.0
+offset_top = -16.0
+offset_right = 16.0
+offset_bottom = 16.0
+
 [node name="Icon" type="Sprite2D" parent="."]
 scale = Vector2(0.360417, 0.360417)
 texture = ExtResource("2_yhm0m")
@@ -50,3 +56,5 @@ offset_left = 32.0
 offset_top = -8.0
 offset_right = 56.0
 offset_bottom = 16.0
+
+[connection signal="pressed" from="Button" to="." method="Pressed"]

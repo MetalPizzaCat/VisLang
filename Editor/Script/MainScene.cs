@@ -101,6 +101,7 @@ public partial class MainScene : Node2D
         }
         node.Grabbed += NodeGrabbed;
         node.Released += NodeReleased;
+        node.InputNodeSelected += InputConnectionSelected;
 
         node.GlobalPosition = MouseLocation;
         node.GenerateFunction(info);
@@ -108,6 +109,10 @@ public partial class MainScene : Node2D
         Nodes.Add(node);
     }
 
+    private void InputConnectionSelected(NodeInput input)
+    {
+        ConnectionManager.SelectInputConnector(input);
+    }
     private void ExecConnectionSelected(ExecInput input)
     {
         ConnectionManager.SelectExecConnector(input);
