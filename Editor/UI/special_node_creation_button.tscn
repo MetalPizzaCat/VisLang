@@ -1,0 +1,7 @@
+[gd_scene load_steps=3 format=3 uid="uid://7gbfqm1vpu20"]
+
+[ext_resource type="PackedScene" uid="uid://b265t1hod771q" path="res://UI/node_creation_button.tscn" id="1_8uamf"]
+[ext_resource type="Script" path="res://Script/UI/NodeCreation/SpecialNodeCreationButton.cs" id="2_vtpsy"]
+
+[node name="Button" instance=ExtResource("1_8uamf")]
+script = ExtResource("2_vtpsy")

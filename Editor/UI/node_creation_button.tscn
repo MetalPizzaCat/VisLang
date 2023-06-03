@@ -1,7 +1,7 @@
-[gd_scene load_steps=3 format=3 uid="uid://uiwt6rhnaqgc"]
+[gd_scene load_steps=3 format=3 uid="uid://b265t1hod771q"]
 
 [ext_resource type="Texture2D" uid="uid://d0vsau6vks6tu" path="res://icon.svg" id="1_kdc1y"]
-[ext_resource type="Script" path="res://Script/UI/NodeCreationButton.cs" id="1_xrttj"]
+[ext_resource type="Script" path="res://Script/UI/NodeCreation/NodeCreationButton.cs" id="1_xrttj"]
 
 [node name="Button" type="Button" node_paths=PackedStringArray("FunctionNameLabel")]
 tooltip_text = "Your mom"

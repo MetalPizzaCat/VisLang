@@ -73,6 +73,18 @@ public partial class MainScene : Node2D
         _debugger.SystemOutput.CollectionChanged += OutputTextChanged;
         EntranceInput.Selected += ExecConnectionSelected;
         NodeCreationMenu.FunctionSelected += CreateNode;
+        NodeCreationMenu.SpecialFunctionSelected += CreateSpecialNode;
+    }
+
+    private void CreateSpecialNode(SpecialFunctionInfo info)
+    {
+        VisNode? node = info.Prefab?.InstantiateOrNull<VisNode>();
+        if (node == null)
+        {
+            GD.PrintErr($"Failed to create node for {info.FunctionName}");
+            return;
+        }
+        InitNode(node);
     }
 
     /// <summary>
@@ -95,18 +107,22 @@ public partial class MainScene : Node2D
         {
             return;
         }
-        if (info.IsExecutable)
-        {
-            node.ExecNodeSelected += ExecConnectionSelected;
-        }
+
+        InitNode(node);
+        node.GenerateFunction(info);
+    }
+
+    private void InitNode(VisNode node)
+    {
+        node.ExecNodeSelected += ExecConnectionSelected;
         node.Grabbed += NodeGrabbed;
         node.Released += NodeReleased;
         node.InputNodeSelected += InputConnectionSelected;
 
         node.GlobalPosition = MouseLocation;
-        node.GenerateFunction(info);
         AddChild(node);
         Nodes.Add(node);
+        node.InitOnCanvas(this);
     }
 
     private void InputConnectionSelected(NodeInput input)

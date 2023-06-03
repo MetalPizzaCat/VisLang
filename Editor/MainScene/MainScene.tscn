@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://bml2vknkym6vv"]
+[gd_scene load_steps=19 format=3 uid="uid://bml2vknkym6vv"]
 
 [ext_resource type="Script" path="res://Script/MainScene.cs" id="1_w4485"]
 [ext_resource type="Script" path="res://Script/UI/CanvasControl.cs" id="3_iy83l"]
@@ -16,6 +16,7 @@
 [ext_resource type="Script" path="res://Script/MainScene/NodeMovementManager.cs" id="12_vyifh"]
 [ext_resource type="Script" path="res://Script/MainScene/FunctionSignatureManager.cs" id="13_a8e7i"]
 [ext_resource type="Resource" uid="uid://migjfmdltwbc" path="res://Functions/Func_Add.tres" id="14_ue0gx"]
+[ext_resource type="Resource" uid="uid://b5u2tbwbn3lov" path="res://Functions/Special/func_set.tres" id="14_xfyso"]
 [ext_resource type="Resource" uid="uid://dpkha8n5rkowh" path="res://Functions/Func_Print.tres" id="15_d1s18"]
 
 [node name="MainScene" type="Node2D" node_paths=PackedStringArray("VariableManager", "OutputTextList", "RuntimeVariableInformation", "EntranceInput", "ConnectionManager", "MovementManager", "NodeCreationMenu", "CanvasControl", "TemplateSaveDialog")]
@@ -82,6 +83,7 @@ CanvasControl = NodePath("../Camera2D/Control")
 [node name="Functions" type="Node" parent="."]
 script = ExtResource("13_a8e7i")
 Functions = [ExtResource("14_ue0gx"), ExtResource("15_d1s18")]
+SpecialFunctions = [ExtResource("14_xfyso")]
 
 [node name="NodeLayer" type="CanvasLayer" parent="."]
 layer = 2

@@ -39,11 +39,20 @@ public partial class SetterNode : VisNode
         }, "VisLang.VariableSetNode", false));
     }
 
+    public override void InitOnCanvas(MainScene canvas)
+    {
+        base.InitOnCanvas(canvas);
+        if (canvas.VariableManager != null)
+        {
+            canvas.VariableManager.VariableListChanged += VariableListUpdated;
+        }
+    }
+
     /// <summary>
     /// Call this when list gets updated to update options available in this node
     /// </summary>
     /// <param name="variables">All variable available in the system</param>
-    public void VariableListUpdated(List<VariableControl> variables)
+    private void VariableListUpdated(List<VariableControl> variables)
     {
         Variables.Clear();
         options.Clear();

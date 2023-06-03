@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://cuw6xf1wlf0ag"]
+[gd_scene load_steps=4 format=3 uid="uid://cuw6xf1wlf0ag"]
 
-[ext_resource type="Script" path="res://Script/UI/NodeCreationMenu.cs" id="1_gr5wr"]
-[ext_resource type="PackedScene" uid="uid://uiwt6rhnaqgc" path="res://UI/node_creation_button.tscn" id="2_5w8ek"]
+[ext_resource type="Script" path="res://Script/UI/NodeCreation/NodeCreationMenu.cs" id="1_1jm4i"]
+[ext_resource type="PackedScene" uid="uid://b265t1hod771q" path="res://UI/node_creation_button.tscn" id="2_h61yf"]
+[ext_resource type="PackedScene" uid="uid://7gbfqm1vpu20" path="res://UI/special_node_creation_button.tscn" id="3_4t5xh"]
 
 [node name="PopupPanel" type="PopupPanel" node_paths=PackedStringArray("ItemContainer")]
 title = "Create a node"
@@ -9,9 +10,10 @@ size = Vector2i(255, 333)
 visible = true
 always_on_top = true
 mouse_passthrough = true
-script = ExtResource("1_gr5wr")
+script = ExtResource("1_1jm4i")
 ItemContainer = NodePath("VBoxContainer/ScrollContainer/VBoxContainer")
-ButtonPrefab = ExtResource("2_5w8ek")
+ButtonPrefab = ExtResource("2_h61yf")
+SpecialButtonPrefab = ExtResource("3_4t5xh")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 anchors_preset = 10

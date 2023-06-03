@@ -65,6 +65,15 @@ public partial class VisNode : Node2D
         NodeOutput.OwningNode = this;
     }
 
+    /// <summary>
+    /// Call this when node is added to the canvas for the node to perform all of the additional event connections and node adjustments
+    /// </summary>
+    /// <param name="canvas">Main canvas</param>
+    public virtual void InitOnCanvas(MainScene canvas)
+    {
+        // grab any additional events here
+    }
+
     public void GenerateFunction(FunctionInfo info)
     {
         FunctionInfo = info;
@@ -115,6 +124,10 @@ public partial class VisNode : Node2D
 
     public NodeType? CreateNode<NodeType>(VisLang.VisSystem? interpreter) where NodeType : VisLang.VisNode
     {
+        if(FunctionInfo == null)
+        {
+            throw new MissingFunctionInfoException("Attempted to create a function but FunctionInfo is null");
+        }
         NodeType? node = (NodeType?)Activator.CreateInstance("VisLang", FunctionInfo.NodeType)?.Unwrap();
         if (node == null)
         {
