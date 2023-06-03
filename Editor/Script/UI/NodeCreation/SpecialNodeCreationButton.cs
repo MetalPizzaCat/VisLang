@@ -29,6 +29,8 @@ public partial class SpecialNodeCreationButton : NodeCreationButtonBase
         }
     }
 
+    public override string? FunctionName => Info?.FunctionName;
+
     public override void _Pressed()
     {
         base._Pressed();

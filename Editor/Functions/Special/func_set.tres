@@ -6,5 +6,5 @@
 [resource]
 script = ExtResource("1_gdm8f")
 FunctionName = "Set"
-FunctionDescription = "Sets value of a chosen node to value of the argument when executed"
+FunctionDescription = "Sets value of a chosen variable to value of the argument when executed"
 Prefab = ExtResource("1_cq0md")

@@ -1,0 +1,22 @@
+[gd_scene load_steps=3 format=3 uid="uid://2yjpbvdcx017"]
+
+[ext_resource type="PackedScene" uid="uid://c7ytdksqfqbhc" path="res://Nodes/VisNode.tscn" id="1_rhqm7"]
+[ext_resource type="Script" path="res://Script/Nodes/GetterNode.cs" id="2_3lcwf"]
+
+[node name="VisNode" node_paths=PackedStringArray("Variables") instance=ExtResource("1_rhqm7")]
+script = ExtResource("2_3lcwf")
+Variables = NodePath("OptionButton")
+
+[node name="Label" parent="." index="3"]
+offset_left = -176.0
+offset_right = 16.0
+text = "Get"
+
+[node name="NodeDataOutput" parent="." index="6"]
+visible = true
+
+[node name="OptionButton" type="OptionButton" parent="." index="7"]
+offset_left = -64.0
+offset_top = -64.0
+offset_right = 88.0
+offset_bottom = -36.0

@@ -34,7 +34,7 @@ public class NodeParser
                 }
                 else
                 {
-                    throw new Exception("Attempted to use return of executable function because function was called");
+                    throw new VisLangVisualParserException("Attempted to use return of executable function before function was called");
                 }
                 continue;
             }
