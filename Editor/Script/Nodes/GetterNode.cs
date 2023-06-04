@@ -8,7 +8,7 @@ using System.Linq;
 /// </summary>
 public partial class GetterNode : VariableNode
 {
-    protected override FunctionInfo? GetFunctionInfo(Variable val)
+    protected override FunctionInfo? GetFunctionInfo(VariableInfo val)
     {
         return new FunctionInfo("Get", false, new(), "VisLang.VariableGetNode", true, val.ValueType);
     }
@@ -16,9 +16,9 @@ public partial class GetterNode : VariableNode
     protected override void ApplyAdditionalDataToNode<NodeType>(NodeType node)
     {
         base.ApplyAdditionalDataToNode(node);
-        if (node is VisLang.VariableGetNode get && CurrentVariable != null)
+        if (node is VisLang.VariableGetNode get)
         {
-            get.Name = CurrentVariable.Name;
+            get.Name = Info.Name;
         }
     }
 }

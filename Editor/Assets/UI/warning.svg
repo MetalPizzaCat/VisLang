@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="18mm"
+   height="15mm"
+   viewBox="0 0 18 15"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.2.2 (1:1.2.2+202305151915+b0a8486541)"
+   sodipodi:docname="warning.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     showgrid="true"
+     inkscape:zoom="6.1148148"
+     inkscape:cx="-6.8685645"
+     inkscape:cy="48.815869"
+     inkscape:window-width="1920"
+     inkscape:window-height="1008"
+     inkscape:window-x="1920"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1">
+    <inkscape:grid
+       type="xygrid"
+       id="grid132"
+       originx="0"
+       originy="0" />
+  </sodipodi:namedview>
+  <defs
+     id="defs2">
+    <linearGradient
+       id="linearGradient2885"
+       inkscape:swatch="solid">
+      <stop
+         style="stop-color:#e46e6e;stop-opacity:1;"
+         offset="0"
+         id="stop2883" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient917"
+       inkscape:swatch="solid">
+      <stop
+         style="stop-color:#e46e6e;stop-opacity:1;"
+         offset="0"
+         id="stop915" />
+    </linearGradient>
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <path
+       sodipodi:type="star"
+       style="fill:#f35f5f;fill-opacity:1;stroke:#000000;stroke-width:0.499999;stroke-linecap:square"
+       id="path236"
+       inkscape:flatsided="true"
+       sodipodi:sides="3"
+       sodipodi:cx="4.6764784"
+       sodipodi:cy="22.725954"
+       sodipodi:r1="9.4408722"
+       sodipodi:r2="4.7204366"
+       sodipodi:arg1="-1.5707963"
+       sodipodi:arg2="-0.52359878"
+       inkscape:rounded="0"
+       inkscape:randomized="0"
+       d="m 4.6764786,13.285082 8.1760344,14.161308 -16.3520699,0 z"
+       inkscape:transform-center-y="-2.374704"
+       transform="matrix(1.0464308,0,0,1.0061374,4.106389,-12.853618)" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0.1;font-family:'Comic Mono';-inkscape-font-specification:'Comic Mono';letter-spacing:0px;word-spacing:0.0079375px;writing-mode:lr-tb;baseline-shift:baseline;fill:#f35f5f;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:square;stroke-dasharray:none"
+       x="5.6622496"
+       y="13.128433"
+       id="text2999"
+       inkscape:label="text2999"><tspan
+         sodipodi:role="line"
+         id="tspan2997"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Comic Mono';-inkscape-font-specification:'Comic Mono';writing-mode:lr-tb;baseline-shift:baseline;stroke-width:1;stroke-dasharray:none"
+         x="5.6622496"
+         y="13.128433">!</tspan></text>
+    <rect
+       style="fill:#f35f5f;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:square;stroke-dasharray:none"
+       id="rect3111"
+       width="0.67662197"
+       height="0.83434325"
+       x="8.6680927"
+       y="12.161502" />
+    <rect
+       style="fill:#f35f5f;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:square;stroke-dasharray:none"
+       id="rect3113"
+       width="0.68111134"
+       height="5.7544122"
+       x="8.5558376"
+       y="4.2897091" />
+  </g>
+  <metadata
+     id="metadata4234">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <cc:license
+           rdf:resource="http://creativecommons.org/publicdomain/zero/1.0/" />
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/publicdomain/zero/1.0/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+</svg>

@@ -8,7 +8,7 @@ using System.Linq;
 /// </summary>
 public partial class SetterNode : VariableNode
 {
-    protected override FunctionInfo? GetFunctionInfo(Variable val)
+    protected override FunctionInfo? GetFunctionInfo(VariableInfo val)
     {
         return new FunctionInfo("Set", true, new Godot.Collections.Array<FunctionInputInfo>()
         {
@@ -19,9 +19,9 @@ public partial class SetterNode : VariableNode
     protected override void ApplyAdditionalDataToNode<NodeType>(NodeType node)
     {
         base.ApplyAdditionalDataToNode(node);
-        if (node is VisLang.VariableSetNode set && CurrentVariable != null)
+        if (node is VisLang.VariableSetNode set)
         {
-            set.Name = CurrentVariable.Name;
+            set.Name = Info.Name;
         }
     }
 }

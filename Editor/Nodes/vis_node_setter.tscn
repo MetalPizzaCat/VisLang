@@ -1,11 +1,14 @@
-[gd_scene load_steps=3 format=3 uid="uid://dk8u81wibm8ol"]
+[gd_scene load_steps=4 format=3 uid="uid://dk8u81wibm8ol"]
 
 [ext_resource type="PackedScene" uid="uid://bqtugitvy6nko" path="res://Nodes/vis_node_exectuable.tscn" id="1_rtlte"]
 [ext_resource type="Script" path="res://Script/Nodes/SetterNode.cs" id="2_al5mc"]
 
-[node name="VisNodeSetter" node_paths=PackedStringArray("Variables") instance=ExtResource("1_rtlte")]
+[sub_resource type="LabelSettings" id="LabelSettings_l0e78"]
+font_color = Color(0, 0, 0, 1)
+
+[node name="VisNodeSetter" node_paths=PackedStringArray("VariableNameLabel") instance=ExtResource("1_rtlte")]
 script = ExtResource("2_al5mc")
-Variables = NodePath("OptionButton")
+VariableNameLabel = NodePath("VariableNameLabel")
 
 [node name="Label" parent="." index="3"]
 offset_left = -144.0
@@ -13,6 +16,7 @@ offset_right = -14.0
 text = "Set"
 
 [node name="OptionButton" type="OptionButton" parent="." index="5"]
+visible = false
 offset_left = -56.0
 offset_top = -96.0
 offset_right = 96.0
@@ -20,3 +24,12 @@ offset_bottom = -68.0
 
 [node name="NodeInputAnchor" parent="." index="8"]
 position = Vector2(-104, -24)
+
+[node name="VariableNameLabel" type="Label" parent="." index="12"]
+offset_left = -64.0
+offset_top = -96.0
+offset_right = 88.0
+offset_bottom = -70.0
+text = "VariableName"
+label_settings = SubResource("LabelSettings_l0e78")
+horizontal_alignment = 2

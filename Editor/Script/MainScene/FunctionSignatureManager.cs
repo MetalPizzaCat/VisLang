@@ -8,4 +8,10 @@ public partial class FunctionSignatureManager : Node
 
     [Export]
     public Godot.Collections.Array<SpecialFunctionInfo> SpecialFunctions { get; set; } = new();
+
+    [ExportGroup("Variable specific")]
+    [Export]
+    public PackedScene? GetterPrefab { get; set; }
+    [Export]
+    public PackedScene? SetterPrefab { get; set; }
 }

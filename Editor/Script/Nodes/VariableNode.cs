@@ -8,88 +8,49 @@ using System.Linq;
 /// </summary>
 public partial class VariableNode : VisNode
 {
-    protected class Variable
-    {
-        public Variable(string name, VisLang.ValueType valueType)
-        {
-            Name = name;
-            ValueType = valueType;
-        }
-
-        public string Name { get; set; }
-        public VisLang.ValueType ValueType { get; set; }
-    }
     [Export]
-    public OptionButton Variables { get; set; }
+    public Label VariableNameLabel { get; set; }
 
-    protected List<Variable> Options = new();
+    protected List<VariableInfo> Options = new();
 
-    protected Variable? GetVariable(int option)
+    public VariableInfo Info { get; set; }
+
+    protected VariableInfo? GetVariable(int option)
     {
         return Options.ElementAtOrDefault(option);
     }
 
-    protected Variable? CurrentVariable => Options.ElementAtOrDefault(Variables.Selected);
-
-    protected virtual FunctionInfo? GetFunctionInfo(Variable val) { return null; }
+    protected virtual FunctionInfo? GetFunctionInfo(VariableInfo val) { return null; }
 
     public override void _Ready()
     {
         base._Ready();
-        Variables.ItemSelected += VariableOptionSelected;
-    }
-    
-    private void VariableOptionSelected(long option)
-    {
-        Variable? val = GetVariable((int)option);
-        if (val != null)
-        {
-            FunctionInfo? info = GetFunctionInfo(val);
-            if (info != null)
-            {
-                GenerateFunction(info);
-            }
-        }
     }
 
-    public override void InitOnCanvas(MainScene canvas)
+    public void InitControl(VariableInfo info)
     {
-        base.InitOnCanvas(canvas);
-        if (canvas.VariableManager != null)
+        Info = info;
+        VariableNameLabel.Text = info.Name;
+        FunctionInfo? fInfo = GetFunctionInfo(Info);
+        if (fInfo != null)
         {
-            canvas.VariableManager.VariableListChanged += VariableListUpdated;
+            GenerateFunction(fInfo);
         }
+        info.NameChanged += VariableNameChanged;
+        info.TypeChanged += VariableTypeChanged;
     }
 
-    /// <summary>
-    /// Call this when list gets updated to update options available in this node
-    /// </summary>
-    /// <param name="variables">All variable available in the system</param>
-    private void VariableListUpdated(List<VariableControl> variables)
+    private void VariableNameChanged(VariableInfo? sender, string oldName, string newName)
     {
-        Variables.Clear();
-        Options.Clear();
-        foreach (VariableControl control in variables)
-        {
-            Options.Add(new Variable(control.VariableName, control.VariableType));
-            control.Changed += VariableUpdated;
-            Variables.AddItem(control.VariableName);
-        }
+        VariableNameLabel.Text = newName;
     }
 
-    public void VariableUpdated(VariableControl? sender, string oldName, string? newName, VisLang.ValueType valType)
+    private void VariableTypeChanged(VariableInfo? sender, VisLang.ValueType oldType, VisLang.ValueType newType)
     {
-        Variable? val = Options.FirstOrDefault(p => p.Name == oldName);
-        if (val == null)
+        FunctionInfo? info = GetFunctionInfo(new VariableInfo(Info.Name, newType));
+        if (info != null)
         {
-            return;
+            GenerateFunction(info);
         }
-        if (newName != null)
-        {
-            val.Name = newName;
-        }
-        val.ValueType = valType;
-
-        Variables.SetItemText(Options.IndexOf(val), newName);
     }
 }

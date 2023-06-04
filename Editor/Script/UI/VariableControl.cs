@@ -1,10 +1,16 @@
 using Godot;
 using System;
+using System.Text.RegularExpressions;
+
 
 public partial class VariableControl : HBoxContainer
 {
-    public delegate void ChangedEventHandler(VariableControl? sender, string name, string newName, VisLang.ValueType valueType);
-    public event ChangedEventHandler? Changed;
+    public delegate void SetterRequestedEventHandler(VariableInfo info);
+    public delegate void GetterRequestedEventHandler(VariableInfo info);
+
+    public event SetterRequestedEventHandler? SetterRequested;
+    public event GetterRequestedEventHandler? GetterRequested;
+
 
     [Export]
     public LineEdit NameEdit { get; set; }
@@ -12,11 +18,18 @@ public partial class VariableControl : HBoxContainer
     [Export]
     public OptionButton TypeOptionButton { get; set; }
 
-    private string _oldName = string.Empty;
+    [Export]
+    public Control? ErrorDisplayControl { get; set; }
+
+    private VariableInfo _info = new VariableInfo("Default", VisLang.ValueType.Bool);
+
+    public VariableInfo Info => _info;
 
     public string VariableName => NameEdit.Text;
 
     public VisLang.ValueType VariableType => TypeOptionButton.Selected > -1 ? (VisLang.ValueType)TypeOptionButton.Selected : VisLang.ValueType.Bool;
+
+    private Regex _variableNameCheckRegex = new Regex(@"^(([A-z])+[0-9]*)$");
 
     public override void _Ready()
     {
@@ -28,11 +41,34 @@ public partial class VariableControl : HBoxContainer
 
     private void ChangeName(string newName)
     {
-        Changed?.Invoke(this, _oldName, newName, VariableType);
+        if (ErrorDisplayControl != null)
+        {
+            if (!_variableNameCheckRegex.IsMatch(newName))
+            {
+                ErrorDisplayControl.Visible = true;
+                ErrorDisplayControl.TooltipText = "Invalid variable name. Name can not contain spaces, special characters and must not start with a number";
+            }
+            else
+            {
+                ErrorDisplayControl.Visible = false;
+            }
+        }
+
+        _info.Name = newName;
     }
 
     private void SelectType(int type)
     {
-        Changed?.Invoke(this, _oldName, null, VariableType);
+        _info.ValueType = (VisLang.ValueType)type;
+    }
+
+    private void CreateSetter()
+    {
+        SetterRequested?.Invoke(Info);
+    }
+
+    private void CreateGetter()
+    {
+        GetterRequested?.Invoke(Info);
     }
 }

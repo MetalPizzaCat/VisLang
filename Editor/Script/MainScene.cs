@@ -10,6 +10,8 @@ public partial class MainScene : Node2D
 
     [Export]
     public VariableManager? VariableManager { get; set; }
+    [Export]
+    public FunctionSignatureManager? FunctionSignatureManager { get; set; }
 
     [Export]
     public VBoxContainer? OutputTextList { get; set; }
@@ -74,6 +76,35 @@ public partial class MainScene : Node2D
         EntranceInput.Selected += ExecConnectionSelected;
         NodeCreationMenu.FunctionSelected += CreateNode;
         NodeCreationMenu.SpecialFunctionSelected += CreateSpecialNode;
+        if (VariableManager != null)
+        {
+            VariableManager.GetterRequested += CreateGetter;
+            VariableManager.SetterRequested += CreateSetter;
+        }
+    }
+
+    private void CreateGetter(VariableInfo info)
+    {
+        VariableNode? node = FunctionSignatureManager?.GetterPrefab?.InstantiateOrNull<VariableNode>();
+        if (node == null)
+        {
+            GD.PrintErr($"Failed to create getter for {info.Name} of {info.ValueType}");
+            return;
+        }
+        node.InitControl(info);
+        InitNode(node, false);
+    }
+
+    private void CreateSetter(VariableInfo info)
+    {
+        VariableNode? node = FunctionSignatureManager?.SetterPrefab?.InstantiateOrNull<VariableNode>();
+        if (node == null)
+        {
+            GD.PrintErr($"Failed to create setter for {info.Name} of {info.ValueType}");
+            return;
+        }
+        node.InitControl(info);
+        InitNode(node, false);
     }
 
     private void CreateSpecialNode(SpecialFunctionInfo info)
@@ -112,14 +143,14 @@ public partial class MainScene : Node2D
         node.GenerateFunction(info);
     }
 
-    private void InitNode(VisNode node)
+    private void InitNode(VisNode node, bool useMouseLocation = true)
     {
         node.ExecNodeSelected += ExecConnectionSelected;
         node.Grabbed += NodeGrabbed;
         node.Released += NodeReleased;
         node.InputNodeSelected += InputConnectionSelected;
 
-        node.GlobalPosition = MouseLocation;
+        node.GlobalPosition = useMouseLocation ? MouseLocation : Vector2.Zero;
         AddChild(node);
         Nodes.Add(node);
         node.InitOnCanvas(this);
@@ -204,7 +235,7 @@ public partial class MainScene : Node2D
         }
         if (VariableManager != null)
         {
-            foreach (VariableControl va in VariableManager.Variables)
+            foreach (VariableControl va in VariableManager.VariableControlButtons)
             {
                 if (string.IsNullOrWhiteSpace(va.VariableName))
                 {
