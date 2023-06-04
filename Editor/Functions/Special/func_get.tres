@@ -1,0 +1,10 @@
+[gd_resource type="Resource" load_steps=3 format=3 uid="uid://cmkvtmtpikk2g"]
+
+[ext_resource type="PackedScene" uid="uid://2yjpbvdcx017" path="res://Nodes/vis_node_getter.tscn" id="1_53f6d"]
+[ext_resource type="Script" path="res://Script/Function/SpecialFunctionInfo.cs" id="2_8esgf"]
+
+[resource]
+script = ExtResource("2_8esgf")
+FunctionName = "Get"
+FunctionDescription = "Gets value of a chosen variable"
+Prefab = ExtResource("1_53f6d")

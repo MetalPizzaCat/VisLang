@@ -6,22 +6,19 @@ using System.Linq;
 /// <summary>
 /// A special execution node that does not need a FunctionInfo to be created and instead uses type of the variable
 /// </summary>
-public partial class SetterNode : VariableNode
+public partial class GetterNode : VariableNode
 {
     protected override FunctionInfo? GetFunctionInfo(VariableInfo val)
     {
-        return new FunctionInfo("Set", true, new Godot.Collections.Array<FunctionInputInfo>()
-        {
-             new FunctionInputInfo("Value", val.ValueType)
-        }, "VisLang.VariableSetNode", false);
+        return new FunctionInfo("Get", false, new(), "VisLang.VariableGetNode", true, val.ValueType);
     }
 
     protected override void ApplyAdditionalDataToNode<NodeType>(NodeType node)
     {
         base.ApplyAdditionalDataToNode(node);
-        if (node is VisLang.VariableSetNode set)
+        if (node is VisLang.VariableGetNode get)
         {
-            set.Name = Info.Name;
+            get.Name = Info.Name;
         }
     }
 }

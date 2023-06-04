@@ -10,6 +10,8 @@ public partial class MainScene : Node2D
 
     [Export]
     public VariableManager? VariableManager { get; set; }
+    [Export]
+    public FunctionSignatureManager? FunctionSignatureManager { get; set; }
 
     [Export]
     public VBoxContainer? OutputTextList { get; set; }
@@ -73,6 +75,47 @@ public partial class MainScene : Node2D
         _debugger.SystemOutput.CollectionChanged += OutputTextChanged;
         EntranceInput.Selected += ExecConnectionSelected;
         NodeCreationMenu.FunctionSelected += CreateNode;
+        NodeCreationMenu.SpecialFunctionSelected += CreateSpecialNode;
+        if (VariableManager != null)
+        {
+            VariableManager.GetterRequested += CreateGetter;
+            VariableManager.SetterRequested += CreateSetter;
+        }
+    }
+
+    private void CreateGetter(VariableInfo info)
+    {
+        VariableNode? node = FunctionSignatureManager?.GetterPrefab?.InstantiateOrNull<VariableNode>();
+        if (node == null)
+        {
+            GD.PrintErr($"Failed to create getter for {info.Name} of {info.ValueType}");
+            return;
+        }
+        node.InitControl(info);
+        InitNode(node, false);
+    }
+
+    private void CreateSetter(VariableInfo info)
+    {
+        VariableNode? node = FunctionSignatureManager?.SetterPrefab?.InstantiateOrNull<VariableNode>();
+        if (node == null)
+        {
+            GD.PrintErr($"Failed to create setter for {info.Name} of {info.ValueType}");
+            return;
+        }
+        node.InitControl(info);
+        InitNode(node, false);
+    }
+
+    private void CreateSpecialNode(SpecialFunctionInfo info)
+    {
+        VisNode? node = info.Prefab?.InstantiateOrNull<VisNode>();
+        if (node == null)
+        {
+            GD.PrintErr($"Failed to create node for {info.FunctionName}");
+            return;
+        }
+        InitNode(node);
     }
 
     /// <summary>
@@ -95,18 +138,22 @@ public partial class MainScene : Node2D
         {
             return;
         }
-        if (info.IsExecutable)
-        {
-            node.ExecNodeSelected += ExecConnectionSelected;
-        }
+
+        InitNode(node);
+        node.GenerateFunction(info);
+    }
+
+    private void InitNode(VisNode node, bool useMouseLocation = true)
+    {
+        node.ExecNodeSelected += ExecConnectionSelected;
         node.Grabbed += NodeGrabbed;
         node.Released += NodeReleased;
         node.InputNodeSelected += InputConnectionSelected;
 
-        node.GlobalPosition = MouseLocation;
-        node.GenerateFunction(info);
+        node.GlobalPosition = useMouseLocation ? MouseLocation : Vector2.Zero;
         AddChild(node);
         Nodes.Add(node);
+        node.InitOnCanvas(this);
     }
 
     private void InputConnectionSelected(NodeInput input)
@@ -178,34 +225,6 @@ public partial class MainScene : Node2D
         RuntimeVariableInformation?.DisplayInformation(_debugger.System.VisSystemMemory);
     }
 
-    /// <summary>
-    /// This simply traverses the line from root node and till the last available node. This does not generate data nodes
-    /// </summary>
-    /// <param name="root">Start editor node</param>
-    /// <param name="interpreter">Interpreter system itself</param>
-    /// <returns>Resulting root node with child nodes attached or null if generation failed</returns>
-    private VisLang.VisNode? GenerateExecutionTree(VisNode root, VisLang.VisSystem interpreter)
-    {
-        VisLang.ExecutionNode? node = root.CreateNode<VisLang.ExecutionNode>(interpreter);
-        if (node == null)
-        {
-            return null;
-        }
-
-        if (root.OutputExecNode != null && root.OutputExecNode.Connection != null && root.OutputExecNode.Connection.OwningNode != null)
-        {
-            VisLang.VisNode? next = GenerateExecutionTree(root.OutputExecNode.Connection.OwningNode, interpreter);
-            if (next != null)
-            {
-                // any node that is connected to exec line is by definition an exec node
-                // right????
-                // TODO: Actually check if i'm right >_>
-                node.DefaultNext = (next as VisLang.ExecutionNode);
-            }
-        }
-        return node;
-    }
-
     private bool PrepareForExecution()
     {
         _debugger.InitNewSystem();
@@ -216,7 +235,7 @@ public partial class MainScene : Node2D
         }
         if (VariableManager != null)
         {
-            foreach (VariableControl va in VariableManager.Variables)
+            foreach (VariableControl va in VariableManager.VariableControlButtons)
             {
                 if (string.IsNullOrWhiteSpace(va.VariableName))
                 {
@@ -229,7 +248,8 @@ public partial class MainScene : Node2D
         {
             return false;
         }
-        VisLang.VisNode? root = GenerateExecutionTree(EntranceInput.Connection.OwningNode, _debugger.System);
+        NodeParser parser = new NodeParser(EntranceInput.Connection.OwningNode, _debugger.System);
+        VisLang.VisNode? root = parser.Parse();
         if (root == null)
         {
             GD.PrintErr("No root node is available");
@@ -245,7 +265,6 @@ public partial class MainScene : Node2D
         StopExecution();
         PrepareForExecution();
         _debugger.Execute();
-        GD.Print(_debugger.System.VisSystemMemory[VariableManager.Variables[0].VariableName].Data);
     }
 
     private void NodeGrabbed(VisNode node)

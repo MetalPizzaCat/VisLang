@@ -5,6 +5,10 @@ namespace VisLang;
 /// </summary>
 public class VariableGetNode : DataNode
 {
+    public VariableGetNode()
+    {
+    }
+
     public VariableGetNode(VisSystem? interpreter) : base(interpreter)
     {
     }

@@ -1,19 +1,41 @@
-[gd_scene load_steps=2 format=3 uid="uid://cjc6nifn3qyy7"]
+[gd_scene load_steps=3 format=3 uid="uid://cjc6nifn3qyy7"]
 
 [ext_resource type="Script" path="res://Script/UI/VariableControl.cs" id="1_yt57h"]
+[ext_resource type="Texture2D" uid="uid://cwgvbucmd5jax" path="res://Assets/UI/warning.svg" id="2_x3pui"]
 
-[node name="VariableControl" type="HBoxContainer" node_paths=PackedStringArray("NameEdit", "TypeOptionButton")]
+[node name="VariableControl" type="HBoxContainer" node_paths=PackedStringArray("NameEdit", "TypeOptionButton", "ErrorDisplayControl")]
 script = ExtResource("1_yt57h")
 NameEdit = NodePath("LineEdit")
 TypeOptionButton = NodePath("OptionButton")
+ErrorDisplayControl = NodePath("WarningLabel")
+
+[node name="WarningLabel" type="TextureRect" parent="."]
+visible = false
+layout_mode = 2
+texture = ExtResource("2_x3pui")
+expand_mode = 3
+
+[node name="GetButton" type="Button" parent="."]
+layout_mode = 2
+text = "Get"
+
+[node name="SetButton" type="Button" parent="."]
+layout_mode = 2
+text = "Set"
 
 [node name="LineEdit" type="LineEdit" parent="."]
 custom_minimum_size = Vector2(125, 0)
 layout_mode = 2
+mouse_filter = 1
+text = "Default"
 placeholder_text = "Variable name"
+context_menu_enabled = false
+clear_button_enabled = true
 
 [node name="OptionButton" type="OptionButton" parent="."]
 layout_mode = 2
 
+[connection signal="pressed" from="GetButton" to="." method="CreateGetter"]
+[connection signal="pressed" from="SetButton" to="." method="CreateSetter"]
 [connection signal="text_changed" from="LineEdit" to="." method="ChangeName"]
 [connection signal="item_selected" from="OptionButton" to="." method="SelectType"]

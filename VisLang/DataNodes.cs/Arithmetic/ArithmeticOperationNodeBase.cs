@@ -12,4 +12,8 @@ public class ArithmeticOperationNodeBase : DataNode
     public ArithmeticOperationNodeBase(VisSystem? interpreter) : base(interpreter)
     {
     }
+
+    public ArithmeticOperationNodeBase()
+    {
+    }
 }

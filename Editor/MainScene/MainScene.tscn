@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://bml2vknkym6vv"]
+[gd_scene load_steps=20 format=3 uid="uid://bml2vknkym6vv"]
 
 [ext_resource type="Script" path="res://Script/MainScene.cs" id="1_w4485"]
 [ext_resource type="Script" path="res://Script/UI/CanvasControl.cs" id="3_iy83l"]
@@ -15,12 +15,15 @@
 [ext_resource type="PackedScene" uid="uid://cuw6xf1wlf0ag" path="res://UI/node_creation_menu.tscn" id="11_rgm21"]
 [ext_resource type="Script" path="res://Script/MainScene/NodeMovementManager.cs" id="12_vyifh"]
 [ext_resource type="Script" path="res://Script/MainScene/FunctionSignatureManager.cs" id="13_a8e7i"]
+[ext_resource type="PackedScene" uid="uid://2yjpbvdcx017" path="res://Nodes/vis_node_getter.tscn" id="14_7npgy"]
 [ext_resource type="Resource" uid="uid://migjfmdltwbc" path="res://Functions/Func_Add.tres" id="14_ue0gx"]
+[ext_resource type="PackedScene" uid="uid://dk8u81wibm8ol" path="res://Nodes/vis_node_setter.tscn" id="15_5tvch"]
 [ext_resource type="Resource" uid="uid://dpkha8n5rkowh" path="res://Functions/Func_Print.tres" id="15_d1s18"]
 
-[node name="MainScene" type="Node2D" node_paths=PackedStringArray("VariableManager", "OutputTextList", "RuntimeVariableInformation", "EntranceInput", "ConnectionManager", "MovementManager", "NodeCreationMenu", "CanvasControl", "TemplateSaveDialog")]
+[node name="MainScene" type="Node2D" node_paths=PackedStringArray("VariableManager", "FunctionSignatureManager", "OutputTextList", "RuntimeVariableInformation", "EntranceInput", "ConnectionManager", "MovementManager", "NodeCreationMenu", "CanvasControl", "TemplateSaveDialog")]
 script = ExtResource("1_w4485")
 VariableManager = NodePath("UiControls/VariableControl")
+FunctionSignatureManager = NodePath("Functions")
 OutputTextList = NodePath("UiControls/Control/TabContainer/Output/VBoxContainer")
 MessageTextLabelPrefab = ExtResource("5_xfi40")
 RuntimeVariableInformation = NodePath("UiControls/RuntimeVariableInformation")
@@ -82,6 +85,8 @@ CanvasControl = NodePath("../Camera2D/Control")
 [node name="Functions" type="Node" parent="."]
 script = ExtResource("13_a8e7i")
 Functions = [ExtResource("14_ue0gx"), ExtResource("15_d1s18")]
+GetterPrefab = ExtResource("14_7npgy")
+SetterPrefab = ExtResource("15_5tvch")
 
 [node name="NodeLayer" type="CanvasLayer" parent="."]
 layer = 2
@@ -127,25 +132,28 @@ text = "Stop"
 
 [node name="VariableControl" type="Control" parent="UiControls" node_paths=PackedStringArray("Container")]
 layout_mode = 3
-anchors_preset = 0
-offset_left = 1344.0
+anchor_left = 0.76
+anchor_right = 1.0
+anchor_bottom = 0.373
+offset_left = -0.00012207
 offset_top = 8.0
-offset_right = 1600.0
-offset_bottom = 328.0
+offset_bottom = -7.70001
+grow_horizontal = 2
+grow_vertical = 2
 script = ExtResource("3_vtslo")
 VariableControlPlaceholder = ExtResource("3_jx1hi")
 Container = NodePath("ScrollContainer/VBoxContainer")
 
 [node name="ColorRect" type="ColorRect" parent="UiControls/VariableControl"]
 layout_mode = 0
-offset_right = 256.0
+offset_right = 384.0
 offset_bottom = 320.0
 color = Color(0, 0, 0, 0.435294)
 
 [node name="ScrollContainer" type="ScrollContainer" parent="UiControls/VariableControl"]
 layout_mode = 0
-offset_top = 24.0
-offset_right = 256.0
+offset_top = 32.0
+offset_right = 384.0
 offset_bottom = 320.0
 
 [node name="VBoxContainer" type="VBoxContainer" parent="UiControls/VariableControl/ScrollContainer"]

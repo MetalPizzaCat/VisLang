@@ -62,10 +62,6 @@ public partial class ConnectionManager : Node
             {
                 return;
             }
-            if (SelectedInputConnector.InputType != input.InputType)
-            {
-                return;
-            }
             CreateInputConnection(input.IsInput ? SelectedInputConnector : input, input.IsInput ? input : SelectedInputConnector);
         }
         else

@@ -1,13 +1,13 @@
 using Godot;
 using System;
 
-public partial class NodeCreationButton : Button
+/// <summary>
+/// Button for creating nodes that use FunctionInfo for generation
+/// </summary>
+public partial class NodeCreationButton : NodeCreationButtonBase
 {
     public delegate void SelectedEventHandler(NodeCreationButton? button, FunctionInfo function);
     public event SelectedEventHandler? Selected;
-
-    [Export]
-    public Label? FunctionNameLabel { get; set; }
 
     private FunctionInfo? _info;
 
@@ -30,9 +30,14 @@ public partial class NodeCreationButton : Button
         }
     }
 
-    public override void _Ready()
+    public override string? FunctionName => Info?.FunctionName;
+
+    public override void _Pressed()
     {
-        base._Ready();
-        Pressed += () => { if (Info != null) Selected?.Invoke(this, Info); };
+        base._Pressed();
+        if (Info != null)
+        {
+            Selected?.Invoke(this, Info);
+        }
     }
 }

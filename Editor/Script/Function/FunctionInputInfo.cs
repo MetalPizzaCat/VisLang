@@ -22,4 +22,10 @@ public partial class FunctionInputInfo : Resource
 
     [Export]
     public VisLang.ValueType InputType { get; set; } = VisLang.ValueType.Bool;
+
+    /// <summary>
+    /// If true any type can be passed into this input and InputType will be ignored
+    /// </summary>
+    [Export]
+    public bool AllowAnyType { get; set; } = false;
 }
