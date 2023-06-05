@@ -1,6 +1,11 @@
 [gd_scene format=3 uid="uid://c67wh757rx8s3"]
 
 [node name="RichTextLabel" type="RichTextLabel"]
+clip_contents = false
+custom_minimum_size = Vector2(1000, 30)
+offset_right = 448.0
+offset_bottom = 30.0
+size_flags_horizontal = 3
 size_flags_vertical = 3
 bbcode_enabled = true
 text = "[color=red]Variable with invalid name[/color]"

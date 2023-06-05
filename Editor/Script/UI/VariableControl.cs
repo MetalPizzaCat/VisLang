@@ -34,7 +34,7 @@ public partial class VariableControl : HBoxContainer
     private bool _isInvalidName = false;
     private bool _isNameDuplicate = false;
 
-    protected bool IsInvalidName
+    public bool IsInvalidName
     {
         get => _isInvalidName;
         set

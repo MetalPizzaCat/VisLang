@@ -13,11 +13,9 @@ public partial class MainScene : Node2D
     [Export]
     public FunctionSignatureManager? FunctionSignatureManager { get; set; }
 
-    [Export]
-    public VBoxContainer? OutputTextList { get; set; }
-    [Export]
-    public PackedScene? MessageTextLabelPrefab { get; set; }
+
     private List<RichTextLabel> _outputMessages = new();
+    private List<RichTextLabel> _errorMessages = new();
     [Export]
     public RuntimeVariableInformationControl? RuntimeVariableInformation { get; set; }
 
@@ -46,6 +44,14 @@ public partial class MainScene : Node2D
     public PackedScene? VisNodePrefab { get; set; }
     [Export]
     public PackedScene? ExecNodePrefab { get; set; }
+
+    [ExportGroup("System output")]
+    [Export]
+    public VBoxContainer? OutputTextList { get; set; }
+    [Export]
+    public VBoxContainer? ErrorTextList { get; set; }
+    [Export]
+    public PackedScene? MessageTextLabelPrefab { get; set; }
 
 
     public Vector2 MouseLocation => (CanvasControl?.MousePosition - (CanvasControl?.DefaultViewportSize ?? Vector2.Zero) / 2f) ?? Vector2.Zero;
@@ -225,6 +231,56 @@ public partial class MainScene : Node2D
         RuntimeVariableInformation?.DisplayInformation(_debugger.System.VisSystemMemory);
     }
 
+    private bool ProcessVariables()
+    {
+        if (_debugger.System == null)
+        {
+            return false;
+        }
+        bool success = true;
+        if (VariableManager != null)
+        {
+            foreach (VariableControl va in VariableManager.VariableControlButtons)
+            {
+                if (va.IsInvalidName)
+                {
+                    AddErrorMessage($"Fatal error. Invalid variable name: \"{va.Info.Name}\" is not a valid name");
+                    success = false;
+                }
+                if(va.IsNameDuplicate)
+                {
+                    AddErrorMessage($"Fatal error. Duplicate variable name: \"{va.Info.Name}\" appears more then once");
+                    success = false;
+                }
+                _debugger.System.VisSystemMemory.CreateVariable(va.VariableName, va.VariableType);
+            }
+        }
+        return success;
+    }
+
+    private void CleanErrorMessages()
+    {
+        foreach (RichTextLabel label in _errorMessages)
+        {
+            ErrorTextList?.RemoveChild(label);
+            label.QueueFree();
+        }
+        _errorMessages.Clear();
+    }
+
+    private void AddErrorMessage(string message)
+    {
+        RichTextLabel? msg = MessageTextLabelPrefab?.InstantiateOrNull<RichTextLabel>();
+        if (msg == null)
+        {
+            GD.PrintErr("Can not print error message because message prefab did not create message object");
+            return;
+        }
+        msg.Text = $"[color=red]{message}[/color]";
+        _errorMessages.Add(msg);
+        ErrorTextList?.AddChild(msg);
+    }
+
     private bool PrepareForExecution()
     {
         _debugger.InitNewSystem();
@@ -233,16 +289,10 @@ public partial class MainScene : Node2D
             GD.PrintErr("Failed to initialize debug system");
             return false;
         }
-        if (VariableManager != null)
+        CleanErrorMessages();
+        if (!ProcessVariables())
         {
-            foreach (VariableControl va in VariableManager.VariableControlButtons)
-            {
-                if (string.IsNullOrWhiteSpace(va.VariableName))
-                {
-                    throw new Exception("Bad variable name!");
-                }
-                _debugger.System.VisSystemMemory.CreateVariable(va.VariableName, va.VariableType);
-            }
+            return false;
         }
         if (EntranceInput.Connection == null || EntranceInput.Connection.OwningNode == null)
         {

@@ -20,12 +20,10 @@
 [ext_resource type="PackedScene" uid="uid://dk8u81wibm8ol" path="res://Nodes/vis_node_setter.tscn" id="15_5tvch"]
 [ext_resource type="Resource" uid="uid://dpkha8n5rkowh" path="res://Functions/Func_Print.tres" id="15_d1s18"]
 
-[node name="MainScene" type="Node2D" node_paths=PackedStringArray("VariableManager", "FunctionSignatureManager", "OutputTextList", "RuntimeVariableInformation", "EntranceInput", "ConnectionManager", "MovementManager", "NodeCreationMenu", "CanvasControl", "TemplateSaveDialog")]
+[node name="MainScene" type="Node2D" node_paths=PackedStringArray("VariableManager", "FunctionSignatureManager", "RuntimeVariableInformation", "EntranceInput", "ConnectionManager", "MovementManager", "NodeCreationMenu", "CanvasControl", "OutputTextList", "ErrorTextList", "TemplateSaveDialog")]
 script = ExtResource("1_w4485")
 VariableManager = NodePath("UiControls/VariableControl")
 FunctionSignatureManager = NodePath("Functions")
-OutputTextList = NodePath("UiControls/Control/TabContainer/Output/VBoxContainer")
-MessageTextLabelPrefab = ExtResource("5_xfi40")
 RuntimeVariableInformation = NodePath("UiControls/RuntimeVariableInformation")
 EntranceInput = NodePath("NodeLayer/NodeInput")
 ConnectionManager = NodePath("ConnectionManager")
@@ -34,6 +32,9 @@ NodeCreationMenu = NodePath("UI/PopupPanel")
 CanvasControl = NodePath("Camera2D/Control")
 VisNodePrefab = ExtResource("3_kaxs0")
 ExecNodePrefab = ExtResource("7_xst2a")
+OutputTextList = NodePath("UiControls/Control/TabContainer/Output/VBoxContainer")
+ErrorTextList = NodePath("UiControls/Control/TabContainer/Errors/VBoxContainer")
+MessageTextLabelPrefab = ExtResource("5_xfi40")
 TemplateSaveDialog = NodePath("UI/FileDialog")
 
 [node name="UI" type="CanvasLayer" parent="."]
@@ -206,11 +207,6 @@ offset_bottom = 128.0
 layout_mode = 2
 
 [node name="VBoxContainer" type="VBoxContainer" parent="UiControls/Control/TabContainer/Output"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-
-[node name="RichTextLabel" parent="UiControls/Control/TabContainer/Output/VBoxContainer" instance=ExtResource("5_xfi40")]
 layout_mode = 2
 
 [node name="Errors" type="ScrollContainer" parent="UiControls/Control/TabContainer"]
