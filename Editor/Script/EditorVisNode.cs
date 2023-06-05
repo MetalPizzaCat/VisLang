@@ -3,18 +3,18 @@ using System;
 using System.Collections.Generic;
 
 
-public partial class VisNode : Node2D
+public partial class EditorVisNode : Node2D
 {
     public delegate void ExecNodeSelectedEventHandler(ExecInput node);
     public event ExecNodeSelectedEventHandler? ExecNodeSelected;
 
-    public delegate void GrabbedEventHandler(VisNode node);
+    public delegate void GrabbedEventHandler(EditorVisNode node);
     /// <summary>
     /// Invoked when user selects a node by pressing on it 
     /// </summary>
     public event GrabbedEventHandler? Grabbed;
 
-    public delegate void ReleasedEventHandler(VisNode node);
+    public delegate void ReleasedEventHandler(EditorVisNode node);
     /// <summary>
     /// Invoked when user stops pressing on a node
     /// </summary>
@@ -42,9 +42,25 @@ public partial class VisNode : Node2D
     public ExecInput? InputExecNode { get; set; }
     [Export]
     public ExecInput? OutputExecNode { get; set; }
+    [ExportGroup("User debug")]
+    [Export]
+    public Sprite2D? ExecutionDebugIcon { get; set; }
 
     public List<NodeInput> Inputs { get; set; } = new List<NodeInput>();
 
+    private bool _isCurrentlyExecuted = false;
+    public bool IsCurrentlyExecuted
+    {
+        get => _isCurrentlyExecuted;
+        set
+        {
+            _isCurrentlyExecuted = value;
+            if(ExecutionDebugIcon != null)
+            {
+                ExecutionDebugIcon.Visible = value;
+            }
+        }
+    }
     public override void _Ready()
     {
         if (FunctionInfo != null)
@@ -105,7 +121,7 @@ public partial class VisNode : Node2D
             //TODO: make this constant dynamic to avoid recompiling code each time you feel like making ui pretty
             currentInputOffset += 32f;
         }
-        if(info.HasOutput)
+        if (info.HasOutput)
         {
             NodeOutput.Visible = true;
             NodeOutput.InputType = info.OutputType ?? VisLang.ValueType.Bool;
@@ -124,7 +140,7 @@ public partial class VisNode : Node2D
 
     public NodeType? CreateNode<NodeType>(VisLang.VisSystem? interpreter) where NodeType : VisLang.VisNode
     {
-        if(FunctionInfo == null)
+        if (FunctionInfo == null)
         {
             throw new MissingFunctionInfoException("Attempted to create a function but FunctionInfo is null");
         }

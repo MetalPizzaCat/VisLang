@@ -34,7 +34,7 @@ public partial class MainScene : Node2D
     [Export]
     public NodeCreationMenu NodeCreationMenu { get; set; }
 
-    public List<VisNode> Nodes { get; set; } = new();
+    public List<EditorVisNode> Nodes { get; set; } = new();
 
     [ExportGroup("Runtime creation")]
     [Export]
@@ -52,6 +52,8 @@ public partial class MainScene : Node2D
     public VBoxContainer? ErrorTextList { get; set; }
     [Export]
     public PackedScene? MessageTextLabelPrefab { get; set; }
+    [Export]
+    public Control? DebugWarningControl { get; set; }
 
 
     public Vector2 MouseLocation => (CanvasControl?.MousePosition - (CanvasControl?.DefaultViewportSize ?? Vector2.Zero) / 2f) ?? Vector2.Zero;
@@ -72,6 +74,10 @@ public partial class MainScene : Node2D
             {
                 RuntimeVariableInformation.Visible = value;
             }
+            if (DebugWarningControl != null)
+            {
+                DebugWarningControl.Visible = value;
+            }
         }
     }
 
@@ -79,6 +85,7 @@ public partial class MainScene : Node2D
     public override void _Ready()
     {
         _debugger.SystemOutput.CollectionChanged += OutputTextChanged;
+        _debugger.ExecutionFinished += FinishExecution;
         EntranceInput.Selected += ExecConnectionSelected;
         NodeCreationMenu.FunctionSelected += CreateNode;
         NodeCreationMenu.SpecialFunctionSelected += CreateSpecialNode;
@@ -87,6 +94,11 @@ public partial class MainScene : Node2D
             VariableManager.GetterRequested += CreateGetter;
             VariableManager.SetterRequested += CreateSetter;
         }
+    }
+
+    private void FinishExecution()
+    {
+        IsExecuting = false;
     }
 
     private void CreateGetter(VariableInfo info)
@@ -115,7 +127,7 @@ public partial class MainScene : Node2D
 
     private void CreateSpecialNode(SpecialFunctionInfo info)
     {
-        VisNode? node = info.Prefab?.InstantiateOrNull<VisNode>();
+        EditorVisNode? node = info.Prefab?.InstantiateOrNull<EditorVisNode>();
         if (node == null)
         {
             GD.PrintErr($"Failed to create node for {info.FunctionName}");
@@ -130,14 +142,14 @@ public partial class MainScene : Node2D
     /// <param name="info">Function signature</param>
     private void CreateNode(FunctionInfo info)
     {
-        VisNode? node = null;
+        EditorVisNode? node = null;
         if (info.IsExecutable)
         {
-            node = ExecNodePrefab?.InstantiateOrNull<VisNode>();
+            node = ExecNodePrefab?.InstantiateOrNull<EditorVisNode>();
         }
         else
         {
-            node = VisNodePrefab?.InstantiateOrNull<VisNode>();
+            node = VisNodePrefab?.InstantiateOrNull<EditorVisNode>();
         }
 
         if (node == null)
@@ -149,7 +161,7 @@ public partial class MainScene : Node2D
         node.GenerateFunction(info);
     }
 
-    private void InitNode(VisNode node, bool useMouseLocation = true)
+    private void InitNode(EditorVisNode node, bool useMouseLocation = true)
     {
         node.ExecNodeSelected += ExecConnectionSelected;
         node.Grabbed += NodeGrabbed;
@@ -210,6 +222,7 @@ public partial class MainScene : Node2D
     private void StopExecution()
     {
         IsExecuting = false;
+        Nodes.ForEach(p => p.IsCurrentlyExecuted = false);
         _debugger.Stop();
     }
 
@@ -218,12 +231,7 @@ public partial class MainScene : Node2D
         if (_debugger.System == null)
         {
             PrepareForExecution();
-            foreach (RichTextLabel label in _outputMessages)
-            {
-                OutputTextList?.RemoveChild(label);
-                label.QueueFree();
-            }
-            _outputMessages.Clear();
+            ClearOutputMessages();
             IsExecuting = true;
         }
 
@@ -247,7 +255,7 @@ public partial class MainScene : Node2D
                     AddErrorMessage($"Fatal error. Invalid variable name: \"{va.Info.Name}\" is not a valid name");
                     success = false;
                 }
-                if(va.IsNameDuplicate)
+                if (va.IsNameDuplicate)
                 {
                     AddErrorMessage($"Fatal error. Duplicate variable name: \"{va.Info.Name}\" appears more then once");
                     success = false;
@@ -258,7 +266,17 @@ public partial class MainScene : Node2D
         return success;
     }
 
-    private void CleanErrorMessages()
+    private void ClearOutputMessages()
+    {
+        foreach (RichTextLabel label in _outputMessages)
+        {
+            OutputTextList?.RemoveChild(label);
+            label.QueueFree();
+        }
+        _outputMessages.Clear();
+    }
+
+    private void ClearErrorMessages()
     {
         foreach (RichTextLabel label in _errorMessages)
         {
@@ -289,7 +307,8 @@ public partial class MainScene : Node2D
             GD.PrintErr("Failed to initialize debug system");
             return false;
         }
-        CleanErrorMessages();
+        ClearOutputMessages();
+        ClearErrorMessages();
         if (!ProcessVariables())
         {
             return false;
@@ -317,12 +336,12 @@ public partial class MainScene : Node2D
         _debugger.Execute();
     }
 
-    private void NodeGrabbed(VisNode node)
+    private void NodeGrabbed(EditorVisNode node)
     {
         MovementManager.SelectedNode = node;
     }
 
-    private void NodeReleased(VisNode node)
+    private void NodeReleased(EditorVisNode node)
     {
         if (MovementManager.SelectedNode == node)
         {

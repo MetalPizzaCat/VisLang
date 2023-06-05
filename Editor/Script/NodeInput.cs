@@ -25,7 +25,7 @@ public partial class NodeInput : Node2D
     [Export]
     public CheckBox BoolInput { get; set; }
 
-    public VisNode? OwningNode { get; set; } = null;
+    public EditorVisNode? OwningNode { get; set; } = null;
 
     /// <summary>
     /// Other side of the connection node

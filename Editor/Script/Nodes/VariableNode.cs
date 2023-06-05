@@ -6,7 +6,7 @@ using System.Linq;
 /// <summary>
 /// A special node that does not need a FunctionInfo to be created and instead uses type of the variable
 /// </summary>
-public partial class VariableNode : VisNode
+public partial class VariableNode : EditorVisNode
 {
     [Export]
     public Label VariableNameLabel { get; set; }

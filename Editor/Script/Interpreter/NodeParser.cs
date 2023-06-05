@@ -5,15 +5,15 @@ using System.Linq;
 
 public class NodeParser
 {
-    private List<VisNode> _parsedNodes = new();
+    private List<EditorVisNode> _parsedNodes = new();
 
     private List<VisLang.VisNode> _visNodes = new();
 
-    private VisNode _root;
+    private EditorVisNode _root;
 
     private VisLang.VisSystem _system;
 
-    private List<VisLang.VisNode> GenerateInputs(VisNode root)
+    private List<VisLang.VisNode> GenerateInputs(EditorVisNode root)
     {
         List<VisLang.VisNode> inputs = new();
         foreach (NodeInput input in root.Inputs)
@@ -54,14 +54,14 @@ public class NodeParser
     /// <param name="root">Start editor node</param>
     /// <param name="_system">Interpreter system itself</param>
     /// <returns>Resulting root node with child nodes attached or null if generation failed</returns>
-    private VisLang.VisNode? GenerateExecutionTree(VisNode root)
+    private VisLang.VisNode? GenerateExecutionTree(EditorVisNode root)
     {
         VisLang.ExecutionNode? node = root.CreateNode<VisLang.ExecutionNode>(_system);
         if (node == null)
         {
             return null;
         }
-        node.DebugData = node;
+        node.DebugData = root;
         node.Inputs = GenerateInputs(root);
 
         if (root.OutputExecNode != null && root.OutputExecNode.Connection != null && root.OutputExecNode.Connection.OwningNode != null)
@@ -78,7 +78,7 @@ public class NodeParser
         return node;
     }
 
-    private VisLang.DataNode? GenerateDataTree(VisNode root)
+    private VisLang.DataNode? GenerateDataTree(EditorVisNode root)
     {
         _parsedNodes.Add(root);
         VisLang.DataNode? node = root.CreateNode<VisLang.DataNode>(_system);
@@ -96,7 +96,7 @@ public class NodeParser
         return GenerateExecutionTree(_root);
     }
 
-    public NodeParser(VisNode root, VisLang.VisSystem system)
+    public NodeParser(EditorVisNode root, VisLang.VisSystem system)
     {
         _system = system;
         _root = root;

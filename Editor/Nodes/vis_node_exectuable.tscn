@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://bqtugitvy6nko"]
 
-[ext_resource type="PackedScene" uid="uid://c7ytdksqfqbhc" path="res://Nodes/VisNode.tscn" id="1_1ivh7"]
+[ext_resource type="PackedScene" uid="uid://dnrclaeedqc4k" path="res://Nodes/VisNode.tscn" id="1_1ivh7"]
 [ext_resource type="PackedScene" uid="uid://dd2ewu3al55co" path="res://Nodes/ExecNodeInput.tscn" id="2_4xqwt"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_jybab"]

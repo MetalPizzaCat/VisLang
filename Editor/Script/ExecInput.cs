@@ -14,7 +14,7 @@ public partial class ExecInput : Node2D
     public bool IsInput { get; set; } = false;
 
     public ExecInput? Connection { get; set; } = null;
-    public VisNode? OwningNode { get; set; } = null;
+    public EditorVisNode? OwningNode { get; set; } = null;
 
     private void ConnectorSelected()
     {

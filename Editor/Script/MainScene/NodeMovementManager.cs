@@ -9,7 +9,7 @@ public partial class NodeMovementManager : Node
     [Export]
     public Vector2 GridCellSize { get; set; } = new Vector2(16, 16);
 
-    public VisNode? SelectedNode { get; set; } = null;
+    public EditorVisNode? SelectedNode { get; set; } = null;
 
     public override void _Input(InputEvent @event)
     {
