@@ -31,6 +31,29 @@ public partial class VariableControl : HBoxContainer
 
     private Regex _variableNameCheckRegex = new Regex(@"^(([A-z])+[0-9]*)$");
 
+    private bool _isInvalidName = false;
+    private bool _isNameDuplicate = false;
+
+    protected bool IsInvalidName
+    {
+        get => _isInvalidName;
+        set
+        {
+            _isInvalidName = value;
+            DisplayErrors();
+        }
+    }
+
+    public bool IsNameDuplicate
+    {
+        get => _isNameDuplicate;
+        set
+        {
+            _isNameDuplicate = value;
+            DisplayErrors();
+        }
+    }
+
     public override void _Ready()
     {
         foreach (VisLang.ValueType val in (VisLang.ValueType[])Enum.GetValues(typeof(VisLang.ValueType)))
@@ -45,16 +68,48 @@ public partial class VariableControl : HBoxContainer
         {
             if (!_variableNameCheckRegex.IsMatch(newName))
             {
-                ErrorDisplayControl.Visible = true;
-                ErrorDisplayControl.TooltipText = "Invalid variable name. Name can not contain spaces, special characters and must not start with a number";
+                IsInvalidName = true;
             }
             else
             {
-                ErrorDisplayControl.Visible = false;
+
+                IsInvalidName = false;
             }
         }
 
         _info.Name = newName;
+    }
+
+    public void DisplayDuplicateNameError()
+    {
+        IsNameDuplicate = true;
+    }
+
+    public void HideDuplicateNameError()
+    {
+        IsNameDuplicate = false;
+    }
+
+    private void DisplayErrors()
+    {
+        if (ErrorDisplayControl == null)
+        {
+            return;
+        }
+        if (IsInvalidName)
+        {
+            ErrorDisplayControl.Visible = true;
+            ErrorDisplayControl.TooltipText = "Invalid variable name. Name can not contain spaces, special characters and must not start with a number";
+        }
+        else if (IsNameDuplicate)
+        {
+            ErrorDisplayControl.Visible = true;
+            ErrorDisplayControl.TooltipText = "Name is already in use";
+        }
+        else
+        {
+            ErrorDisplayControl.Visible = false;
+        }
     }
 
     private void SelectType(int type)

@@ -6,6 +6,9 @@ public class VariableInfo
     public delegate void NameChangedEventHandler(VariableInfo? sender, string oldName, string newName);
     public delegate void TypeChangedEventHandler(VariableInfo? info, VisLang.ValueType oldType, VisLang.ValueType newType);
 
+    /// <summary>
+    /// Called before name change is applied
+    /// </summary>
     public event NameChangedEventHandler? NameChanged;
     public event TypeChangedEventHandler? TypeChanged;
     public VariableInfo(string name, VisLang.ValueType valueType)
