@@ -8,6 +8,9 @@ public partial class EditorVisNode : Node2D
     public delegate void ExecNodeSelectedEventHandler(ExecInput node);
     public event ExecNodeSelectedEventHandler? ExecNodeSelected;
 
+    public delegate void DeleteRequestedEventHandler(EditorVisNode node);
+    public event DeleteRequestedEventHandler? DeleteRequested;
+
     public delegate void GrabbedEventHandler(EditorVisNode node);
     /// <summary>
     /// Invoked when user selects a node by pressing on it 
@@ -23,8 +26,22 @@ public partial class EditorVisNode : Node2D
     public delegate void InputNodeSelectedEventHandler(NodeInput input);
     public event InputNodeSelectedEventHandler? InputNodeSelected;
 
-    public FunctionInfo? FunctionInfo { get; set; } = null;
+    private FunctionInfo? _info = null;
+    public FunctionInfo? FunctionInfo
+    {
+        get => _info;
+        set
+        {
+            if (MainButton != null && value != null)
+            {
+                MainButton.TooltipText = value.FunctionDescription;
+            }
+            _info = value;
+        }
+    }
 
+    [Export]
+    public Button? MainButton { get; set; }
     [Export]
     public PackedScene? NodeInputPrefab { get; set; } = null;
 
@@ -36,6 +53,8 @@ public partial class EditorVisNode : Node2D
 
     [Export]
     public Label? NodeNameLabel { get; set; }
+    [Export]
+    public PopupMenu? ContextMenu { get; set; }
 
     [ExportGroup("Exec")]
     [Export]
@@ -48,6 +67,7 @@ public partial class EditorVisNode : Node2D
 
     public List<NodeInput> Inputs { get; set; } = new List<NodeInput>();
 
+
     private bool _isCurrentlyExecuted = false;
     public bool IsCurrentlyExecuted
     {
@@ -55,7 +75,7 @@ public partial class EditorVisNode : Node2D
         set
         {
             _isCurrentlyExecuted = value;
-            if(ExecutionDebugIcon != null)
+            if (ExecutionDebugIcon != null)
             {
                 ExecutionDebugIcon.Visible = value;
             }
@@ -172,5 +192,22 @@ public partial class EditorVisNode : Node2D
     private void ReleaseNode()
     {
         Released?.Invoke(this);
+    }
+
+    protected virtual void ContextMenuOptionSelected(long option)
+    {
+        if (option == 0)
+        {
+            DeleteRequested?.Invoke(this);
+        }
+    }
+
+    protected void ButtonGuiInput(InputEvent @event)
+    {
+        if (@event is InputEventMouseButton btn && btn.Pressed && btn.ButtonIndex == MouseButton.Right && ContextMenu != null)
+        {
+            ContextMenu.Position = new Vector2I((int)btn.Position.X, (int)btn.Position.Y);
+            ContextMenu?.Popup();
+        }
     }
 }

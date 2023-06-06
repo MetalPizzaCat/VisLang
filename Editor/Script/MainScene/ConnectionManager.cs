@@ -93,6 +93,36 @@ public partial class ConnectionManager : Node
         }
     }
 
+    private IEnumerable<ConnectorLine> GetExecLinesForNode(EditorVisNode node)
+    {
+        return _connections.Where(p =>
+        {
+            return p.StartNode != null && p.EndNode != null && (((p.StartNode is ExecInput inp) && inp.OwningNode == node) || ((p.EndNode is ExecInput outp) && outp.OwningNode == node));
+        });
+    }
+
+
+    public void DeleteAllConnectionsForNode(EditorVisNode src)
+    {
+        IEnumerable<ConnectorLine> lines = GetExecLinesForNode(src);
+        //remove all exec connections first since it doesn't matter which end you are deleting in them
+        foreach (ConnectorLine line in lines)
+        {
+            line.QueueFree();
+
+            (line.StartNode as ExecInput).Connection = null;
+            (line.EndNode as ExecInput).Connection = null;
+        }
+
+        IEnumerable<ConnectorLine> outputLines = _connections.Where(p => p.StartNode == src.NodeOutput || src.Inputs.Contains(p.EndNode));
+        foreach (ConnectorLine line in outputLines)
+        {
+            (line.EndNode as NodeInput).Connection = null;
+            line.QueueFree();
+        }
+        _connections.RemoveAll(p => lines.Contains(p) || outputLines.Contains(p));
+    }
+
     private ConnectorLine? GetConnectorLine(Node src, Node dst)
     {
         return _connections.FirstOrDefault(p => p.StartNode == src && p.EndNode == dst);

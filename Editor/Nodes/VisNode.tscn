@@ -10,12 +10,14 @@
 [sub_resource type="LabelSettings" id="LabelSettings_qu6ij"]
 font_color = Color(0, 0, 0, 1)
 
-[node name="VisNode" type="Node2D" node_paths=PackedStringArray("NodeInputAnchor", "NodeOutput", "NodeNameLabel", "ExecutionDebugIcon")]
+[node name="VisNode" type="Node2D" node_paths=PackedStringArray("MainButton", "NodeInputAnchor", "NodeOutput", "NodeNameLabel", "ContextMenu", "ExecutionDebugIcon")]
 script = ExtResource("1_01t4y")
+MainButton = NodePath("Button")
 NodeInputPrefab = ExtResource("2_vfm24")
 NodeInputAnchor = NodePath("NodeInputAnchor")
 NodeOutput = NodePath("NodeDataOutput")
 NodeNameLabel = NodePath("Label")
+ContextMenu = NodePath("PopupMenu")
 ExecutionDebugIcon = NodePath("ExecutionStepDisplayIcon")
 
 [node name="Button" type="Button" parent="."]
@@ -63,5 +65,12 @@ position = Vector2(0, -88)
 rotation = 1.57079
 texture = ExtResource("6_uhvt2")
 
+[node name="PopupMenu" type="PopupMenu" parent="."]
+item_count = 1
+item_0/text = "Delete"
+item_0/id = 0
+
 [connection signal="button_down" from="Button" to="." method="GrabNode"]
 [connection signal="button_up" from="Button" to="." method="ReleaseNode"]
+[connection signal="gui_input" from="Button" to="." method="ButtonGuiInput"]
+[connection signal="index_pressed" from="PopupMenu" to="." method="ContextMenuOptionSelected"]

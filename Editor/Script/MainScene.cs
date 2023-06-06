@@ -167,11 +167,20 @@ public partial class MainScene : Node2D
         node.Grabbed += NodeGrabbed;
         node.Released += NodeReleased;
         node.InputNodeSelected += InputConnectionSelected;
+        node.DeleteRequested += DeleteNode;
 
         node.GlobalPosition = useMouseLocation ? MouseLocation : Vector2.Zero;
         AddChild(node);
         Nodes.Add(node);
         node.InitOnCanvas(this);
+    }
+
+    private void DeleteNode(EditorVisNode node)
+    {
+        Nodes.Remove(node);
+        RemoveChild(node);
+
+        ConnectionManager.DeleteAllConnectionsForNode(node);
     }
 
     private void InputConnectionSelected(NodeInput input)
