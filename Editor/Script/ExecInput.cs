@@ -16,6 +16,8 @@ public partial class ExecInput : Node2D
     public ExecInput? Connection { get; set; } = null;
     public EditorVisNode? OwningNode { get; set; } = null;
 
+    public bool IsExecConnected => Connection != null;
+
     private void ConnectorSelected()
     {
         // because it would be very annoying to deal with node connections from inside the node itself

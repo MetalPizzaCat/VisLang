@@ -32,6 +32,8 @@ public partial class NodeInput : Node2D
     /// </summary>
     public NodeInput? Connection { get; set; } = null;
 
+    public bool IsInputConnected => Connection != null;
+
     public string InputName
     {
         get => InputNameLabel.Text;
