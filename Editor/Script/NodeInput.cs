@@ -15,7 +15,7 @@ public partial class NodeInput : Node2D
     [Export]
     public bool IsInput { get; set; } = true;
     [Export]
-    public bool AllowsAny { get; set; } = false;
+    public FunctionInputInfo.TypePermissions TypeMatchingPermissions { get; set; } = FunctionInputInfo.TypePermissions.MustMatchAll;
 
     [ExportGroup("Input fields")]
     [Export]
@@ -24,6 +24,8 @@ public partial class NodeInput : Node2D
     public SpinBox NumberInput { get; set; }
     [Export]
     public CheckBox BoolInput { get; set; }
+    [Export]
+    public SpinBox IntInput { get; set; }
 
     public EditorVisNode? OwningNode { get; set; } = null;
 
@@ -50,6 +52,7 @@ public partial class NodeInput : Node2D
             StringInput.Visible = value == VisLang.ValueType.String && IsInput;
             NumberInput.Visible = value == VisLang.ValueType.Float && IsInput;
             BoolInput.Visible = value == VisLang.ValueType.Bool && IsInput;
+            IntInput.Visible = value == VisLang.ValueType.Integer && IsInput;
             _inputType = value;
         }
     }
@@ -71,6 +74,9 @@ public partial class NodeInput : Node2D
                     return (float)NumberInput.Value;
                 case VisLang.ValueType.String:
                     return StringInput.Text;
+                case VisLang.ValueType.Integer:
+                    // godot uses double for spin box but int can't be double can it?
+                    return (int)IntInput.Value;
             }
             return 0;
         }
@@ -83,7 +89,7 @@ public partial class NodeInput : Node2D
 
     public bool IsValidTypeConnection(NodeInput other)
     {
-        return (other.InputType == InputType) || AllowsAny;
+        return (other.InputType == InputType) || (TypeMatchingPermissions == FunctionInputInfo.TypePermissions.AllowAny);
     }
 
     /// <summary>

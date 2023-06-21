@@ -7,6 +7,29 @@ using VisLang;
 [MonoCustomResourceRegistry.RegisteredType("FunctionInputInfo")]
 public partial class FunctionInputInfo : Resource
 {
+    /// <summary>
+    /// Type matching permissions for inputs
+    /// </summary>
+    public enum TypePermissions
+    {
+        /// <summary>
+        /// Input can only be of the same type and be an array(if IsArray is true) or not array(if IsArray is false)
+        /// </summary>
+        MustMatchAll,
+        /// <summary>
+        /// Input can only be of the same type, but it does not matter if it's an array or not. Note: i have no idea where this would be useful
+        /// </summary>
+        MustMatchOnlyType,
+        /// <summary>
+        /// Input can be of any type but must be an array(if IsArray is true) or not array(if IsArray is false)
+        /// </summary>
+        MustMatchOnlyArray,
+        /// <summary>
+        /// Anything goes
+        /// </summary>
+        AllowAny
+    }
+
     public FunctionInputInfo()
     {
     }
@@ -24,8 +47,14 @@ public partial class FunctionInputInfo : Resource
     public VisLang.ValueType InputType { get; set; } = VisLang.ValueType.Bool;
 
     /// <summary>
+    /// If true given input must be of array type
+    /// </summary>
+    [Export]
+    public bool IsArray { get; set; } = false;
+
+    /// <summary>
     /// If true any type can be passed into this input and InputType will be ignored
     /// </summary>
     [Export]
-    public bool AllowAnyType { get; set; } = false;
+    public TypePermissions TypeMatchingPermissions { get; set; } = TypePermissions.MustMatchAll;
 }

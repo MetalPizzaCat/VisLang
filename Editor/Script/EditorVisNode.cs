@@ -132,7 +132,7 @@ public partial class EditorVisNode : Node2D
             NodeInput input = NodeInputPrefab.InstantiateOrNull<NodeInput>();
             input.OwningNode = this;
             input.InputName = argument.InputName;
-            input.AllowsAny = argument.AllowAnyType;
+            input.TypeMatchingPermissions = argument.TypeMatchingPermissions;
             input.InputType = argument.InputType;
             input.Selected += (NodeInput input) => { InputNodeSelected?.Invoke(input); };
             Inputs.Add(input);

@@ -1,0 +1,14 @@
+[gd_resource type="Resource" load_steps=3 format=3 uid="uid://migjfmdltwbc"]
+
+[ext_resource type="Resource" uid="uid://b77ne4h638yht" path="res://Functions/Arguments/Func_Add_Arg.tres" id="1_tk4je"]
+[ext_resource type="Script" path="res://Script/Function/FunctionInfo.cs" id="2_12yji"]
+
+[resource]
+script = ExtResource("2_12yji")
+FunctionName = "Add(Float)"
+FunctionDescription = "Adds two numbers together"
+IsExecutable = false
+Inputs = [ExtResource("1_tk4je"), ExtResource("1_tk4je")]
+_output = 2
+HasOutput = true
+NodeType = "VisLang.AdditionNode"
