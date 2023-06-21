@@ -24,7 +24,7 @@ public class BasicSystemTest
     public void TestVariableSet()
     {
         VisSystem system = new VisSystem();
-        system.VisSystemMemory.CreateVariable("i", VisLang.ValueType.Number, 0);
+        system.VisSystemMemory.CreateVariable("i", VisLang.ValueType.Float, 0);
         Assert.IsNotNull(system.VisSystemMemory["i"]);
         Assert.AreEqual(0, system.VisSystemMemory["i"].Data);
         system.Entrance = new VariableSetNode(system) { Name = "i", DefaultValue = 69f };
@@ -40,8 +40,8 @@ public class BasicSystemTest
     public void TestVariableGetSet()
     {
         VisSystem system = new VisSystem();
-        system.VisSystemMemory.CreateVariable("i", VisLang.ValueType.Number, 0);
-        system.VisSystemMemory.CreateVariable("j", VisLang.ValueType.Number, 85f);
+        system.VisSystemMemory.CreateVariable("i", VisLang.ValueType.Float, 0);
+        system.VisSystemMemory.CreateVariable("j", VisLang.ValueType.Float, 85f);
         Assert.IsNotNull(system.VisSystemMemory["i"]);
         Assert.IsNotNull(system.VisSystemMemory["j"]);
         Assert.AreEqual(0, system.VisSystemMemory["i"].Data);
@@ -63,7 +63,7 @@ public class BasicSystemTest
     public void TestVariablePrint()
     {
         VisSystem system = new VisSystem();
-        system.VisSystemMemory.CreateVariable("i", VisLang.ValueType.Number, 99f);
+        system.VisSystemMemory.CreateVariable("i", VisLang.ValueType.Float, 99f);
         Assert.IsNotNull(system.VisSystemMemory["i"]);
         Assert.AreEqual(99f, system.VisSystemMemory["i"].Data);
         PrintNode printer = new PrintNode(system);
@@ -82,9 +82,9 @@ public class BasicSystemTest
     public void TestControlFlow()
     {
         VisSystem system = new VisSystem();
-        system.VisSystemMemory.CreateVariable("a", VisLang.ValueType.Number, 99f);
-        system.VisSystemMemory.CreateVariable("b", VisLang.ValueType.Number, 99f);
-        system.VisSystemMemory.CreateVariable("result", VisLang.ValueType.Number, -1f);
+        system.VisSystemMemory.CreateVariable("a", VisLang.ValueType.Float, 99f);
+        system.VisSystemMemory.CreateVariable("b", VisLang.ValueType.Float, 99f);
+        system.VisSystemMemory.CreateVariable("result", VisLang.ValueType.Float, -1f);
         Assert.IsNotNull(system.VisSystemMemory["a"]);
         Assert.IsNotNull(system.VisSystemMemory["b"]);
         Assert.IsNotNull(system.VisSystemMemory["result"]);
@@ -117,7 +117,7 @@ public class BasicSystemTest
     public void TestVariablePrintAddress()
     {
         VisSystem system = new VisSystem();
-        system.VisSystemMemory.CreateVariable("i", VisLang.ValueType.Number, 99f);
+        system.VisSystemMemory.CreateVariable("i", VisLang.ValueType.Float, 99f);
         Assert.IsNotNull(system.VisSystemMemory["i"]);
         Assert.AreEqual(99f, system.VisSystemMemory["i"].Data);
         PrintNode printer = new PrintNode(system);
@@ -136,7 +136,7 @@ public class BasicSystemTest
     public void TestVariablePrintInvalidAddress()
     {
         VisSystem system = new VisSystem();
-        system.VisSystemMemory.CreateVariable("i", VisLang.ValueType.Number, 99f);
+        system.VisSystemMemory.CreateVariable("i", VisLang.ValueType.Float, 99f);
         Assert.IsNotNull(system.VisSystemMemory["i"]);
         Assert.AreEqual(99f, system.VisSystemMemory["i"].Data);
         PrintNode printer = new PrintNode(system);
@@ -155,7 +155,7 @@ public class BasicSystemTest
     public void TestVariablePrintAddressOfAddress()
     {
         VisSystem system = new VisSystem();
-        system.VisSystemMemory.CreateVariable("i", VisLang.ValueType.Number, 99f);
+        system.VisSystemMemory.CreateVariable("i", VisLang.ValueType.Float, 99f);
         system.VisSystemMemory.CreateVariable("i_ptr", VisLang.ValueType.Address, 0);
         Assert.IsNotNull(system.VisSystemMemory["i"]);
         Assert.AreEqual(99f, system.VisSystemMemory["i"].Data);
@@ -328,7 +328,7 @@ public class BasicSystemTest
         system.Procedures.Add(new VisProcedure(system)
         {
             Name = "AddOne",
-            Arguments = new() { { "arg_num", VisLang.ValueType.Number } },
+            Arguments = new() { { "arg_num", VisLang.ValueType.Float } },
             OutputValueType = null,
         });
         VisProcedure? proc = system.GetProcedure("AddOne");
@@ -366,8 +366,8 @@ public class BasicSystemTest
         system.Functions.Add(new VisFunction(system)
         {
             Name = "CoolMath",
-            Arguments = new() { { "arg", VisLang.ValueType.Number } },
-            OutputValueType = VisLang.ValueType.Number
+            Arguments = new() { { "arg", VisLang.ValueType.Float } },
+            OutputValueType = VisLang.ValueType.Float
         });
 
         VisFunction? func = system.GetFunction("CoolMath");
@@ -389,7 +389,7 @@ public class BasicSystemTest
                     FunctionName = "CoolMath",
                     Inputs = new()
                     {
-                        new VariableGetConstNode(){Value = new Value(VisLang.ValueType.Number,false,3)}
+                        new VariableGetConstNode(){Value = new Value(VisLang.ValueType.Float,false,3)}
                     }
                 }
             }
@@ -397,6 +397,167 @@ public class BasicSystemTest
         system.Execute();
         Assert.AreEqual(1, system.Output.Count);
         Assert.AreEqual("6", system.Output.FirstOrDefault());
+    }
+
+    [TestMethod]
+    public void TestArrayAppend()
+    {
+        VisSystem system = new VisSystem();
+        system.VisSystemMemory.CreateVariable("arr", VisLang.ValueType.Float, 0, true);
+        Assert.IsNotNull(system.VisSystemMemory["arr"]);
+        Assert.IsTrue(system?.VisSystemMemory["arr"]?.Data is List<Value>);
+        system.Entrance = new ArrayAppendElement(system)
+        {
+            Inputs = new()
+            {
+                // array
+                new VariableGetNode(system)
+                {
+                    Name = "arr"
+                },
+                // value
+                new VariableGetConstNode(){Value = new Value(VisLang.ValueType.Float , false,69f)}
+            }
+        };
+
+        system.Execute();
+        Assert.AreEqual(69f, (system?.VisSystemMemory["arr"]?.Data as List<Value>)?.ElementAt(0)?.Data ?? 0);
+        //Assert.AreEqual(69f, system.VisSystemMemory["i"].Data);
+    }
+
+    [TestMethod]
+    public void TestArrayAppendAndGet()
+    {
+        VisSystem system = new VisSystem();
+        system.VisSystemMemory.CreateVariable("arr", VisLang.ValueType.Float, 0, true);
+        system.VisSystemMemory.CreateVariable("res", VisLang.ValueType.Float, 0, false);
+        Assert.IsNotNull(system.VisSystemMemory["arr"]);
+        Assert.IsNotNull(system.VisSystemMemory["res"]);
+        Assert.IsTrue(system?.VisSystemMemory["arr"]?.Data is List<Value>);
+        system.Entrance = new ArrayAppendElement(system)
+        {
+            Inputs = new()
+            {
+                // array
+                new VariableGetNode(system)
+                {
+                    Name = "arr"
+                },
+                // value
+                new VariableGetConstNode(){Value = new Value(VisLang.ValueType.Float , false,69f)}
+            },
+            DefaultNext = new VariableSetNode(system)
+            {
+                Name = "res",
+                Inputs = new()
+                {
+                    new ArrayGetElementAtNode(system)
+                    {
+                        Inputs = new List<VisNode>()
+                        {
+                            // array
+                            new VariableGetNode(system)
+                            {
+                                Name = "arr"
+                            },
+                            // value
+                            new VariableGetConstNode(){Value = new Value(VisLang.ValueType.Integer , false,0)}
+                        }
+                    }
+                }
+            }
+        };
+
+        system.Execute();
+        Assert.AreEqual(69f, (system?.VisSystemMemory["arr"]?.Data as List<Value>)?.ElementAt(0)?.Data ?? 0);
+        Assert.AreEqual(69f, system?.VisSystemMemory["res"]?.Data);
+        //Assert.AreEqual(69f, system.VisSystemMemory["i"].Data);
+    }
+
+    [TestMethod]
+    public void TestArrayAppendAndGetAndThenSet()
+    {
+        VisSystem system = new VisSystem();
+        system.VisSystemMemory.CreateVariable("arr", VisLang.ValueType.Float, 0, true);
+        system.VisSystemMemory.CreateVariable("res", VisLang.ValueType.Float, 0, false);
+        system.VisSystemMemory.CreateVariable("res2", VisLang.ValueType.Float, 0, false);
+        Assert.IsNotNull(system.VisSystemMemory["arr"]);
+        Assert.IsNotNull(system.VisSystemMemory["res"]);
+        Assert.IsNotNull(system.VisSystemMemory["res2"]);
+        Assert.IsTrue(system?.VisSystemMemory["arr"]?.Data is List<Value>);
+        system.Entrance = new ArrayAppendElement(system)
+        {
+            Inputs = new()
+            {
+                // array
+                new VariableGetNode(system)
+                {
+                    Name = "arr"
+                },
+                // value
+                new VariableGetConstNode(){Value = new Value(VisLang.ValueType.Float , false,69f)}
+            },
+            DefaultNext = new VariableSetNode(system)
+            {
+                Name = "res",
+                Inputs = new()
+                {
+                    new ArrayGetElementAtNode(system)
+                    {
+                        Inputs = new List<VisNode>()
+                        {
+                            // array
+                            new VariableGetNode(system)
+                            {
+                                Name = "arr"
+                            },
+                            // index
+                            new VariableGetConstNode(){Value = new Value(VisLang.ValueType.Integer , false,0)}
+                        }
+                    }
+                },
+                DefaultNext = new ArraySetElementAtNode(system)
+                {
+                    Inputs = new()
+                    {
+                        new VariableGetNode(system)
+                        {
+                            Name = "arr"
+                        },
+                        // index
+                        new VariableGetConstNode(){Value = new Value(VisLang.ValueType.Integer , false,0)},
+                         // value
+                        new VariableGetConstNode(){Value = new Value(VisLang.ValueType.Float , false,420f)}
+                    },
+                    DefaultNext = new VariableSetNode(system)
+                    {
+                        Name = "res2",
+                        Inputs = new()
+                        {
+                            new ArrayGetElementAtNode(system)
+                            {
+                                Inputs = new List<VisNode>()
+                                {
+                                    // array
+                                    new VariableGetNode(system)
+                                    {
+                                        Name = "arr"
+                                    },
+                                    // index
+                                    new VariableGetConstNode(){Value = new Value(VisLang.ValueType.Integer , false,0)}
+                                }
+                            }
+                        },
+                    }
+                }
+            }
+        };
+
+        system.Execute();
+        Assert.AreEqual(420f, (system?.VisSystemMemory["arr"]?.Data as List<Value>)?.ElementAt(0)?.Data ?? 0);
+        Assert.AreEqual(69f, system?.VisSystemMemory["res"]?.Data);
+        Assert.AreEqual(420f, system?.VisSystemMemory["res2"]?.Data);
+        //Assert.AreEqual(69f, system.VisSystemMemory["i"].Data);
     }
 
 }

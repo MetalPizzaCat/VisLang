@@ -48,7 +48,7 @@ public partial class NodeInput : Node2D
         set
         {
             StringInput.Visible = value == VisLang.ValueType.String && IsInput;
-            NumberInput.Visible = value == VisLang.ValueType.Number && IsInput;
+            NumberInput.Visible = value == VisLang.ValueType.Float && IsInput;
             BoolInput.Visible = value == VisLang.ValueType.Bool && IsInput;
             _inputType = value;
         }
@@ -66,7 +66,7 @@ public partial class NodeInput : Node2D
             {
                 case VisLang.ValueType.Bool:
                     return BoolInput.ButtonPressed;
-                case VisLang.ValueType.Number:
+                case VisLang.ValueType.Float:
                     // using float because i said so >:(
                     return (float)NumberInput.Value;
                 case VisLang.ValueType.String:

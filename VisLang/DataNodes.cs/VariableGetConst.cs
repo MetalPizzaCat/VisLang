@@ -14,7 +14,7 @@ public class VariableGetConstNode : DataNode
     public VariableGetConstNode() { }
 
     public string Name { get; set; } = "Default";
-    public Value Value { get; set; } = new Value(ValueType.Number, false, 0);
+    public Value Value { get; set; } = new Value(ValueType.Float, false, 0);
     public override Value? GetValue()
     {
         return Value;
