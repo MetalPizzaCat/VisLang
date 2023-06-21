@@ -10,5 +10,6 @@ FunctionDescription = "Adds two numbers together"
 IsExecutable = false
 Inputs = [ExtResource("1_tk4je"), ExtResource("1_tk4je")]
 _output = 2
+_isOutputArray = false
 HasOutput = true
 NodeType = "VisLang.AdditionNode"

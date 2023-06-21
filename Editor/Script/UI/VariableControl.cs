@@ -17,6 +17,8 @@ public partial class VariableControl : HBoxContainer
 
     [Export]
     public OptionButton TypeOptionButton { get; set; }
+    [Export]
+    public PopupMenu? ContextMenu { get; set; }
 
     [Export]
     public Control? ErrorDisplayControl { get; set; }
@@ -130,5 +132,35 @@ public partial class VariableControl : HBoxContainer
     private void ToggleArray(bool IsArray)
     {
         _info.IsArray = IsArray;
+    }
+
+    private void ShowContextMenu()
+    {
+        if (ContextMenu != null)
+        {
+            ContextMenu.Position = new Vector2I((int)GetGlobalMousePosition().X, (int)GetGlobalMousePosition().Y);
+            ContextMenu.Popup();
+        }
+
+    }
+
+    private void ContextMenuItemSelected(int id)
+    {
+        // unfortunately the way context menu works is by passing the id of the selected item
+        // which is not helpful when items are known before hand
+        // 1 and 3 are  missing because those are the id of the group separators
+        switch (id)
+        {
+            case 1: // get
+                CreateGetter();
+                return;
+            case 2: // set
+                CreateSetter();
+                return;
+            case 4: // get element at
+                return;
+            case 5: // set element at
+                return;
+        }
     }
 }
