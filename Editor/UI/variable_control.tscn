@@ -35,7 +35,16 @@ clear_button_enabled = true
 [node name="OptionButton" type="OptionButton" parent="."]
 layout_mode = 2
 
+[node name="CheckBox" type="CheckBox" parent="."]
+layout_mode = 2
+text = "Is array"
+
+[node name="DeleteVariableButton" type="Button" parent="."]
+layout_mode = 2
+text = "X"
+
 [connection signal="pressed" from="GetButton" to="." method="CreateGetter"]
 [connection signal="pressed" from="SetButton" to="." method="CreateSetter"]
 [connection signal="text_changed" from="LineEdit" to="." method="ChangeName"]
 [connection signal="item_selected" from="OptionButton" to="." method="SelectType"]
+[connection signal="toggled" from="CheckBox" to="." method="ToggleArray"]

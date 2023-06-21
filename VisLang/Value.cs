@@ -173,7 +173,7 @@ public class Value
     /// <summary>
     /// Gets string value for the data stored in the object using `.ToString`. This is meant for simplifying internal conversions and does NOT perform type checks 
     /// </summary>
-    public string? AsString() => _data?.ToString();
+    public string? AsString() => (IsArray ? string.Join(',', _data) : _data?.ToString());
 
     /// <summary>
     ///Tries to convert value stored in object to float. This is meant for simplifying internal conversions and does NOT perform type checks 
@@ -203,7 +203,7 @@ public class Value
         }
         if (IsArray)
         {
-            return string.Join(',', Data);
+            return $"[{string.Join(',', _data as List<Value>)}]";
         }
         return _data?.ToString() ?? "you some how managed to bypass null check in TryAsString(), fascinating. You get a cookie :3";
     }

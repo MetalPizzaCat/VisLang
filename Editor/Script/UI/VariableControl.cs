@@ -21,7 +21,7 @@ public partial class VariableControl : HBoxContainer
     [Export]
     public Control? ErrorDisplayControl { get; set; }
 
-    private VariableInfo _info = new VariableInfo("Default", VisLang.ValueType.Bool);
+    private VariableInfo _info = new VariableInfo("Default", VisLang.ValueType.Bool, false);
 
     public VariableInfo Info => _info;
 
@@ -125,5 +125,10 @@ public partial class VariableControl : HBoxContainer
     private void CreateGetter()
     {
         GetterRequested?.Invoke(Info);
+    }
+
+    private void ToggleArray(bool IsArray)
+    {
+        _info.IsArray = IsArray;
     }
 }

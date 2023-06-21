@@ -154,9 +154,9 @@ layout_mode = 3
 anchor_left = 0.76
 anchor_right = 1.0
 anchor_bottom = 0.373
-offset_left = -0.00012207
+offset_left = -32.0
 offset_top = 8.0
-offset_bottom = -7.70001
+offset_bottom = -7.69998
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("3_vtslo")
@@ -164,16 +164,18 @@ VariableControlPlaceholder = ExtResource("3_jx1hi")
 Container = NodePath("ScrollContainer/VBoxContainer")
 
 [node name="ColorRect" type="ColorRect" parent="UiControls/VariableControl"]
-layout_mode = 0
-offset_right = 384.0
-offset_bottom = 320.0
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 color = Color(0, 0, 0, 0.435294)
 
 [node name="ScrollContainer" type="ScrollContainer" parent="UiControls/VariableControl"]
-layout_mode = 0
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 offset_top = 32.0
-offset_right = 384.0
-offset_bottom = 320.0
 
 [node name="VBoxContainer" type="VBoxContainer" parent="UiControls/VariableControl/ScrollContainer"]
 layout_mode = 2

@@ -10,7 +10,7 @@ public partial class GetterNode : VariableNode
 {
     protected override FunctionInfo? GetFunctionInfo(VariableInfo val)
     {
-        return new FunctionInfo("Get", false, new(), "VisLang.VariableGetNode", true, val.ValueType);
+        return new FunctionInfo("Get", false, new(), "VisLang.VariableGetNode", true, val.ValueType, val.IsArray);
     }
 
     protected override void ApplyAdditionalDataToNode<NodeType>(NodeType node)

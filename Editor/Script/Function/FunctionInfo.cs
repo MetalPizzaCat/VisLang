@@ -33,9 +33,13 @@ public partial class FunctionInfo : Resource
     public VisLang.ValueType _output;
 
     [Export]
+    public bool _isOutputArray;
+
+    [Export]
     public bool HasOutput { get; set; } = false;
 
     public VisLang.ValueType? OutputType => HasOutput ? _output : null;
+    public bool? IsOutputArray => HasOutput ? _isOutputArray : null;
 
     /// <summary>
     /// Typename of the node for creating nodes at runtime via reflection.
@@ -48,7 +52,7 @@ public partial class FunctionInfo : Resource
     {
     }
 
-    public FunctionInfo(string functionName, bool isExecutable, Array<FunctionInputInfo> inputs, string nodeType, bool hasOutput, VisLang.ValueType output = VisLang.ValueType.Bool)
+    public FunctionInfo(string functionName, bool isExecutable, Array<FunctionInputInfo> inputs, string nodeType, bool hasOutput, VisLang.ValueType output = VisLang.ValueType.Bool, bool isOutArray = false)
     {
         FunctionName = functionName;
         IsExecutable = isExecutable;
@@ -56,5 +60,6 @@ public partial class FunctionInfo : Resource
         _output = output;
         HasOutput = hasOutput;
         NodeType = nodeType;
+        _isOutputArray = isOutArray;
     }
 }

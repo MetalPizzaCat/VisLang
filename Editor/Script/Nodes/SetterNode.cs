@@ -12,7 +12,7 @@ public partial class SetterNode : VariableNode
     {
         return new FunctionInfo("Set", true, new Godot.Collections.Array<FunctionInputInfo>()
         {
-             new FunctionInputInfo("Value", val.ValueType)
+             new FunctionInputInfo("Value", val.ValueType,val.IsArray)
         }, "VisLang.VariableSetNode", false);
     }
 

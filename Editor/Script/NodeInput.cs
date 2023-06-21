@@ -15,6 +15,23 @@ public partial class NodeInput : Node2D
     [Export]
     public bool IsInput { get; set; } = true;
     [Export]
+    public Sprite2D DefaultIcon { get; set; }
+    [Export]
+    public Sprite2D ArrayIcon { get; set; }
+
+    [Export]
+    public bool IsArray
+    {
+        get => _isArray;
+        set
+        {
+            _isArray = value;
+            DefaultIcon.Visible = !_isArray;
+            ArrayIcon.Visible = _isArray;
+        }
+    }
+    
+    [Export]
     public FunctionInputInfo.TypePermissions TypeMatchingPermissions { get; set; } = FunctionInputInfo.TypePermissions.MustMatchAll;
 
     [ExportGroup("Input fields")]
@@ -43,19 +60,23 @@ public partial class NodeInput : Node2D
     }
 
     private VisLang.ValueType _inputType = VisLang.ValueType.Bool;
+    private bool _isArray = false;
 
     public VisLang.ValueType InputType
     {
         get => _inputType;
         set
         {
-            StringInput.Visible = value == VisLang.ValueType.String && IsInput;
-            NumberInput.Visible = value == VisLang.ValueType.Float && IsInput;
-            BoolInput.Visible = value == VisLang.ValueType.Bool && IsInput;
-            IntInput.Visible = value == VisLang.ValueType.Integer && IsInput;
+            // inputs are not visible if it's not an input, but also invisible if it's an array since we don't provide a way to edit arrays via editor
+            // because that would be too annoying to add 
+            StringInput.Visible = value == VisLang.ValueType.String && IsInput && !IsArray;
+            NumberInput.Visible = value == VisLang.ValueType.Float && IsInput && !IsArray;
+            BoolInput.Visible = value == VisLang.ValueType.Bool && IsInput && !IsArray;
+            IntInput.Visible = value == VisLang.ValueType.Integer && IsInput && !IsArray;
             _inputType = value;
         }
     }
+
 
     /// <summary>
     /// Get current value stored in the input. Resulting value will depend on InputType
@@ -89,7 +110,7 @@ public partial class NodeInput : Node2D
 
     public bool IsValidTypeConnection(NodeInput other)
     {
-        return (other.InputType == InputType) || (TypeMatchingPermissions == FunctionInputInfo.TypePermissions.AllowAny);
+        return (other.InputType == InputType && other.IsArray == IsArray) || (TypeMatchingPermissions == FunctionInputInfo.TypePermissions.AllowAny);
     }
 
     /// <summary>

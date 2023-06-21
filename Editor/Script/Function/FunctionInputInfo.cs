@@ -34,10 +34,18 @@ public partial class FunctionInputInfo : Resource
     {
     }
 
-    public FunctionInputInfo(string inputName, ValueType inputType)
+    public FunctionInputInfo(string inputName, ValueType inputType, bool isArray)
     {
         InputName = inputName;
         InputType = inputType;
+        IsArray = isArray;
+    }
+
+    public FunctionInputInfo(VariableInfo info)
+    {
+        InputName = info.Name;
+        InputType = info.ValueType;
+        IsArray = info.IsArray;
     }
 
     [Export]
