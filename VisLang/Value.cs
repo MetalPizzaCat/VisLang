@@ -203,7 +203,7 @@ public class Value
         }
         if (IsArray)
         {
-            return $"[{string.Join(',', _data as List<Value>)}]";
+            return $"[{string.Join(',', (_data as List<Value>).Select(i => i.Data))}]";
         }
         return _data?.ToString() ?? "you some how managed to bypass null check in TryAsString(), fascinating. You get a cookie :3";
     }

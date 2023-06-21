@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://ncyjciglhky1"]
+[gd_scene load_steps=21 format=3 uid="uid://ncyjciglhky1"]
 
 [ext_resource type="Script" path="res://Script/MainScene.cs" id="1_w4485"]
 [ext_resource type="Script" path="res://Script/UI/CanvasControl.cs" id="3_iy83l"]
@@ -17,6 +17,7 @@
 [ext_resource type="Script" path="res://Script/MainScene/NodeMovementManager.cs" id="12_vyifh"]
 [ext_resource type="Script" path="res://Script/MainScene/FunctionSignatureManager.cs" id="13_a8e7i"]
 [ext_resource type="PackedScene" uid="uid://2yjpbvdcx017" path="res://Nodes/vis_node_getter.tscn" id="14_7npgy"]
+[ext_resource type="Resource" uid="uid://ebcuptp46d3h" path="res://Functions/Func_Array_Append.tres" id="14_lsc1g"]
 [ext_resource type="PackedScene" uid="uid://dk8u81wibm8ol" path="res://Nodes/vis_node_setter.tscn" id="15_5tvch"]
 [ext_resource type="Resource" uid="uid://dpkha8n5rkowh" path="res://Functions/Func_Print.tres" id="15_d1s18"]
 
@@ -87,7 +88,7 @@ CanvasControl = NodePath("../Camera2D/Control")
 
 [node name="Functions" type="Node" parent="."]
 script = ExtResource("13_a8e7i")
-Functions = [ExtResource("12_daao2"), ExtResource("15_d1s18")]
+Functions = [ExtResource("12_daao2"), ExtResource("15_d1s18"), ExtResource("14_lsc1g")]
 GetterPrefab = ExtResource("14_7npgy")
 SetterPrefab = ExtResource("15_5tvch")
 
