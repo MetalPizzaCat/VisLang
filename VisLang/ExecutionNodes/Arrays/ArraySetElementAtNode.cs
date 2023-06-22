@@ -33,10 +33,6 @@ public class ArraySetElementAtNode : ExecutionNode
         {
             throw new NullReferenceException("Attempted set value of the array element but provided value is null");
         }
-        if (Array.ValueType != ValueToSetType)
-        {
-            throw new Interpreter.ValueTypeMismatchException($"Array type mismatch attempted to set value of the element in array of type {Array.ValueType.ToString()} but value is of type {ValueToSetType.ToString()}");
-        }
         if (Array.Data is List<Value> arr)
         {
             arr[Index].Data = Value;

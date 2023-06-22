@@ -8,6 +8,6 @@ public class EqualsNode : BinaryOperationNodeBase
 
     public override Value? GetValue()
     {
-        return new Value(ValueType.Bool, false, ValueLeft.EqualsTo(ValueRight));
+        return new Value(ValueType.Bool, ValueLeft.EqualsTo(ValueRight));
     }
 }

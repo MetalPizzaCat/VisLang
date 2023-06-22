@@ -19,16 +19,15 @@ texture = ExtResource("2_x3pui")
 expand_mode = 3
 
 [node name="GetButton" type="Button" parent="."]
-visible = false
 layout_mode = 2
 text = "Get"
 
 [node name="GetButton2" type="Button" parent="."]
+visible = false
 layout_mode = 2
 text = "Get"
 
 [node name="SetButton" type="Button" parent="."]
-visible = false
 layout_mode = 2
 text = "Set"
 
@@ -43,10 +42,6 @@ clear_button_enabled = true
 
 [node name="OptionButton" type="OptionButton" parent="."]
 layout_mode = 2
-
-[node name="CheckBox" type="CheckBox" parent="."]
-layout_mode = 2
-text = "Is array"
 
 [node name="DeleteVariableButton" type="Button" parent="."]
 layout_mode = 2
@@ -75,5 +70,4 @@ item_5/id = 5
 [connection signal="pressed" from="SetButton" to="." method="CreateSetter"]
 [connection signal="text_changed" from="LineEdit" to="." method="ChangeName"]
 [connection signal="item_selected" from="OptionButton" to="." method="SelectType"]
-[connection signal="toggled" from="CheckBox" to="." method="ToggleArray"]
 [connection signal="index_pressed" from="PopupMenu" to="." method="ContextMenuItemSelected"]

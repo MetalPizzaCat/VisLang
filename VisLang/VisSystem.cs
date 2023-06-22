@@ -40,20 +40,20 @@ public class VisSystemMemory
 
     public Value? this[string name] => Variables.ContainsKey(name) ? (Memory.ContainsKey(Variables[name]) ? Memory[Variables[name]] : null) : null;
 
-    public uint AllocateValue(ValueType type, object? value = null, bool array = false)
+    public uint AllocateValue(ValueType type, object? value = null)
     {
-        Memory.Add(_memoryCounter, new Value(type, _memoryCounter, array, value));
+        Memory.Add(_memoryCounter, new Value(type, _memoryCounter, value));
         _memoryCounter++;
         return _memoryCounter - 1;
     }
 
-    public bool CreateVariable(string name, ValueType type, object? value = null, bool array = false)
+    public bool CreateVariable(string name, ValueType type, object? value = null)
     {
         if (this[name] != null)
         {
             return false;
         }
-        uint addr = AllocateValue(type, value, array);
+        uint addr = AllocateValue(type, value);
         Variables.Add(name, addr);
         return true;
     }

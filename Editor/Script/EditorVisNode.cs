@@ -132,7 +132,6 @@ public partial class EditorVisNode : Node2D
             NodeInput input = NodeInputPrefab.InstantiateOrNull<NodeInput>();
             input.OwningNode = this;
             input.InputName = argument.InputName;
-            input.IsArray = argument.IsArray;
             input.TypeMatchingPermissions = argument.TypeMatchingPermissions;
             input.InputType = argument.InputType;
             input.Selected += (NodeInput input) => { InputNodeSelected?.Invoke(input); };
@@ -146,7 +145,6 @@ public partial class EditorVisNode : Node2D
         {
             NodeOutput.Visible = true;
             NodeOutput.InputType = info.OutputType ?? VisLang.ValueType.Bool;
-            NodeOutput.IsArray = info.IsOutputArray ?? false;
         }
         if (NodeNameLabel != null)
         {

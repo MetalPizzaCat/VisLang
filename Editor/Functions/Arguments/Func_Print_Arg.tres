@@ -6,5 +6,4 @@
 script = ExtResource("1_w140f")
 InputName = "Text"
 InputType = 4
-IsArray = false
-TypeMatchingPermissions = 3
+TypeMatchingPermissions = 1

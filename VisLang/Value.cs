@@ -29,7 +29,8 @@ public enum ValueType
     /// <summary>
     /// Address of the value in the interpreter memory. Uses c# uint
     /// </summary>
-    Address
+    Address,
+    Array,
 }
 
 /// <summary>
@@ -46,7 +47,7 @@ public class Value
     /// </summary>
     public ValueType ValueType { get; set; } = ValueType.Bool;
 
-    public bool IsArray { get; set; } = false;
+    public bool IsArray => ValueType == ValueType.Array;
 
     /// <summary>
     /// The actual data stored in the value
@@ -115,11 +116,10 @@ public class Value
     /// <param name="address"> Address of the variable in the memory</param>
     /// <param name="isArray">If true value will be an array that uses List</param>
     /// <param name="data">Possible init data or null if no data is needed.</param>
-    public Value(ValueType variableType, uint address, bool isArray, object? data)
+    public Value(ValueType variableType, uint address, object? data)
     {
         ValueType = variableType;
-        IsArray = isArray;
-        if (isArray)
+        if (IsArray)
         {
             // arrays are stored as list of value objects
             // while technically arrays in the language can only store one object type
@@ -140,11 +140,10 @@ public class Value
     /// <param name="variableType">What data does this value store</param>
     /// <param name="isArray">If true value will be an array that uses List</param>
     /// <param name="data">Possible init data or null if no data is needed.</param>
-    public Value(ValueType variableType, bool isArray, object? data)
+    public Value(ValueType variableType, object? data)
     {
         ValueType = variableType;
-        IsArray = isArray;
-        if (isArray)
+        if (IsArray && data == null)
         {
             // arrays are stored as list of value objects
             // while technically arrays in the language can only store one object type
@@ -203,7 +202,7 @@ public class Value
         }
         if (IsArray)
         {
-            return $"[{string.Join(',', (_data as List<Value>).Select(i => i.Data))}]";
+            return $"[{string.Join(',', (_data as List<Value>).Select(i => i.IsArray ? i.TryAsString() : i.Data))}]";
         }
         return _data?.ToString() ?? "you some how managed to bypass null check in TryAsString(), fascinating. You get a cookie :3";
     }
@@ -213,10 +212,6 @@ public class Value
         if (_data == null)
         {
             throw new NullReferenceException("Value data is null");
-        }
-        if (IsArray)
-        {
-            throw new ValueTypeMismatchException($"Expected int got array of {ValueType.ToString()}");
         }
         if (ValueType != ValueType.Integer)
         {
@@ -230,10 +225,6 @@ public class Value
         if (_data == null)
         {
             throw new NullReferenceException("Value data is null");
-        }
-        if (IsArray)
-        {
-            throw new ValueTypeMismatchException($"Expected bool got array of {ValueType.ToString()}");
         }
         if (ValueType != ValueType.Bool)
         {

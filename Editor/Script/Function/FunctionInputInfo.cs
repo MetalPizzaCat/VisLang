@@ -15,15 +15,7 @@ public partial class FunctionInputInfo : Resource
         /// <summary>
         /// Input can only be of the same type and be an array(if IsArray is true) or not array(if IsArray is false)
         /// </summary>
-        MustMatchAll,
-        /// <summary>
-        /// Input can only be of the same type, but it does not matter if it's an array or not. Note: i have no idea where this would be useful
-        /// </summary>
-        MustMatchOnlyType,
-        /// <summary>
-        /// Input can be of any type but must be an array(if IsArray is true) or not array(if IsArray is false)
-        /// </summary>
-        MustMatchOnlyArray,
+        SameTypeOnly,
         /// <summary>
         /// Anything goes
         /// </summary>
@@ -34,18 +26,16 @@ public partial class FunctionInputInfo : Resource
     {
     }
 
-    public FunctionInputInfo(string inputName, ValueType inputType, bool isArray)
+    public FunctionInputInfo(string inputName, ValueType inputType)
     {
         InputName = inputName;
         InputType = inputType;
-        IsArray = isArray;
     }
 
     public FunctionInputInfo(VariableInfo info)
     {
         InputName = info.Name;
         InputType = info.ValueType;
-        IsArray = info.IsArray;
     }
 
     [Export]
@@ -53,16 +43,9 @@ public partial class FunctionInputInfo : Resource
 
     [Export]
     public VisLang.ValueType InputType { get; set; } = VisLang.ValueType.Bool;
-
-    /// <summary>
-    /// If true given input must be of array type
-    /// </summary>
-    [Export]
-    public bool IsArray { get; set; } = false;
-
     /// <summary>
     /// If true any type can be passed into this input and InputType will be ignored
     /// </summary>
     [Export]
-    public TypePermissions TypeMatchingPermissions { get; set; } = TypePermissions.MustMatchAll;
+    public TypePermissions TypeMatchingPermissions { get; set; } = TypePermissions.SameTypeOnly;
 }

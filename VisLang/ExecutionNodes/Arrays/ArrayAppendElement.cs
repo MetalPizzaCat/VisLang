@@ -31,13 +31,9 @@ public class ArrayAppendElement : ExecutionNode
         {
             throw new NullReferenceException("Attempted set value of the array element but provided value is null");
         }
-        if (Array.ValueType != ValueToSetType)
+        if (Array.Data is List<Value> arr && ValueToSetType != null)
         {
-            throw new Interpreter.ValueTypeMismatchException($"Array type mismatch attempted to set value of the element in array of type {Array.ValueType.ToString()} but value is of type {ValueToSetType.ToString()}");
-        }
-        if (Array.Data is List<Value> arr)
-        {
-            arr.Add(new Value(Array.ValueType, false, Value));
+            arr.Add(new Value(ValueToSetType.Value, Value));
         }
     }
 }

@@ -269,7 +269,7 @@ public partial class MainScene : Node2D
                     AddErrorMessage($"Fatal error. Duplicate variable name: \"{va.Info.Name}\" appears more then once");
                     success = false;
                 }
-                _debugger.System.VisSystemMemory.CreateVariable(va.VariableName, va.VariableType, null, va.Info.IsArray);
+                _debugger.System.VisSystemMemory.CreateVariable(va.VariableName, va.VariableType, null);
             }
         }
         return success;

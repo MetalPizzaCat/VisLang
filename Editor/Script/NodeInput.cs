@@ -19,20 +19,9 @@ public partial class NodeInput : Node2D
     [Export]
     public Sprite2D ArrayIcon { get; set; }
 
+
     [Export]
-    public bool IsArray
-    {
-        get => _isArray;
-        set
-        {
-            _isArray = value;
-            DefaultIcon.Visible = !_isArray;
-            ArrayIcon.Visible = _isArray;
-        }
-    }
-    
-    [Export]
-    public FunctionInputInfo.TypePermissions TypeMatchingPermissions { get; set; } = FunctionInputInfo.TypePermissions.MustMatchAll;
+    public FunctionInputInfo.TypePermissions TypeMatchingPermissions { get; set; } = FunctionInputInfo.TypePermissions.SameTypeOnly;
 
     [ExportGroup("Input fields")]
     [Export]
@@ -76,6 +65,8 @@ public partial class NodeInput : Node2D
             _inputType = value;
         }
     }
+
+    public bool IsArray => InputType == VisLang.ValueType.Array;
 
 
     /// <summary>
