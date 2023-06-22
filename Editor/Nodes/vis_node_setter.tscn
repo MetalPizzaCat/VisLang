@@ -11,6 +11,9 @@ script = ExtResource("2_al5mc")
 VariableNameLabel = NodePath("VariableNameLabel")
 CodeTheme = null
 
+[node name="NodeBasicStyleExec" parent="." index="1"]
+modulate = Color(1, 1, 1, 1)
+
 [node name="Label" parent="." index="3"]
 offset_left = -144.0
 offset_right = -14.0

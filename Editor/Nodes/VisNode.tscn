@@ -29,6 +29,7 @@ offset_right = 96.0
 offset_bottom = 64.0
 
 [node name="NodeBasicStyleExec" type="Sprite2D" parent="."]
+modulate = Color(0.513726, 1, 0.741176, 1)
 texture_filter = 1
 position = Vector2(9.53674e-06, -52)
 scale = Vector2(0.253968, 0.315789)
