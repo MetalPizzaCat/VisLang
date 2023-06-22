@@ -101,7 +101,11 @@ public partial class NodeInput : Node2D
 
     public bool IsValidTypeConnection(NodeInput other)
     {
-        return (other.InputType == InputType && other.IsArray == IsArray) || (TypeMatchingPermissions == FunctionInputInfo.TypePermissions.AllowAny);
+        // check if types are known at design time and if they are ensure that they match
+        // if type can not be known at design time we allow the connection and make runtime deal with it
+        // if input does not care what type is passed into we also allow the connection and make it runtime's job to deal with errors  
+        return (other.InputType == InputType && other.IsArray == IsArray) ||
+         (TypeMatchingPermissions == FunctionInputInfo.TypePermissions.AllowAny || other.TypeMatchingPermissions == FunctionInputInfo.TypePermissions.AllowAny);
     }
 
     /// <summary>

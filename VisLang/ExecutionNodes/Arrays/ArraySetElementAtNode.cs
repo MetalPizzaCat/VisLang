@@ -35,7 +35,7 @@ public class ArraySetElementAtNode : ExecutionNode
         }
         if (Array.Data is List<Value> arr)
         {
-            arr[Index].Data = Value;
+            arr[Index] = Inputs.ElementAtOrDefault(2)?.GetValue() ?? throw new NullReferenceException("Value must not be null");
         }
     }
 }

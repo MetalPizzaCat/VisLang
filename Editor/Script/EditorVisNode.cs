@@ -145,6 +145,7 @@ public partial class EditorVisNode : Node2D
         {
             NodeOutput.Visible = true;
             NodeOutput.InputType = info.OutputType ?? VisLang.ValueType.Bool;
+            NodeOutput.TypeMatchingPermissions = (info.IsOutputTypeKnown ?? false) ? FunctionInputInfo.TypePermissions.SameTypeOnly : FunctionInputInfo.TypePermissions.AllowAny;
         }
         if (NodeNameLabel != null)
         {
