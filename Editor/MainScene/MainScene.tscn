@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://bml2vknkym6vv"]
+[gd_scene load_steps=23 format=3 uid="uid://ncyjciglhky1"]
 
 [ext_resource type="Script" path="res://Script/MainScene.cs" id="1_w4485"]
 [ext_resource type="Script" path="res://Script/UI/CanvasControl.cs" id="3_iy83l"]
@@ -13,12 +13,15 @@
 [ext_resource type="PackedScene" uid="uid://dpw6l4ftfkiy7" path="res://Nodes/connector_line.tscn" id="9_csoc2"]
 [ext_resource type="Script" path="res://Script/MainScene/CanvasUiControl.cs" id="10_2je7w"]
 [ext_resource type="PackedScene" uid="uid://cuw6xf1wlf0ag" path="res://UI/node_creation_menu.tscn" id="11_rgm21"]
+[ext_resource type="Resource" uid="uid://migjfmdltwbc" path="res://Functions/Func_Add_F.tres" id="12_daao2"]
 [ext_resource type="Script" path="res://Script/MainScene/NodeMovementManager.cs" id="12_vyifh"]
 [ext_resource type="Script" path="res://Script/MainScene/FunctionSignatureManager.cs" id="13_a8e7i"]
 [ext_resource type="PackedScene" uid="uid://2yjpbvdcx017" path="res://Nodes/vis_node_getter.tscn" id="14_7npgy"]
-[ext_resource type="Resource" uid="uid://migjfmdltwbc" path="res://Functions/Func_Add.tres" id="14_ue0gx"]
+[ext_resource type="Resource" uid="uid://l1eetdpg8ut5" path="res://Functions/Func_Array_Append.tres" id="14_lsc1g"]
 [ext_resource type="PackedScene" uid="uid://dk8u81wibm8ol" path="res://Nodes/vis_node_setter.tscn" id="15_5tvch"]
 [ext_resource type="Resource" uid="uid://dpkha8n5rkowh" path="res://Functions/Func_Print.tres" id="15_d1s18"]
+[ext_resource type="Resource" uid="uid://dpc05ors8lkbo" path="res://Functions/Func_Array_SetElem.tres" id="15_kkack"]
+[ext_resource type="Resource" uid="uid://b4ca7uc8mn75i" path="res://Functions/Func_Array_GetElem.tres" id="16_mb6gk"]
 
 [node name="MainScene" type="Node2D" node_paths=PackedStringArray("VariableManager", "FunctionSignatureManager", "RuntimeVariableInformation", "EntranceInput", "ConnectionManager", "MovementManager", "NodeCreationMenu", "CanvasControl", "OutputTextList", "ErrorTextList", "DebugWarningControl", "TemplateSaveDialog")]
 script = ExtResource("1_w4485")
@@ -87,7 +90,7 @@ CanvasControl = NodePath("../Camera2D/Control")
 
 [node name="Functions" type="Node" parent="."]
 script = ExtResource("13_a8e7i")
-Functions = [ExtResource("14_ue0gx"), ExtResource("15_d1s18")]
+Functions = [ExtResource("12_daao2"), ExtResource("15_d1s18"), ExtResource("14_lsc1g"), ExtResource("15_kkack"), ExtResource("16_mb6gk")]
 GetterPrefab = ExtResource("14_7npgy")
 SetterPrefab = ExtResource("15_5tvch")
 
@@ -154,9 +157,9 @@ layout_mode = 3
 anchor_left = 0.76
 anchor_right = 1.0
 anchor_bottom = 0.373
-offset_left = -0.00012207
+offset_left = -32.0
 offset_top = 8.0
-offset_bottom = -7.70001
+offset_bottom = -7.69998
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("3_vtslo")
@@ -164,16 +167,22 @@ VariableControlPlaceholder = ExtResource("3_jx1hi")
 Container = NodePath("ScrollContainer/VBoxContainer")
 
 [node name="ColorRect" type="ColorRect" parent="UiControls/VariableControl"]
-layout_mode = 0
-offset_right = 384.0
-offset_bottom = 320.0
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 color = Color(0, 0, 0, 0.435294)
 
 [node name="ScrollContainer" type="ScrollContainer" parent="UiControls/VariableControl"]
-layout_mode = 0
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 offset_top = 32.0
-offset_right = 384.0
-offset_bottom = 320.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="VBoxContainer" type="VBoxContainer" parent="UiControls/VariableControl/ScrollContainer"]
 layout_mode = 2

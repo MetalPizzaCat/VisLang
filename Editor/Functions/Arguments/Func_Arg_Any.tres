@@ -1,0 +1,10 @@
+[gd_resource type="Resource" load_steps=2 format=3 uid="uid://ddwn3h05q6wkm"]
+
+[ext_resource type="Script" path="res://Script/Function/FunctionInputInfo.cs" id="1_35guo"]
+
+[resource]
+script = ExtResource("1_35guo")
+InputName = "Value"
+InputType = 0
+IsArray = false
+TypeMatchingPermissions = 1

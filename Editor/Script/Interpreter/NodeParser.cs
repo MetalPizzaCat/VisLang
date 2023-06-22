@@ -7,6 +7,10 @@ public class NodeParser
 {
     private List<EditorVisNode> _parsedNodes = new();
 
+    /// <summary>
+    /// List of all nodes created during code parsing. This will not be used during execution and is meant to be used to allow referring to existing nodes
+    /// </summary>
+    /// <returns></returns>
     private List<VisLang.VisNode> _visNodes = new();
 
     private EditorVisNode _root;
@@ -20,7 +24,7 @@ public class NodeParser
         {
             if (input.Connection == null || input.Connection.OwningNode == null)
             {
-                inputs.Add(new VisLang.VariableGetConstNode() { Value = new VisLang.Value(input.InputType, false, input.Data) });
+                inputs.Add(new VisLang.VariableGetConstNode() { Value = new VisLang.Value(input.InputType, input.Data) });
                 continue;
             }
             // we will not generate executable functions that are used as input but we will have to connect them somehow
@@ -63,18 +67,21 @@ public class NodeParser
         }
         node.DebugData = root;
         node.Inputs = GenerateInputs(root);
-
+        // we record node at this moment because as we will traverse the tree further we need this node to exist to be able to reference it
+        _visNodes.Add(node);
         if (root.OutputExecNode != null && root.OutputExecNode.Connection != null && root.OutputExecNode.Connection.OwningNode != null)
         {
             VisLang.VisNode? next = GenerateExecutionTree(root.OutputExecNode.Connection.OwningNode);
-            if (next != null)
+            if (next is VisLang.ExecutionNode exec)
             {
-                // any node that is connected to exec line is by definition an exec node
-                // right????
-                // TODO: Actually check if i'm right >_>
-                node.DefaultNext = (next as VisLang.ExecutionNode);
+                node.DefaultNext = exec;
+            }
+            else
+            {
+                throw new VisLangVisualParserException("Attempted to parse the execution tree but found node with invalid connection");
             }
         }
+
         return node;
     }
 
@@ -88,6 +95,9 @@ public class NodeParser
         }
         node.DebugData = root;
         node.Inputs = GenerateInputs(root);
+        // record this node so any other code that references this node in editor
+        // will use it instead of duplicating the data tree
+        _visNodes.Add(node);
         return node;
     }
 

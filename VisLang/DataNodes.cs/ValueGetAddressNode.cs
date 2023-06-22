@@ -23,6 +23,6 @@ public class ValueGetAddressNode : DataNode
         {
             return null;
         }
-        return new Value(ValueType.Address, false, (uint)(Inputs.FirstOrDefault().GetValue().Address ?? 0));
+        return new Value(ValueType.Address, (uint)(Inputs.FirstOrDefault().GetValue().Address ?? 0));
     }
 }

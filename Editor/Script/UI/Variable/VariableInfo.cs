@@ -19,6 +19,7 @@ public class VariableInfo
 
     private string _name;
     private VisLang.ValueType _type;
+    private bool _array;
 
     public string Name
     {

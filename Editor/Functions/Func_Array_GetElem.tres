@@ -1,0 +1,16 @@
+[gd_resource type="Resource" load_steps=4 format=3 uid="uid://b4ca7uc8mn75i"]
+
+[ext_resource type="Resource" uid="uid://ef36r8dt8b7w" path="res://Functions/Arguments/Func_Arg_Array.tres" id="1_7kueu"]
+[ext_resource type="Resource" uid="uid://b32ijxen53jk" path="res://Functions/Arguments/Func_Arg_Array_Index.tres" id="2_vaa0p"]
+[ext_resource type="Script" path="res://Script/Function/FunctionInfo.cs" id="3_wtm1i"]
+
+[resource]
+script = ExtResource("3_wtm1i")
+FunctionName = "Get element at"
+FunctionDescription = "Appends a value to array"
+IsExecutable = false
+Inputs = [ExtResource("1_7kueu"), ExtResource("2_vaa0p")]
+_output = 0
+_isOutputTypeKnown = false
+HasOutput = true
+NodeType = "VisLang.ArrayGetElementAtNode"

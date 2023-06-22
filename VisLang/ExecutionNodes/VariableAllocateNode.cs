@@ -28,6 +28,6 @@ public class VariableAllocateNode : ExecutionNode
 
     public override Value? GetValue()
     {
-        return _createdVariableAddress.HasValue ? new Value(ValueType.Address, false, _createdVariableAddress) : null;
+        return _createdVariableAddress.HasValue ? new Value(ValueType.Address, _createdVariableAddress) : null;
     }
 }

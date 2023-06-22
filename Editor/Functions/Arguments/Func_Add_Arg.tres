@@ -5,4 +5,6 @@
 [resource]
 script = ExtResource("1_d6kb5")
 InputName = "Value"
-InputType = 2
+InputType = 3
+IsArray = false
+TypeMatchingPermissions = 0

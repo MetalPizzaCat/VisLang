@@ -15,7 +15,7 @@ public partial class FunctionInfo : Resource
     public string FunctionName { get; set; } = "Invalid node name :3";
 
     [Export(PropertyHint.MultilineText)]
-    public string FunctionDescription {get;set;} = "Never gonna give you up";
+    public string FunctionDescription { get; set; } = "Never gonna give you up";
 
     /// <summary>
     /// If true a special executable node prefab will be spawned 
@@ -30,12 +30,19 @@ public partial class FunctionInfo : Resource
     public Godot.Collections.Array<FunctionInputInfo> Inputs = new();
 
     [Export]
-    public VisLang.ValueType _output;
+    private VisLang.ValueType _output;
+
+    /// <summary>
+    /// If true output type is know and can be used during preprocessing stage checks
+    /// </summary>
+    [Export]
+    private bool _isOutputTypeKnown = true;
 
     [Export]
     public bool HasOutput { get; set; } = false;
 
     public VisLang.ValueType? OutputType => HasOutput ? _output : null;
+    public bool? IsOutputTypeKnown => HasOutput ? _isOutputTypeKnown : null;
 
     /// <summary>
     /// Typename of the node for creating nodes at runtime via reflection.
@@ -48,7 +55,7 @@ public partial class FunctionInfo : Resource
     {
     }
 
-    public FunctionInfo(string functionName, bool isExecutable, Array<FunctionInputInfo> inputs, string nodeType, bool hasOutput, VisLang.ValueType output = VisLang.ValueType.Bool)
+    public FunctionInfo(string functionName, bool isExecutable, Array<FunctionInputInfo> inputs, string nodeType, bool hasOutput, VisLang.ValueType output = VisLang.ValueType.Bool, bool outputTypeKnown = true)
     {
         FunctionName = functionName;
         IsExecutable = isExecutable;
@@ -56,5 +63,6 @@ public partial class FunctionInfo : Resource
         _output = output;
         HasOutput = hasOutput;
         NodeType = nodeType;
+        _isOutputTypeKnown = outputTypeKnown;
     }
 }

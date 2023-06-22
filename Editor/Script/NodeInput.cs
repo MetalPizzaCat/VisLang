@@ -15,7 +15,13 @@ public partial class NodeInput : Node2D
     [Export]
     public bool IsInput { get; set; } = true;
     [Export]
-    public bool AllowsAny { get; set; } = false;
+    public Sprite2D DefaultIcon { get; set; }
+    [Export]
+    public Sprite2D ArrayIcon { get; set; }
+
+
+    [Export]
+    public FunctionInputInfo.TypePermissions TypeMatchingPermissions { get; set; } = FunctionInputInfo.TypePermissions.SameTypeOnly;
 
     [ExportGroup("Input fields")]
     [Export]
@@ -24,6 +30,8 @@ public partial class NodeInput : Node2D
     public SpinBox NumberInput { get; set; }
     [Export]
     public CheckBox BoolInput { get; set; }
+    [Export]
+    public SpinBox IntInput { get; set; }
 
     public EditorVisNode? OwningNode { get; set; } = null;
 
@@ -41,18 +49,25 @@ public partial class NodeInput : Node2D
     }
 
     private VisLang.ValueType _inputType = VisLang.ValueType.Bool;
+    private bool _isArray = false;
 
     public VisLang.ValueType InputType
     {
         get => _inputType;
         set
         {
-            StringInput.Visible = value == VisLang.ValueType.String && IsInput;
-            NumberInput.Visible = value == VisLang.ValueType.Number && IsInput;
-            BoolInput.Visible = value == VisLang.ValueType.Bool && IsInput;
+            // inputs are not visible if it's not an input, but also invisible if it's an array since we don't provide a way to edit arrays via editor
+            // because that would be too annoying to add 
+            StringInput.Visible = value == VisLang.ValueType.String && IsInput && !IsArray;
+            NumberInput.Visible = value == VisLang.ValueType.Float && IsInput && !IsArray;
+            BoolInput.Visible = value == VisLang.ValueType.Bool && IsInput && !IsArray;
+            IntInput.Visible = value == VisLang.ValueType.Integer && IsInput && !IsArray;
             _inputType = value;
         }
     }
+
+    public bool IsArray => InputType == VisLang.ValueType.Array;
+
 
     /// <summary>
     /// Get current value stored in the input. Resulting value will depend on InputType
@@ -66,11 +81,14 @@ public partial class NodeInput : Node2D
             {
                 case VisLang.ValueType.Bool:
                     return BoolInput.ButtonPressed;
-                case VisLang.ValueType.Number:
+                case VisLang.ValueType.Float:
                     // using float because i said so >:(
                     return (float)NumberInput.Value;
                 case VisLang.ValueType.String:
                     return StringInput.Text;
+                case VisLang.ValueType.Integer:
+                    // godot uses double for spin box but int can't be double can it?
+                    return (int)IntInput.Value;
             }
             return 0;
         }
@@ -83,7 +101,11 @@ public partial class NodeInput : Node2D
 
     public bool IsValidTypeConnection(NodeInput other)
     {
-        return (other.InputType == InputType) || AllowsAny;
+        // check if types are known at design time and if they are ensure that they match
+        // if type can not be known at design time we allow the connection and make runtime deal with it
+        // if input does not care what type is passed into we also allow the connection and make it runtime's job to deal with errors  
+        return (other.InputType == InputType && other.IsArray == IsArray) ||
+         (TypeMatchingPermissions == FunctionInputInfo.TypePermissions.AllowAny || other.TypeMatchingPermissions == FunctionInputInfo.TypePermissions.AllowAny);
     }
 
     /// <summary>

@@ -1,0 +1,17 @@
+[gd_resource type="Resource" load_steps=5 format=3 uid="uid://dpc05ors8lkbo"]
+
+[ext_resource type="Resource" uid="uid://ef36r8dt8b7w" path="res://Functions/Arguments/Func_Arg_Array.tres" id="1_sr12k"]
+[ext_resource type="Resource" uid="uid://b32ijxen53jk" path="res://Functions/Arguments/Func_Arg_Array_Index.tres" id="2_byamq"]
+[ext_resource type="Resource" uid="uid://ddwn3h05q6wkm" path="res://Functions/Arguments/Func_Arg_Any.tres" id="3_t7cfi"]
+[ext_resource type="Script" path="res://Script/Function/FunctionInfo.cs" id="3_xvpqm"]
+
+[resource]
+script = ExtResource("3_xvpqm")
+FunctionName = "Set element at"
+FunctionDescription = "Sets value of the element at given index"
+IsExecutable = true
+Inputs = [ExtResource("1_sr12k"), ExtResource("2_byamq"), ExtResource("3_t7cfi")]
+_output = 0
+_isOutputArray = false
+HasOutput = false
+NodeType = "VisLang.ArraySetElementAtNode"

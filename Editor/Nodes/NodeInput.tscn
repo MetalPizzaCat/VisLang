@@ -1,14 +1,18 @@
-[gd_scene load_steps=3 format=3 uid="uid://osjihadr7boh"]
+[gd_scene load_steps=4 format=3 uid="uid://osjihadr7boh"]
 
 [ext_resource type="Script" path="res://Script/NodeInput.cs" id="1_gf17q"]
 [ext_resource type="Texture2D" uid="uid://bgqiirjom5845" path="res://Assets/data_connector.svg" id="2_yhm0m"]
+[ext_resource type="Texture2D" uid="uid://h8kent0a76vm" path="res://Assets/data_connector_array.svg" id="3_p0xju"]
 
-[node name="NodeInput" type="Node2D" node_paths=PackedStringArray("InputNameLabel", "StringInput", "NumberInput", "BoolInput")]
+[node name="NodeInput" type="Node2D" node_paths=PackedStringArray("InputNameLabel", "DefaultIcon", "ArrayIcon", "StringInput", "NumberInput", "BoolInput", "IntInput")]
 script = ExtResource("1_gf17q")
 InputNameLabel = NodePath("InputName")
+DefaultIcon = NodePath("IconDefault")
+ArrayIcon = NodePath("IconArray")
 StringInput = NodePath("ManualInputControls/StringInput")
 NumberInput = NodePath("ManualInputControls/NumberInput")
 BoolInput = NodePath("ManualInputControls/BoolInput")
+IntInput = NodePath("ManualInputControls/IntInput")
 
 [node name="Button" type="Button" parent="."]
 offset_left = -16.0
@@ -16,9 +20,15 @@ offset_top = -16.0
 offset_right = 16.0
 offset_bottom = 16.0
 
-[node name="Icon" type="Sprite2D" parent="."]
+[node name="IconDefault" type="Sprite2D" parent="."]
 scale = Vector2(0.360417, 0.360417)
 texture = ExtResource("2_yhm0m")
+
+[node name="IconArray" type="Sprite2D" parent="."]
+visible = false
+position = Vector2(-4.76837e-07, -4.76837e-07)
+scale = Vector2(0.580208, 0.580208)
+texture = ExtResource("3_p0xju")
 
 [node name="InputName" type="Label" parent="."]
 offset_left = -128.0
@@ -49,6 +59,17 @@ offset_top = -16.0
 offset_right = 128.0
 offset_bottom = 15.0
 step = 0.0
+allow_greater = true
+allow_lesser = true
+custom_arrow_step = 0.1
+
+[node name="IntInput" type="SpinBox" parent="ManualInputControls"]
+visible = false
+layout_mode = 0
+offset_left = 32.0
+offset_top = -16.0
+offset_right = 128.0
+offset_bottom = 15.0
 allow_greater = true
 allow_lesser = true
 custom_arrow_step = 0.1

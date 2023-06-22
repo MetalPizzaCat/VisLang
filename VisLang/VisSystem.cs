@@ -42,7 +42,7 @@ public class VisSystemMemory
 
     public uint AllocateValue(ValueType type, object? value = null)
     {
-        Memory.Add(_memoryCounter, new Value(type, _memoryCounter, false, value));
+        Memory.Add(_memoryCounter, new Value(type, _memoryCounter, value));
         _memoryCounter++;
         return _memoryCounter - 1;
     }

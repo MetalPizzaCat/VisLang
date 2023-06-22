@@ -10,6 +10,6 @@ public class PrintNode : ExecutionNode
     public override void Execute()
     {
         base.Execute();
-        Interpreter?.AddOutput(Inputs.FirstOrDefault()?.GetValue()?.AsString() ?? "Hello, blessed sigmar, the world drowns in memory leaks!");
+        Interpreter?.AddOutput(Inputs.FirstOrDefault()?.GetValue()?.TryAsString() ?? "Attempted to print value but value was null so instead you get this string :3");
     }
 }

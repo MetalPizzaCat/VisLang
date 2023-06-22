@@ -5,5 +5,5 @@
 [resource]
 script = ExtResource("1_w140f")
 InputName = "Text"
-InputType = 3
-AllowAnyType = true
+InputType = 4
+TypeMatchingPermissions = 1

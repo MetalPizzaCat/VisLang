@@ -7,6 +7,21 @@ using VisLang;
 [MonoCustomResourceRegistry.RegisteredType("FunctionInputInfo")]
 public partial class FunctionInputInfo : Resource
 {
+    /// <summary>
+    /// Type matching permissions for inputs
+    /// </summary>
+    public enum TypePermissions
+    {
+        /// <summary>
+        /// Input can only be of the same type and be an array(if IsArray is true) or not array(if IsArray is false)
+        /// </summary>
+        SameTypeOnly,
+        /// <summary>
+        /// Anything goes
+        /// </summary>
+        AllowAny
+    }
+
     public FunctionInputInfo()
     {
     }
@@ -17,15 +32,20 @@ public partial class FunctionInputInfo : Resource
         InputType = inputType;
     }
 
+    public FunctionInputInfo(VariableInfo info)
+    {
+        InputName = info.Name;
+        InputType = info.ValueType;
+    }
+
     [Export]
     public string InputName { get; set; } = "Default name";
 
     [Export]
     public VisLang.ValueType InputType { get; set; } = VisLang.ValueType.Bool;
-
     /// <summary>
     /// If true any type can be passed into this input and InputType will be ignored
     /// </summary>
     [Export]
-    public bool AllowAnyType { get; set; } = false;
+    public TypePermissions TypeMatchingPermissions { get; set; } = TypePermissions.SameTypeOnly;
 }
