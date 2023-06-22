@@ -11,6 +11,6 @@ FunctionDescription = "Appends a value to array"
 IsExecutable = true
 Inputs = [ExtResource("1_58wn7"), ExtResource("2_3sap3")]
 _output = 0
-_isOutputArray = false
+_isOutputTypeKnown = true
 HasOutput = false
 NodeType = "VisLang.ArrayAppendElement"

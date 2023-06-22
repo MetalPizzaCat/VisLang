@@ -10,6 +10,6 @@ FunctionDescription = "Prints a string into the output window"
 IsExecutable = true
 Inputs = [ExtResource("1_57xg5")]
 _output = 0
-_isOutputArray = false
+_isOutputTypeKnown = true
 HasOutput = false
 NodeType = "VisLang.PrintNode"

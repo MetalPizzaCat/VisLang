@@ -41,6 +41,9 @@ public partial class EditorVisNode : Node2D
     }
 
     [Export]
+    public CodeColorTheme? CodeTheme { get; set; }
+
+    [Export]
     public Button? MainButton { get; set; }
     [Export]
     public PackedScene? NodeInputPrefab { get; set; } = null;

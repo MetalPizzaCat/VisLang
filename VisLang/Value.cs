@@ -105,6 +105,12 @@ public class Value
                         throw new ValueTypeMismatchException($"Value type mismatch. Expected uint got {value.GetType()}");
                     }
                     break;
+                case ValueType.Array:
+                    if (value.GetType() != typeof(List<Value>))
+                    {
+                        throw new ValueTypeMismatchException($"Value type mismatch. Expected array got {value.GetType()}");
+                    }
+                    break;
             }
             _data = value;
         }

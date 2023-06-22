@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=3 uid="uid://ncyjciglhky1"]
+[gd_scene load_steps=24 format=3 uid="uid://ncyjciglhky1"]
 
 [ext_resource type="Script" path="res://Script/MainScene.cs" id="1_w4485"]
 [ext_resource type="Script" path="res://Script/UI/CanvasControl.cs" id="3_iy83l"]
@@ -10,6 +10,7 @@
 [ext_resource type="PackedScene" uid="uid://dd2ewu3al55co" path="res://Nodes/ExecNodeInput.tscn" id="7_ealpf"]
 [ext_resource type="PackedScene" uid="uid://bqtugitvy6nko" path="res://Nodes/vis_node_exectuable.tscn" id="7_xst2a"]
 [ext_resource type="Script" path="res://Script/MainScene/ConnectionManager.cs" id="8_ykfng"]
+[ext_resource type="Resource" uid="uid://dbhhner37tajl" path="res://Assets/DefaultCodeTheme.tres" id="9_1rk7r"]
 [ext_resource type="PackedScene" uid="uid://dpw6l4ftfkiy7" path="res://Nodes/connector_line.tscn" id="9_csoc2"]
 [ext_resource type="Script" path="res://Script/MainScene/CanvasUiControl.cs" id="10_2je7w"]
 [ext_resource type="PackedScene" uid="uid://cuw6xf1wlf0ag" path="res://UI/node_creation_menu.tscn" id="11_rgm21"]
@@ -79,6 +80,7 @@ metadata/_edit_use_anchors_ = true
 
 [node name="ConnectionManager" type="Node" parent="." node_paths=PackedStringArray("ConnectionPreview", "CanvasControl", "Canvas")]
 script = ExtResource("8_ykfng")
+Theme = ExtResource("9_1rk7r")
 ConnectorPrefab = ExtResource("9_csoc2")
 ConnectionPreview = NodePath("../NodeLayer/ConnectorLine")
 CanvasControl = NodePath("../Camera2D/Control")
@@ -98,6 +100,8 @@ SetterPrefab = ExtResource("15_5tvch")
 layer = 2
 follow_viewport_enabled = true
 
+[node name="ConnectorLine" parent="NodeLayer" instance=ExtResource("9_csoc2")]
+
 [node name="NodeInput" parent="NodeLayer" instance=ExtResource("7_ealpf")]
 position = Vector2(-544, -80)
 
@@ -107,8 +111,6 @@ offset_top = -40.0
 offset_right = 24.0
 offset_bottom = -14.0
 text = "Exec"
-
-[node name="ConnectorLine" parent="NodeLayer" instance=ExtResource("9_csoc2")]
 
 [node name="UiControls" type="CanvasLayer" parent="."]
 layer = 2

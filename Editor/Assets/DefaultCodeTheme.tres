@@ -1,0 +1,16 @@
+[gd_resource type="Resource" load_steps=2 format=3 uid="uid://dbhhner37tajl"]
+
+[ext_resource type="Script" path="res://Script/Nodes/CodeColorTheme.cs" id="1_3r481"]
+
+[resource]
+script = ExtResource("1_3r481")
+AnyColor = Color(0.176471, 0.176471, 0.176471, 1)
+BoolColor = Color(0.501961, 0, 0, 1)
+CharColor = Color(0.517647, 0, 0.521569, 1)
+IntegerColor = Color(0.164706, 0.654902, 0.301961, 1)
+FloatColor = Color(0.737255, 0.713726, 0.317647, 1)
+StringColor = Color(0, 0.65098, 0.745098, 1)
+AddressColor = Color(0, 0.0588235, 1, 1)
+ArrayColor = Color(1, 0.54902, 0, 1)
+FunctionColor = Color(0.172549, 0.890196, 0.14902, 1)
+ProcedureColor = Color(0.576471, 0.584314, 0.862745, 1)

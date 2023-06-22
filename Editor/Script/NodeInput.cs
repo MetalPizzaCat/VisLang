@@ -9,6 +9,9 @@ public partial class NodeInput : Node2D
 
     public delegate void SelectedEventHandler(NodeInput input);
     public event SelectedEventHandler? Selected;
+
+    [Export]
+    public CodeColorTheme? Theme { get; set; }
     [Export]
     public Label InputNameLabel { get; set; }
 
@@ -62,6 +65,11 @@ public partial class NodeInput : Node2D
             NumberInput.Visible = value == VisLang.ValueType.Float && IsInput && !IsArray;
             BoolInput.Visible = value == VisLang.ValueType.Bool && IsInput && !IsArray;
             IntInput.Visible = value == VisLang.ValueType.Integer && IsInput && !IsArray;
+            if (Theme != null)
+            {
+                DefaultIcon.SelfModulate = TypeMatchingPermissions == FunctionInputInfo.TypePermissions.AllowAny ? Theme.AnyColor : Theme.GetColorForType(value);
+                ArrayIcon.SelfModulate = TypeMatchingPermissions == FunctionInputInfo.TypePermissions.AllowAny ? Theme.AnyColor : Theme.GetColorForType(value);
+            }
             _inputType = value;
         }
     }

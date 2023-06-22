@@ -9,6 +9,15 @@ public partial class ConnectorLine : Node2D
     private Node2D? _anchorStart;
     private Node2D? _anchorEnd;
 
+    public Color Color
+    {
+        get => Modulate;
+        set
+        {
+            Modulate = value;
+        }
+    }
+
     public Vector2 Start
     {
         get => _anchorStart?.GlobalPosition ?? Line.Points[0];

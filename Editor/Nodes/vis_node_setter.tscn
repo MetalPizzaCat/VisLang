@@ -9,6 +9,7 @@ font_color = Color(0, 0, 0, 1)
 [node name="VisNodeSetter" node_paths=PackedStringArray("VariableNameLabel") instance=ExtResource("1_rtlte")]
 script = ExtResource("2_al5mc")
 VariableNameLabel = NodePath("VariableNameLabel")
+CodeTheme = null
 
 [node name="Label" parent="." index="3"]
 offset_left = -144.0

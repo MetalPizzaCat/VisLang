@@ -10,6 +10,8 @@ using System.Linq;
 public partial class ConnectionManager : Node
 {
     [Export]
+    public CodeColorTheme? Theme { get; set; }
+    [Export]
     public PackedScene? ConnectorPrefab { get; set; }
 
     [Export]
@@ -87,6 +89,8 @@ public partial class ConnectionManager : Node
                     input = node;
                 }
             }
+
+            ConnectionPreview.Color = (input.TypeMatchingPermissions == FunctionInputInfo.TypePermissions.AllowAny ? Theme?.AnyColor : Theme?.GetColorForType(input.InputType)) ?? new Color(1, 1, 1);
             IsPerformingConnection = true;
             SelectedInputConnector = input;
             ConnectionPreview.Start = input.GlobalPosition;
@@ -133,7 +137,7 @@ public partial class ConnectionManager : Node
     /// </summary>
     /// <param name="src">Start node</param>
     /// <param name="dst">End node</param>
-    private void CreateConnection(Node2D src, Node2D dst)
+    private void CreateConnection(Node2D src, Node2D dst, VisLang.ValueType? connectionValueType = null)
     {
         ConnectorLine? line = ConnectorPrefab?.InstantiateOrNull<ConnectorLine>();
         if (line == null)
@@ -145,6 +149,10 @@ public partial class ConnectionManager : Node
         line.End = dst.GlobalPosition;
         line.StartNode = src;
         line.EndNode = dst;
+        if (Theme != null)
+        {
+            line.Color = connectionValueType == null ? Theme.AnyColor : Theme.GetColorForType(connectionValueType.Value);
+        }
         _connections.Add(line);
         Canvas?.AddChild(line);
         IsPerformingConnection = false;
@@ -163,7 +171,7 @@ public partial class ConnectionManager : Node
         {
             return;
         }
-        CreateConnection(source, destination);
+        CreateConnection(source, destination, source.TypeMatchingPermissions == FunctionInputInfo.TypePermissions.AllowAny ? null : source.InputType);
         // we only tell destination what it's connected to because source can have as many connections as it wants
         destination.Connection = source;
     }
@@ -175,6 +183,8 @@ public partial class ConnectionManager : Node
             // we simply ignore possibility of connecting data to exec
             return;
         }
+        // Exec is white
+        ConnectionPreview.Color = new Color(1, 1, 1);
         if (IsPerformingConnection && SelectedExecConnector != null)
         {
             // we count is cancellation because this seems intuitive

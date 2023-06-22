@@ -12,6 +12,6 @@ FunctionDescription = "Sets value of the element at given index"
 IsExecutable = true
 Inputs = [ExtResource("1_sr12k"), ExtResource("2_byamq"), ExtResource("3_t7cfi")]
 _output = 0
-_isOutputArray = false
+_isOutputTypeKnown = true
 HasOutput = false
 NodeType = "VisLang.ArraySetElementAtNode"
