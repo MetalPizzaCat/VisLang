@@ -6,6 +6,10 @@ using System;
 /// </summary>
 public partial class NodeInput : Node2D
 {
+    public delegate void ConnectionCreatedEventHandler(NodeInput sender);
+    public delegate void ConnectionDestroyedEventHandler(NodeInput sender);
+    public event ConnectionCreatedEventHandler? ConnectionCreated;
+    public event ConnectionDestroyedEventHandler? ConnectionDestroyed;
 
     public delegate void SelectedEventHandler(NodeInput input);
     public event SelectedEventHandler? Selected;
@@ -38,10 +42,32 @@ public partial class NodeInput : Node2D
 
     public EditorVisNode? OwningNode { get; set; } = null;
 
+    private NodeInput? _connection = null;
     /// <summary>
     /// Other side of the connection node
     /// </summary>
-    public NodeInput? Connection { get; set; } = null;
+    public NodeInput? Connection
+    {
+        get => _connection;
+        set
+        {
+            NodeInput? old = _connection;
+            _connection = value;
+            // if was and now is not means connection destroyed 
+            if (old != null && _connection == null)
+            {
+                ConnectionDestroyed?.Invoke(this);
+            }
+            // if was not and now is means connection created
+            if (old == null && _connection != null)
+            {
+                ConnectionCreated?.Invoke(this);
+            }
+            UpdateInputsVisuals();
+        }
+    }
+
+    public bool IsManualInputVisible => !IsInputConnected;
 
     public bool IsInputConnected => Connection != null;
 
@@ -59,18 +85,8 @@ public partial class NodeInput : Node2D
         get => _inputType;
         set
         {
-            // inputs are not visible if it's not an input, but also invisible if it's an array since we don't provide a way to edit arrays via editor
-            // because that would be too annoying to add 
-            StringInput.Visible = value == VisLang.ValueType.String && IsInput && !IsArray;
-            NumberInput.Visible = value == VisLang.ValueType.Float && IsInput && !IsArray;
-            BoolInput.Visible = value == VisLang.ValueType.Bool && IsInput && !IsArray;
-            IntInput.Visible = value == VisLang.ValueType.Integer && IsInput && !IsArray;
-            if (Theme != null)
-            {
-                DefaultIcon.SelfModulate = TypeMatchingPermissions == FunctionInputInfo.TypePermissions.AllowAny ? Theme.AnyColor : Theme.GetColorForType(value);
-                ArrayIcon.SelfModulate = TypeMatchingPermissions == FunctionInputInfo.TypePermissions.AllowAny ? Theme.AnyColor : Theme.GetColorForType(value);
-            }
             _inputType = value;
+            UpdateInputsVisuals();
         }
     }
 
@@ -99,6 +115,24 @@ public partial class NodeInput : Node2D
                     return (int)IntInput.Value;
             }
             return 0;
+        }
+    }
+
+    /// <summary>
+    /// Updates visibility and colors for the input elements and type icon
+    /// </summary>
+    private void UpdateInputsVisuals()
+    {
+        // inputs are not visible if it's not an input, but also invisible if it's an array since we don't provide a way to edit arrays via editor
+        // because that would be too annoying to add 
+        StringInput.Visible = InputType == VisLang.ValueType.String && IsInput && !IsArray && IsManualInputVisible;
+        NumberInput.Visible = InputType == VisLang.ValueType.Float && IsInput && !IsArray && IsManualInputVisible;
+        BoolInput.Visible = InputType == VisLang.ValueType.Bool && IsInput && !IsArray && IsManualInputVisible;
+        IntInput.Visible = InputType == VisLang.ValueType.Integer && IsInput && !IsArray && IsManualInputVisible;
+        if (Theme != null)
+        {
+            DefaultIcon.SelfModulate = TypeMatchingPermissions == FunctionInputInfo.TypePermissions.AllowAny ? Theme.AnyColor : Theme.GetColorForType(InputType);
+            ArrayIcon.SelfModulate = TypeMatchingPermissions == FunctionInputInfo.TypePermissions.AllowAny ? Theme.AnyColor : Theme.GetColorForType(InputType);
         }
     }
 

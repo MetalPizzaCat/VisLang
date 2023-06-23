@@ -47,6 +47,11 @@ public class Value
     /// </summary>
     public ValueType ValueType { get; set; } = ValueType.Bool;
 
+    /// <summary>
+    /// Type of the value stored in the array(if array is typed)
+    /// </summary>
+    public ValueType? ArrayDataType { get; set; } = null;
+
     public bool IsArray => ValueType == ValueType.Array;
 
     /// <summary>
@@ -72,43 +77,43 @@ public class Value
                 case ValueType.Bool:
                     if (value.GetType() != typeof(bool))
                     {
-                        throw new ValueTypeMismatchException($"Value type mismatch. Expected bool got {value.GetType()}");
+                        throw new ValueTypeMismatchException($"Value type mismatch. Expected bool got {value.GetType()}", null);
                     }
                     break;
                 case ValueType.Char:
                     if (value.GetType() != typeof(char))
                     {
-                        throw new ValueTypeMismatchException($"Value type mismatch. Expected char got {value.GetType()}");
+                        throw new ValueTypeMismatchException($"Value type mismatch. Expected char got {value.GetType()}", null);
                     }
                     break;
                 case ValueType.Integer:
                     if (value.GetType() != typeof(float))
                     {
-                        throw new ValueTypeMismatchException($"Value type mismatch. Expected int got {value.GetType()}");
+                        throw new ValueTypeMismatchException($"Value type mismatch. Expected int got {value.GetType()}", null);
                     }
                     break;
                 case ValueType.Float:
                     if (value.GetType() != typeof(float))
                     {
-                        throw new ValueTypeMismatchException($"Value type mismatch. Expected float got {value.GetType()}");
+                        throw new ValueTypeMismatchException($"Value type mismatch. Expected float got {value.GetType()}", null);
                     }
                     break;
                 case ValueType.String:
                     if (value.GetType() != typeof(string))
                     {
-                        throw new ValueTypeMismatchException($"Value type mismatch. Expected string got {value.GetType()}");
+                        throw new ValueTypeMismatchException($"Value type mismatch. Expected string got {value.GetType()}", null);
                     }
                     break;
                 case ValueType.Address:
                     if (value.GetType() != typeof(uint))
                     {
-                        throw new ValueTypeMismatchException($"Value type mismatch. Expected uint got {value.GetType()}");
+                        throw new ValueTypeMismatchException($"Value type mismatch. Expected uint got {value.GetType()}", null);
                     }
                     break;
                 case ValueType.Array:
                     if (value.GetType() != typeof(List<Value>))
                     {
-                        throw new ValueTypeMismatchException($"Value type mismatch. Expected array got {value.GetType()}");
+                        throw new ValueTypeMismatchException($"Value type mismatch. Expected array got {value.GetType()}", null);
                     }
                     break;
             }
@@ -122,7 +127,7 @@ public class Value
     /// <param name="address"> Address of the variable in the memory</param>
     /// <param name="isArray">If true value will be an array that uses List</param>
     /// <param name="data">Possible init data or null if no data is needed.</param>
-    public Value(ValueType variableType, uint address, object? data)
+    public Value(ValueType variableType, uint address, object? data, ValueType? arrayDataType = null)
     {
         ValueType = variableType;
         if (IsArray)
@@ -137,6 +142,7 @@ public class Value
         {
             _data = data;
         }
+        ArrayDataType = arrayDataType;
         Address = address;
     }
 
@@ -146,7 +152,8 @@ public class Value
     /// <param name="variableType">What data does this value store</param>
     /// <param name="isArray">If true value will be an array that uses List</param>
     /// <param name="data">Possible init data or null if no data is needed.</param>
-    public Value(ValueType variableType, object? data)
+    /// <param name="arrayDataType">Type of the data stored in the array or null if array accepts any type</param>
+    public Value(ValueType variableType, object? data, ValueType? arrayDataType = null)
     {
         ValueType = variableType;
         if (IsArray && data == null)
@@ -161,6 +168,7 @@ public class Value
         {
             _data = data;
         }
+        ArrayDataType = arrayDataType;
         Address = null;
     }
 
@@ -206,9 +214,9 @@ public class Value
         {
             throw new NullReferenceException("Value data is null");
         }
-        if (IsArray)
+        if (IsArray && _data is List<Value> arr)
         {
-            return $"[{string.Join(',', (_data as List<Value>).Select(i => i.IsArray ? i.TryAsString() : i.Data))}]";
+            return $"[{string.Join(',', arr.Select(i => i.IsArray ? i.TryAsString() : i.Data))}]";
         }
         return _data?.ToString() ?? "you some how managed to bypass null check in TryAsString(), fascinating. You get a cookie :3";
     }
@@ -221,7 +229,7 @@ public class Value
         }
         if (ValueType != ValueType.Integer)
         {
-            throw new ValueTypeMismatchException($"Expected int got {ValueType.ToString()}");
+            throw new ValueTypeMismatchException($"Expected int got {ValueType.ToString()}", null);
         }
         return ((int?)_data).Value;
     }
@@ -234,7 +242,7 @@ public class Value
         }
         if (ValueType != ValueType.Bool)
         {
-            throw new ValueTypeMismatchException($"Expected bool got {ValueType.ToString()}");
+            throw new ValueTypeMismatchException($"Expected bool got {ValueType.ToString()}", null);
         }
         return ((bool?)_data).Value;
     }

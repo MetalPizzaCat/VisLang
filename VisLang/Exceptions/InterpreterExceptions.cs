@@ -1,11 +1,27 @@
 namespace VisLang.Interpreter;
 
 [System.Serializable]
-public class MissingVariableException : System.Exception
+public class InterpreterException : System.Exception
 {
-    public MissingVariableException() { }
-    public MissingVariableException(string message) : base(message) { }
-    public MissingVariableException(string message, System.Exception inner) : base(message, inner) { }
+    protected VisNode? ExceptionSourceNode;
+    /// <summary>
+    /// Creates a new exception
+    /// </summary>
+    /// <param name="message">Message of the exception</param>
+    /// <param name="node">Node that caused this exception to occur</param>
+    /// <returns></returns>
+    public InterpreterException(string message, VisNode? node) : base(message)
+    {
+        ExceptionSourceNode = node;
+    }
+    protected InterpreterException(
+        System.Runtime.Serialization.SerializationInfo info,
+        System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
+}
+[System.Serializable]
+public class MissingVariableException : InterpreterException
+{
+    public MissingVariableException(string message, VisNode? node) : base(message, node) { }
     protected MissingVariableException(
         System.Runtime.Serialization.SerializationInfo info,
         System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
@@ -13,11 +29,9 @@ public class MissingVariableException : System.Exception
 
 
 [System.Serializable]
-public class ValueTypeMismatchException : System.Exception
+public class ValueTypeMismatchException : InterpreterException
 {
-    public ValueTypeMismatchException() { }
-    public ValueTypeMismatchException(string message) : base(message) { }
-    public ValueTypeMismatchException(string message, System.Exception inner) : base(message, inner) { }
+    public ValueTypeMismatchException(string message, VisNode? node) : base(message, node) { }
     protected ValueTypeMismatchException(
         System.Runtime.Serialization.SerializationInfo info,
         System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
