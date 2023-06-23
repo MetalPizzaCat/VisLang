@@ -78,7 +78,9 @@ public partial class NodeInput : Node2D
     }
 
     private VisLang.ValueType _inputType = VisLang.ValueType.Bool;
-    private bool _isArray = false;
+    private VisLang.ValueType? _arrayDataType = null;
+    [Export]
+    public bool IsArrayTypeDependent { get; set; } = false;
 
     public VisLang.ValueType InputType
     {
@@ -86,6 +88,16 @@ public partial class NodeInput : Node2D
         set
         {
             _inputType = value;
+            UpdateInputsVisuals();
+        }
+    }
+
+    public VisLang.ValueType? ArrayDataType
+    {
+        get => _arrayDataType;
+        set
+        {
+            _arrayDataType = value;
             UpdateInputsVisuals();
         }
     }
@@ -131,8 +143,18 @@ public partial class NodeInput : Node2D
         IntInput.Visible = InputType == VisLang.ValueType.Integer && IsInput && !IsArray && IsManualInputVisible;
         if (Theme != null)
         {
-            DefaultIcon.SelfModulate = TypeMatchingPermissions == FunctionInputInfo.TypePermissions.AllowAny ? Theme.AnyColor : Theme.GetColorForType(InputType);
-            ArrayIcon.SelfModulate = TypeMatchingPermissions == FunctionInputInfo.TypePermissions.AllowAny ? Theme.AnyColor : Theme.GetColorForType(InputType);
+            if (IsArray)
+            {
+                ArrayIcon.SelfModulate = TypeMatchingPermissions == FunctionInputInfo.TypePermissions.AllowAny ? Theme.AnyColor : Theme.GetColorForType(ArrayDataType ?? VisLang.ValueType.Array);
+                ArrayIcon.Visible = true;
+                DefaultIcon.Visible = false;
+            }
+            else
+            {
+                DefaultIcon.SelfModulate = TypeMatchingPermissions == FunctionInputInfo.TypePermissions.AllowAny ? Theme.AnyColor : Theme.GetColorForType(InputType);
+                DefaultIcon.Visible = true;
+                ArrayIcon.Visible = false;
+            }
         }
     }
 
@@ -143,15 +165,26 @@ public partial class NodeInput : Node2D
 
     public bool IsValidTypeConnection(NodeInput other)
     {
+        bool validArrayConnection = true;
+        // if both are arrays we have to check if they are compatible based on the stored type
+        if (other.IsArray == IsArray)
+        {
+            // valid is 
+            // both are arrays but accept any *
+            // destination accepts any 
+            // both have matching types *
+            // * <- can be check by comparison of the nullable since it will success if either both null or both are not and have same data
+            validArrayConnection = ArrayDataType == null ||  ArrayDataType == other.ArrayDataType;
+        }
         // check if types are known at design time and if they are ensure that they match
         // if type can not be known at design time we allow the connection and make runtime deal with it
         // if input does not care what type is passed into we also allow the connection and make it runtime's job to deal with errors  
-        return (other.InputType == InputType && other.IsArray == IsArray) ||
+        return (other.InputType == InputType && validArrayConnection) ||
          (TypeMatchingPermissions == FunctionInputInfo.TypePermissions.AllowAny || other.TypeMatchingPermissions == FunctionInputInfo.TypePermissions.AllowAny);
     }
 
     /// <summary>
-    /// Can this node connect to other node
+    /// Can this node connect to other node. Check should be called on destination and have source as the argument(call from right pass left)
     /// </summary>
     public bool CanConnect(NodeInput other)
     {

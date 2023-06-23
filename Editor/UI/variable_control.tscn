@@ -3,12 +3,13 @@
 [ext_resource type="Script" path="res://Script/UI/VariableControl.cs" id="1_yt57h"]
 [ext_resource type="Texture2D" uid="uid://cwgvbucmd5jax" path="res://Assets/UI/warning.svg" id="2_x3pui"]
 
-[node name="VariableControl" type="HBoxContainer" node_paths=PackedStringArray("NameEdit", "TypeOptionButton", "ContextMenu", "ErrorDisplayControl")]
+[node name="VariableControl" type="HBoxContainer" node_paths=PackedStringArray("NameEdit", "TypeOptionButton", "ArrayTypeOptionButton", "ContextMenu", "ErrorDisplayControl")]
 offset_right = 332.0
 offset_bottom = 31.0
 script = ExtResource("1_yt57h")
 NameEdit = NodePath("LineEdit")
-TypeOptionButton = NodePath("OptionButton")
+TypeOptionButton = NodePath("BaseTypeOptionButton")
+ArrayTypeOptionButton = NodePath("ArrayTypeOptionButton")
 ContextMenu = NodePath("PopupMenu")
 ErrorDisplayControl = NodePath("WarningLabel")
 
@@ -40,7 +41,11 @@ placeholder_text = "Variable name"
 context_menu_enabled = false
 clear_button_enabled = true
 
-[node name="OptionButton" type="OptionButton" parent="."]
+[node name="BaseTypeOptionButton" type="OptionButton" parent="."]
+layout_mode = 2
+
+[node name="ArrayTypeOptionButton" type="OptionButton" parent="."]
+visible = false
 layout_mode = 2
 
 [node name="DeleteVariableButton" type="Button" parent="."]
@@ -69,5 +74,6 @@ item_5/id = 5
 [connection signal="pressed" from="GetButton2" to="." method="ShowContextMenu"]
 [connection signal="pressed" from="SetButton" to="." method="CreateSetter"]
 [connection signal="text_changed" from="LineEdit" to="." method="ChangeName"]
-[connection signal="item_selected" from="OptionButton" to="." method="SelectType"]
+[connection signal="item_selected" from="BaseTypeOptionButton" to="." method="SelectType"]
+[connection signal="item_selected" from="ArrayTypeOptionButton" to="." method="SetArrayType"]
 [connection signal="index_pressed" from="PopupMenu" to="." method="ContextMenuItemSelected"]

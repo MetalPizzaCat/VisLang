@@ -5,20 +5,25 @@ public class VariableInfo
 {
     public delegate void NameChangedEventHandler(VariableInfo? sender, string oldName, string newName);
     public delegate void TypeChangedEventHandler(VariableInfo? info, VisLang.ValueType oldType, VisLang.ValueType newType);
+    public delegate void ArrayDataTypeChangedEventHandler(VariableInfo? info, VisLang.ValueType? oldType, VisLang.ValueType? newType);
 
     /// <summary>
     /// Called before name change is applied
     /// </summary>
     public event NameChangedEventHandler? NameChanged;
     public event TypeChangedEventHandler? TypeChanged;
-    public VariableInfo(string name, VisLang.ValueType valueType)
+    public event ArrayDataTypeChangedEventHandler? ArrayDataTypeChanged;
+    public VariableInfo(string name, VisLang.ValueType valueType, VisLang.ValueType? arrayDataType)
     {
         _name = name;
         _type = valueType;
+        _arrayDataType = arrayDataType;
     }
 
     private string _name;
     private VisLang.ValueType _type;
+
+    private VisLang.ValueType? _arrayDataType;
     private bool _array;
 
     public string Name
@@ -38,6 +43,16 @@ public class VariableInfo
         {
             TypeChanged?.Invoke(this, _type, value);
             _type = value;
+        }
+    }
+
+    public VisLang.ValueType? ArrayDataType
+    {
+        get => _arrayDataType;
+        set
+        {
+            ArrayDataTypeChanged?.Invoke(this, _arrayDataType, value);
+            _arrayDataType = value;
         }
     }
 }

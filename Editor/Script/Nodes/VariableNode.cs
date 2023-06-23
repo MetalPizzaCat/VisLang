@@ -38,6 +38,7 @@ public partial class VariableNode : EditorVisNode
         }
         info.NameChanged += VariableNameChanged;
         info.TypeChanged += VariableTypeChanged;
+        info.ArrayDataTypeChanged += VariableArrayTypeChanged;
     }
 
     private void VariableNameChanged(VariableInfo? sender, string oldName, string newName)
@@ -47,7 +48,16 @@ public partial class VariableNode : EditorVisNode
 
     private void VariableTypeChanged(VariableInfo? sender, VisLang.ValueType oldType, VisLang.ValueType newType)
     {
-        FunctionInfo? info = GetFunctionInfo(new VariableInfo(Info.Name, newType));
+        FunctionInfo? info = GetFunctionInfo(new VariableInfo(Info.Name, newType, Info.ArrayDataType));
+        if (info != null)
+        {
+            GenerateFunction(info);
+        }
+    }
+
+    private void VariableArrayTypeChanged(VariableInfo? sender, VisLang.ValueType? oldType, VisLang.ValueType? newType)
+    {
+        FunctionInfo? info = GetFunctionInfo(new VariableInfo(Info.Name, Info.ValueType, newType));
         if (info != null)
         {
             GenerateFunction(info);

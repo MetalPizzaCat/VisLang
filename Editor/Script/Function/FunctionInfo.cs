@@ -11,6 +11,7 @@ using Godot.Collections;
 public partial class FunctionInfo : Resource
 {
 
+
     [Export]
     public string FunctionName { get; set; } = "Invalid node name :3";
 
@@ -24,11 +25,18 @@ public partial class FunctionInfo : Resource
     public bool IsExecutable { get; set; } = false;
 
     /// <summary>
+    /// If true all inputs marked as "ArrayTypeDependent" will have have their value type changed based on the type of the connected array
+    /// </summary>
+    [Export]
+    public bool IsArrayTypeDependent { get; set; } = false;
+
+    /// <summary>
     /// Information about all of the function arguments. Using additional class and Godot array due to a bug with c# dictionaries in godot(they don't work :3)
     /// </summary>
     [Export]
     public Godot.Collections.Array<FunctionInputInfo> Inputs = new();
 
+    [ExportGroup("Output")]
     [Export]
     private VisLang.ValueType _output;
 
@@ -40,9 +48,17 @@ public partial class FunctionInfo : Resource
 
     [Export]
     public bool HasOutput { get; set; } = false;
+    [ExportSubgroup("Array")]
+    [Export]
+    private bool _hasOutputArrayType = false;
+    [Export]
+    public VisLang.ValueType _outputArrayType = VisLang.ValueType.Bool;
+
 
     public VisLang.ValueType? OutputType => HasOutput ? _output : null;
     public bool? IsOutputTypeKnown => HasOutput ? _isOutputTypeKnown : null;
+    public bool HasOutputTypeArrayType => _hasOutputArrayType;
+    public VisLang.ValueType? OutputArrayType => HasOutput && _hasOutputArrayType ? _outputArrayType : null;
 
     /// <summary>
     /// Typename of the node for creating nodes at runtime via reflection.
@@ -55,7 +71,18 @@ public partial class FunctionInfo : Resource
     {
     }
 
-    public FunctionInfo(string functionName, bool isExecutable, Array<FunctionInputInfo> inputs, string nodeType, bool hasOutput, VisLang.ValueType output = VisLang.ValueType.Bool, bool outputTypeKnown = true)
+    public FunctionInfo
+    (
+        string functionName,
+        bool isExecutable,
+        Array<FunctionInputInfo> inputs,
+        string nodeType,
+        bool hasOutput,
+        VisLang.ValueType output = VisLang.ValueType.Bool,
+        bool outputTypeKnown = true,
+        bool hasOutputTypeArrayType = false,
+        VisLang.ValueType outputArrayType = VisLang.ValueType.Bool
+    )
     {
         FunctionName = functionName;
         IsExecutable = isExecutable;
@@ -64,5 +91,7 @@ public partial class FunctionInfo : Resource
         HasOutput = hasOutput;
         NodeType = nodeType;
         _isOutputTypeKnown = outputTypeKnown;
+        _hasOutputArrayType = hasOutputTypeArrayType;
+        _outputArrayType = outputArrayType;
     }
 }
