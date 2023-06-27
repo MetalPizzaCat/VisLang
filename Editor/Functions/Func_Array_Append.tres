@@ -1,16 +1,18 @@
-[gd_resource type="Resource" load_steps=4 format=3 uid="uid://l1eetdpg8ut5"]
+[gd_resource type="Resource" load_steps=3 format=3 uid="uid://l1eetdpg8ut5"]
 
-[ext_resource type="Resource" uid="uid://ef36r8dt8b7w" path="res://Functions/Arguments/Func_Arg_Array.tres" id="1_58wn7"]
 [ext_resource type="Script" path="res://Script/Function/FunctionInfo.cs" id="1_ge8mp"]
-[ext_resource type="Resource" uid="uid://ddwn3h05q6wkm" path="res://Functions/Arguments/Func_Arg_Any.tres" id="2_3sap3"]
+[ext_resource type="Resource" uid="uid://cf7eah7fgi0i2" path="res://Functions/Arguments/Func_Arg_Any_Arr.tres" id="2_p73ex"]
 
 [resource]
 script = ExtResource("1_ge8mp")
 FunctionName = "Append to array"
 FunctionDescription = "Appends a value to array"
 IsExecutable = true
-Inputs = [ExtResource("1_58wn7"), ExtResource("2_3sap3")]
+IsArrayTypeDependent = true
+Inputs = [ExtResource("2_p73ex")]
 _output = 0
 _isOutputTypeKnown = true
 HasOutput = false
+_hasOutputArrayType = false
+_outputArrayType = 0
 NodeType = "VisLang.ArrayAppendElement"

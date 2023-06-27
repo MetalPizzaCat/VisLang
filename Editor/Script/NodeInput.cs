@@ -6,7 +6,7 @@ using System;
 /// </summary>
 public partial class NodeInput : Node2D
 {
-    public delegate void ConnectionCreatedEventHandler(NodeInput sender);
+    public delegate void ConnectionCreatedEventHandler(NodeInput sender, NodeInput other);
     public delegate void ConnectionDestroyedEventHandler(NodeInput sender);
     public event ConnectionCreatedEventHandler? ConnectionCreated;
     public event ConnectionDestroyedEventHandler? ConnectionDestroyed;
@@ -61,7 +61,7 @@ public partial class NodeInput : Node2D
             // if was not and now is means connection created
             if (old == null && _connection != null)
             {
-                ConnectionCreated?.Invoke(this);
+                ConnectionCreated?.Invoke(this, _connection);
             }
             UpdateInputsVisuals();
         }
@@ -79,6 +79,9 @@ public partial class NodeInput : Node2D
 
     private VisLang.ValueType _inputType = VisLang.ValueType.Bool;
     private VisLang.ValueType? _arrayDataType = null;
+    /// <summary>
+    /// If true given input should change it's type based on parent node array type
+    /// </summary>
     [Export]
     public bool IsArrayTypeDependent { get; set; } = false;
 
@@ -92,6 +95,10 @@ public partial class NodeInput : Node2D
         }
     }
 
+    /// <summary>
+    /// Data type of the typed array. Only applies if InputType is Array
+    /// </summary>
+    /// <value></value>
     public VisLang.ValueType? ArrayDataType
     {
         get => _arrayDataType;
@@ -102,6 +109,9 @@ public partial class NodeInput : Node2D
         }
     }
 
+    /// <summary>
+    /// True if base type of the input is an array
+    /// </summary>
     public bool IsArray => InputType == VisLang.ValueType.Array;
 
 
@@ -174,7 +184,7 @@ public partial class NodeInput : Node2D
             // destination accepts any 
             // both have matching types *
             // * <- can be check by comparison of the nullable since it will success if either both null or both are not and have same data
-            validArrayConnection = ArrayDataType == null ||  ArrayDataType == other.ArrayDataType;
+            validArrayConnection = ArrayDataType == null || ArrayDataType == other.ArrayDataType;
         }
         // check if types are known at design time and if they are ensure that they match
         // if type can not be known at design time we allow the connection and make runtime deal with it

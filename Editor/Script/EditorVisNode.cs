@@ -126,6 +126,7 @@ public partial class EditorVisNode : Node2D
         input.OwningNode = this;
         input.InputName = argument.InputName;
         input.TypeMatchingPermissions = argument.TypeMatchingPermissions;
+        input.IsArrayTypeDependent = argument.IsArrayTypeDependent;
         input.InputType = argument.InputType;
         input.ArrayDataType = argument.HasArrayType ? argument.ArrayDataType : null;
         input.Selected += (NodeInput input) => { InputNodeSelected?.Invoke(input); };

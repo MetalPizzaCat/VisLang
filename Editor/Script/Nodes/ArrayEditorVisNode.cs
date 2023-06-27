@@ -6,7 +6,7 @@ using Godot;
 /// </summary>
 public partial class ArrayEditorVisNode : EditorVisNode
 {
-    protected NodeInput ArrayInput;
+    protected NodeInput? ArrayInput;
     protected override void GenerateInputs(float inputNodeVisualOffset, FunctionInfo info)
     {
         // for nodes that depend on array type we manually generate additional input that will be the array input
@@ -26,7 +26,12 @@ public partial class ArrayEditorVisNode : EditorVisNode
         base.GenerateInputs(InputNodeOffsetStep + inputNodeVisualOffset, info);
     }
 
-    private void ArrayInputConnected(NodeInput sender)
+    /// <summary>
+    /// Update array type of all inputs that depend on the connected array type
+    /// </summary>
+    /// <param name="sender">Node that was connected to</param>
+    /// <param name="other">Node that got connected to the sender node. Source node</param>
+    private void ArrayInputConnected(NodeInput sender, NodeInput other)
     {
         foreach (NodeInput input in Inputs)
         {
@@ -36,11 +41,11 @@ public partial class ArrayEditorVisNode : EditorVisNode
             }
             if (input.IsArray)
             {
-                input.ArrayDataType = sender.ArrayDataType ?? VisLang.ValueType.Bool;
+                input.ArrayDataType = other.ArrayDataType ?? VisLang.ValueType.Bool;
             }
             else
             {
-                input.InputType = sender.ArrayDataType ?? VisLang.ValueType.Bool;
+                input.InputType = other.ArrayDataType ?? VisLang.ValueType.Bool;
             }
         }
     }

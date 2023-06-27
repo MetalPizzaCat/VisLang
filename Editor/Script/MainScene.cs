@@ -39,11 +39,16 @@ public partial class MainScene : Node2D
     [ExportGroup("Runtime creation")]
     [Export]
     public CanvasControl? CanvasControl { get; set; }
-    [ExportSubgroup("Prefabs")]
+    [ExportSubgroup("Base Prefabs")]
     [Export]
     public PackedScene? VisNodePrefab { get; set; }
     [Export]
     public PackedScene? ExecNodePrefab { get; set; }
+    [ExportSubgroup("Array Prefabs")]
+    [Export]
+    public PackedScene? VisNodeArrayPrefab { get; set; }
+    [Export]
+    public PackedScene? ExecNodeArrayPrefab { get; set; }
 
     [ExportGroup("System output")]
     [Export]
@@ -143,14 +148,29 @@ public partial class MainScene : Node2D
     private void CreateNode(FunctionInfo info)
     {
         EditorVisNode? node = null;
-        if (info.IsExecutable)
+        if (info.IsArrayTypeDependent)
         {
-            node = ExecNodePrefab?.InstantiateOrNull<EditorVisNode>();
+            if (info.IsExecutable)
+            {
+                node = ExecNodeArrayPrefab?.InstantiateOrNull<ArrayEditorVisNode>();
+            }
+            else
+            {
+                node = VisNodeArrayPrefab?.InstantiateOrNull<ArrayEditorVisNode>();
+            }
         }
         else
         {
-            node = VisNodePrefab?.InstantiateOrNull<EditorVisNode>();
+            if (info.IsExecutable)
+            {
+                node = ExecNodePrefab?.InstantiateOrNull<EditorVisNode>();
+            }
+            else
+            {
+                node = VisNodePrefab?.InstantiateOrNull<EditorVisNode>();
+            }
         }
+
 
         if (node == null)
         {

@@ -58,7 +58,7 @@ public partial class FunctionInputInfo : Resource
     /// <value></value>
     [Export]
     public bool IsArrayTypeDependent { get; set; } = false;
-
+    [ExportSubgroup("For inputs of array type")]
     [Export]
     public bool HasArrayType { get; set; } = false;
     [Export]
