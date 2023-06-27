@@ -6,10 +6,15 @@ using System;
 /// </summary>
 public partial class NodeInput : Node2D
 {
+    public delegate void DestroyedEventHandler(NodeInput sender);
     public delegate void ConnectionCreatedEventHandler(NodeInput sender, NodeInput other);
     public delegate void ConnectionDestroyedEventHandler(NodeInput sender);
     public event ConnectionCreatedEventHandler? ConnectionCreated;
     public event ConnectionDestroyedEventHandler? ConnectionDestroyed;
+    /// <summary>
+    /// Called when node is being destroyed
+    /// </summary>
+    public event DestroyedEventHandler? Destroyed;
 
     public delegate void SelectedEventHandler(NodeInput input);
     public event SelectedEventHandler? Selected;
@@ -25,6 +30,8 @@ public partial class NodeInput : Node2D
     public Sprite2D DefaultIcon { get; set; }
     [Export]
     public Sprite2D ArrayIcon { get; set; }
+    [Export]
+    public Sprite2D ErrorIcon { get; set; }
 
 
     [Export]
@@ -43,6 +50,20 @@ public partial class NodeInput : Node2D
     public EditorVisNode? OwningNode { get; set; } = null;
 
     private NodeInput? _connection = null;
+
+    private bool _valid = true;
+
+    public bool Valid
+    {
+        get => _valid;
+        set
+        {
+            _valid = value;
+            ErrorIcon.Visible = !value;
+        }
+    }
+
+
     /// <summary>
     /// Other side of the connection node
     /// </summary>
@@ -67,7 +88,7 @@ public partial class NodeInput : Node2D
         }
     }
 
-    public bool IsManualInputVisible => !IsInputConnected;
+    public bool IsManualInputVisible => !IsInputConnected && IsInput && !IsArray && Valid;
 
     public bool IsInputConnected => Connection != null;
 
@@ -147,10 +168,10 @@ public partial class NodeInput : Node2D
     {
         // inputs are not visible if it's not an input, but also invisible if it's an array since we don't provide a way to edit arrays via editor
         // because that would be too annoying to add 
-        StringInput.Visible = InputType == VisLang.ValueType.String && IsInput && !IsArray && IsManualInputVisible;
-        NumberInput.Visible = InputType == VisLang.ValueType.Float && IsInput && !IsArray && IsManualInputVisible;
-        BoolInput.Visible = InputType == VisLang.ValueType.Bool && IsInput && !IsArray && IsManualInputVisible;
-        IntInput.Visible = InputType == VisLang.ValueType.Integer && IsInput && !IsArray && IsManualInputVisible;
+        StringInput.Visible = InputType == VisLang.ValueType.String && IsManualInputVisible;
+        NumberInput.Visible = InputType == VisLang.ValueType.Float && IsManualInputVisible;
+        BoolInput.Visible = InputType == VisLang.ValueType.Bool && IsManualInputVisible;
+        IntInput.Visible = InputType == VisLang.ValueType.Integer && IsManualInputVisible;
         if (Theme != null)
         {
             if (IsArray)
@@ -166,6 +187,7 @@ public partial class NodeInput : Node2D
                 ArrayIcon.Visible = false;
             }
         }
+        ErrorIcon.Visible = !Valid;
     }
 
     private void Pressed()
@@ -173,6 +195,11 @@ public partial class NodeInput : Node2D
         Selected?.Invoke(this);
     }
 
+    /// <summary>
+    /// Checks if connection to the given node is possible
+    /// </summary>
+    /// <param name="other">Node to check connections against</param>
+    /// <returns>True if connection is valid</returns>
     public bool IsValidTypeConnection(NodeInput other)
     {
         bool validArrayConnection = true;
@@ -200,6 +227,15 @@ public partial class NodeInput : Node2D
     {
         // output can have as many connections as it wants, since it doesn't store any information about them
         bool connected = IsInput ? (Connection != null) : false;
-        return !(connected || other.OwningNode == OwningNode || other.IsInput == IsInput || !IsValidTypeConnection(other));
+        return Valid && !(connected || other.OwningNode == OwningNode || other.IsInput == IsInput || !IsValidTypeConnection(other));
+    }
+
+    /// <summary>
+    /// Destroy this input and notify all listeners that it was destroyed
+    /// </summary>
+    public void Destroy()
+    {
+        Destroyed?.Invoke(this);
+        QueueFree();
     }
 }

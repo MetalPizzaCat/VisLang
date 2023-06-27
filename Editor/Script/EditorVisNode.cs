@@ -71,6 +71,10 @@ public partial class EditorVisNode : Node2D
     public Sprite2D? ExecutionDebugIcon { get; set; }
 
     public List<NodeInput> Inputs { get; set; } = new List<NodeInput>();
+    /// <summary>
+    /// All of the inputs that had connections before node was recreated 
+    /// </summary>
+    protected List<NodeInput> InvalidInputs { get; set; } = new();
 
 
     private bool _isCurrentlyExecuted = false;
@@ -172,14 +176,36 @@ public partial class EditorVisNode : Node2D
             throw new NullReferenceException("Unable to create node from description because input node was not provided");
         }
 
-
+        // since some nodes might have connections and since i don't want to just delete the connections 
+        // as that would create some confusion(for example if user doesn't not notice connections disappearing)
+        // to combat that we will keep nodes that have connections intact but move them to the bottom of the list
+        // ***
+        // there is a bit of an issue here for when user might change type and then change it back since in this case 
+        // the connection will still be marked as invalid
         foreach (NodeInput input in Inputs)
         {
-            input.QueueFree();
+            if (input.IsInputConnected)
+            {
+                InvalidInputs.Add(input);
+                // this way once user tries to reset connection node will disappear, preventing further confusion
+                input.ConnectionDestroyed += DestroyInvalidNode;
+            }
+            else
+            {
+                input.QueueFree();
+            }
         }
         Inputs.Clear();
 
         GenerateInputs(0f, info);
+
+        float offset = Inputs.Count * InputNodeOffsetStep + InputNodeOffsetStep;
+        foreach (NodeInput input in InvalidInputs)
+        {
+            input.Position = new Vector2(0, offset);
+            offset += InputNodeOffsetStep;
+            input.Valid = false;
+        }
 
         if (info.HasOutput)
         {
@@ -189,6 +215,12 @@ public partial class EditorVisNode : Node2D
         {
             NodeNameLabel.Text = info.FunctionName;
         }
+    }
+
+    private void DestroyInvalidNode(NodeInput input)
+    {
+        InvalidInputs.Remove(input);
+        input.Destroy();
     }
 
     protected virtual void ApplyAdditionalDataToNode<NodeType>(NodeType node) where NodeType : VisLang.VisNode
