@@ -1,0 +1,7 @@
+[gd_scene load_steps=3 format=3 uid="uid://mo2q6f5ebqo5"]
+
+[ext_resource type="PackedScene" uid="uid://dnrclaeedqc4k" path="res://Nodes/VisNode.tscn" id="1_dlxif"]
+[ext_resource type="Script" path="res://Script/Nodes/ArrayEditorVisNode.cs" id="2_kkkj6"]
+
+[node name="VisNodeArray" instance=ExtResource("1_dlxif")]
+script = ExtResource("2_kkkj6")

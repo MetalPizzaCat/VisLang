@@ -26,10 +26,12 @@ public partial class FunctionInputInfo : Resource
     {
     }
 
-    public FunctionInputInfo(string inputName, ValueType inputType)
+    public FunctionInputInfo(string inputName, ValueType inputType, ValueType? arrayDataType)
     {
         InputName = inputName;
         InputType = inputType;
+        ArrayDataType = arrayDataType ?? VisLang.ValueType.Bool;
+        HasArrayType = arrayDataType != null;
     }
 
     public FunctionInputInfo(VariableInfo info)
@@ -48,4 +50,17 @@ public partial class FunctionInputInfo : Resource
     /// </summary>
     [Export]
     public TypePermissions TypeMatchingPermissions { get; set; } = TypePermissions.SameTypeOnly;
+
+    [ExportGroup("Arrays")]
+    /// <summary>
+    /// If true and is used in a function with IsArrayTypeDependent being true, type of this argument will be changed depending on the connected array
+    /// </summary>
+    /// <value></value>
+    [Export]
+    public bool IsArrayTypeDependent { get; set; } = false;
+    [ExportSubgroup("For inputs of array type")]
+    [Export]
+    public bool HasArrayType { get; set; } = false;
+    [Export]
+    public VisLang.ValueType ArrayDataType { get; set; } = VisLang.ValueType.Bool;
 }

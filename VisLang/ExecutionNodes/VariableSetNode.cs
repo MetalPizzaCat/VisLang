@@ -24,8 +24,16 @@ public class VariableSetNode : ExecutionNode
         }
         if (Interpreter?.VisSystemMemory[Name] == null)
         {
-            throw new Interpreter.MissingVariableException($"No variable with name {Name} found");
+            throw new Interpreter.MissingVariableException($"No variable with name {Name} found", this);
         }
-        Interpreter.VisSystemMemory[Name].Data = Value;
+        try
+        {
+            Interpreter.VisSystemMemory[Name].Data = Value;
+        }
+        catch (Interpreter.ValueTypeMismatchException e)
+        {
+            // yes i know, not the cleanest way but this way we can keep assignment as it is but still be able to tell user where it came from in code
+            throw new Interpreter.ValueTypeMismatchException(e.Message, this);
+        }
     }
 }

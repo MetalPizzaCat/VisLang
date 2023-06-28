@@ -426,6 +426,45 @@ public class BasicSystemTest
     }
 
     [TestMethod]
+    public void TestArrayAppendTyped()
+    {
+        VisSystem system = new VisSystem();
+        system.VisSystemMemory.CreateVariable("arr", VisLang.ValueType.Array, null, VisLang.ValueType.Integer);
+        Assert.IsNotNull(system.VisSystemMemory["arr"]);
+        Assert.IsTrue(system?.VisSystemMemory["arr"]?.Data is List<Value>);
+        system.Entrance = new ArrayAppendElement(system)
+        {
+            Inputs = new()
+            {
+                // array
+                new VariableGetNode(system)
+                {
+                    Name = "arr"
+                },
+                // value
+                new VariableGetConstNode(){Value = new Value(VisLang.ValueType.Float ,69f)}
+            }
+        };
+
+        Assert.ThrowsException<VisLang.Interpreter.ValueTypeMismatchException>(() => system.Execute());
+        system.Entrance = new ArrayAppendElement(system)
+        {
+            Inputs = new()
+            {
+                // array
+                new VariableGetNode(system)
+                {
+                    Name = "arr"
+                },
+                // value
+                new VariableGetConstNode(){Value = new Value(VisLang.ValueType.Integer ,69)}
+            }
+        };
+        system.Execute();
+        Assert.AreEqual(69, (system?.VisSystemMemory["arr"]?.Data as List<Value>)?.ElementAt(0)?.Data ?? 0);
+    }
+
+    [TestMethod]
     public void TestArrayAppendAndGet()
     {
         VisSystem system = new VisSystem();

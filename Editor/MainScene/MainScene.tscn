@@ -1,10 +1,12 @@
-[gd_scene load_steps=24 format=3 uid="uid://ncyjciglhky1"]
+[gd_scene load_steps=26 format=3 uid="uid://ncyjciglhky1"]
 
 [ext_resource type="Script" path="res://Script/MainScene.cs" id="1_w4485"]
 [ext_resource type="Script" path="res://Script/UI/CanvasControl.cs" id="3_iy83l"]
 [ext_resource type="PackedScene" uid="uid://cjc6nifn3qyy7" path="res://UI/variable_control.tscn" id="3_jx1hi"]
 [ext_resource type="PackedScene" uid="uid://dnrclaeedqc4k" path="res://Nodes/VisNode.tscn" id="3_kaxs0"]
 [ext_resource type="Script" path="res://Script/UI/VariableManager.cs" id="3_vtslo"]
+[ext_resource type="PackedScene" uid="uid://mo2q6f5ebqo5" path="res://Nodes/vis_node_array.tscn" id="4_bef3k"]
+[ext_resource type="PackedScene" uid="uid://i02krelguajp" path="res://Nodes/vis_node_exectuable_array.tscn" id="5_bpr58"]
 [ext_resource type="PackedScene" uid="uid://c67wh757rx8s3" path="res://UI/message_label.tscn" id="5_xfi40"]
 [ext_resource type="Script" path="res://Script/UI/RuntimeVariableInformationControl.cs" id="6_km71b"]
 [ext_resource type="PackedScene" uid="uid://dd2ewu3al55co" path="res://Nodes/ExecNodeInput.tscn" id="7_ealpf"]
@@ -36,6 +38,8 @@ NodeCreationMenu = NodePath("UI/PopupPanel")
 CanvasControl = NodePath("Camera2D/Control")
 VisNodePrefab = ExtResource("3_kaxs0")
 ExecNodePrefab = ExtResource("7_xst2a")
+VisNodeArrayPrefab = ExtResource("4_bef3k")
+ExecNodeArrayPrefab = ExtResource("5_bpr58")
 OutputTextList = NodePath("UiControls/Control/TabContainer/Output/VBoxContainer")
 ErrorTextList = NodePath("UiControls/Control/TabContainer/Errors/VBoxContainer")
 MessageTextLabelPrefab = ExtResource("5_xfi40")

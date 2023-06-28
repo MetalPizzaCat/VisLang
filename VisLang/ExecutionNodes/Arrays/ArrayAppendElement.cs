@@ -31,6 +31,18 @@ public class ArrayAppendElement : ExecutionNode
         {
             throw new NullReferenceException("Attempted set value of the array element but provided value is null");
         }
+        if (Array.ValueType != ValueType.Array)
+        {
+            throw new Interpreter.ValueTypeMismatchException($"Attempted to append to array but given value is not an array. Value type: {Array.ValueType}", this);
+        }
+        if (Array.ArrayDataType != null && ValueToSetType != null)
+        {
+            if (Array.ArrayDataType.Value != ValueToSetType.Value)
+            {
+                throw new Interpreter.ValueTypeMismatchException($"Attempted to add element to the array but type does not match array data. Expected {Array.ArrayDataType.Value}, got {ValueToSetType.Value}", this);
+            }
+        }
+
         if (Array.Data is List<Value> arr && ValueToSetType != null)
         {
             arr.Add(new Value(ValueToSetType.Value, Value));

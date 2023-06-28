@@ -18,18 +18,21 @@ public partial class VariableControl : HBoxContainer
     [Export]
     public OptionButton TypeOptionButton { get; set; }
     [Export]
+    public OptionButton ArrayTypeOptionButton { get; set; }
+    [Export]
     public PopupMenu? ContextMenu { get; set; }
 
     [Export]
     public Control? ErrorDisplayControl { get; set; }
 
-    private VariableInfo _info = new VariableInfo("Default", VisLang.ValueType.Bool);
+    private VariableInfo _info = new VariableInfo("Default", VisLang.ValueType.Bool, null);
 
     public VariableInfo Info => _info;
 
     public string VariableName => NameEdit.Text;
 
     public VisLang.ValueType VariableType => TypeOptionButton.Selected > -1 ? (VisLang.ValueType)TypeOptionButton.Selected : VisLang.ValueType.Bool;
+    public VisLang.ValueType? ArrayDataType => ArrayTypeOptionButton.Selected > -1 && ArrayTypeOptionButton.Selected < Enum.GetNames(typeof(VisLang.ValueType)).Length ? (VisLang.ValueType)ArrayTypeOptionButton.Selected : null;
 
     private Regex _variableNameCheckRegex = new Regex(@"^(([A-z])+[0-9]*)$");
 
@@ -61,7 +64,9 @@ public partial class VariableControl : HBoxContainer
         foreach (VisLang.ValueType val in (VisLang.ValueType[])Enum.GetValues(typeof(VisLang.ValueType)))
         {
             TypeOptionButton.AddItem(val.ToString());
+            ArrayTypeOptionButton.AddItem(val.ToString());
         }
+        ArrayTypeOptionButton.AddItem("Any");
     }
 
     private void ChangeName(string newName)
@@ -117,6 +122,7 @@ public partial class VariableControl : HBoxContainer
     private void SelectType(int type)
     {
         _info.ValueType = (VisLang.ValueType)type;
+        ArrayTypeOptionButton.Visible = _info.ValueType == VisLang.ValueType.Array;
     }
 
     private void CreateSetter()
@@ -140,23 +146,8 @@ public partial class VariableControl : HBoxContainer
 
     }
 
-    private void ContextMenuItemSelected(int id)
+    private void SetArrayType(int type)
     {
-        // unfortunately the way context menu works is by passing the id of the selected item
-        // which is not helpful when items are known before hand
-        // 1 and 3 are  missing because those are the id of the group separators
-        switch (id)
-        {
-            case 1: // get
-                CreateGetter();
-                return;
-            case 2: // set
-                CreateSetter();
-                return;
-            case 4: // get element at
-                return;
-            case 5: // set element at
-                return;
-        }
+        _info.ArrayDataType = (type < Enum.GetNames(typeof(VisLang.ValueType)).Length ) ? ((VisLang.ValueType)type) : null;
     }
 }
