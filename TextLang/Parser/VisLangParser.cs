@@ -48,7 +48,8 @@ public static class VisLangParser
         from content in Parse.CharExcept('\'').Many().Text()
         from close in Parse.Char('\'')
         select content
-    );
+    ).Named("quoted text");
+
     private static readonly Parser<TypeInfo> _typeParser =
        (from type in (Parse.String("char").Token().Return(VisLang.ValueType.Char)
             .Or(Parse.String("int").Token().Return(VisLang.ValueType.Integer))
@@ -62,8 +63,9 @@ public static class VisLangParser
     private static readonly Parser<VisLang.PrintNode> _printFunctionParser = (
         from keyword in Parse.String("print").Token()
         from lb in Parse.Char('(').Token()
-        from content in _quotedText.Token().Select(p => new VisLang.VariableGetConstNode() { Value = new VisLang.Value(VisLang.ValueType.String, p) })
-                            .Or<VisLang.DataNode>(_variableName.Token().Select(p => new VisLang.VariableGetNode() { Name = p }))
+        from content in (_quotedText.Token().Select(p => new VisLang.VariableGetConstNode() { Value = new VisLang.Value(VisLang.ValueType.String, p) })
+                            .Or<VisLang.DataNode>(_expression)
+                            .Or<VisLang.DataNode>(_operand)).Named("string or variable name")
         from rb in Parse.Char(')').Token()
         select new VisLang.PrintNode() { Inputs = new() { content } }
     );
