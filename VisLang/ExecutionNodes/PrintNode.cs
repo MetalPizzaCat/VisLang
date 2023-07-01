@@ -7,9 +7,9 @@ public class PrintNode : ExecutionNode
     {
     }
 
-    public override void Execute()
+    public override void Execute(NodeContext? context = null)
     {
         base.Execute();
-        Interpreter?.AddOutput(Inputs.FirstOrDefault()?.GetValue()?.TryAsString() ?? "Attempted to print value but value was null so instead you get this string :3");
+        Interpreter?.AddOutput(Inputs.FirstOrDefault()?.GetValue(context)?.TryAsString() ?? "Attempted to print value but value was null so instead you get this string :3");
     }
 }

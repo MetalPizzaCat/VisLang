@@ -14,8 +14,8 @@ public class VariableGetNode : DataNode
     }
 
     public string Name { get; set; } = "Default";
-    public override Value? GetValue()
+    public override Value? GetValue(NodeContext? context = null)
     {
-        return Interpreter?.VisSystemMemory[Name];
+        return Interpreter?.VisSystemMemory.GetValue(Name, context?.Variables);
     }
 }

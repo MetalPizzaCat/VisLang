@@ -6,11 +6,11 @@ namespace VisLang;
 public class ArraySetElementAtNode : ExecutionNode
 {
     public int DefaultIndex = 0;
-    public Value? Array => Inputs.ElementAtOrDefault(0)?.GetValue();
-    public int Index => Inputs.ElementAtOrDefault(1)?.GetValue()?.AsInteger() ?? DefaultIndex;
-    public object? Value => Inputs.ElementAtOrDefault(2)?.GetValue()?.Data;
+    public Value? GetInputArray(NodeContext? context) => Inputs.ElementAtOrDefault(0)?.GetValue(context);
+    public int GetInputIndex(NodeContext? context) => Inputs.ElementAtOrDefault(1)?.GetValue(context)?.AsInteger() ?? DefaultIndex;
+    public object? GetInputValue(NodeContext? context) => Inputs.ElementAtOrDefault(2)?.GetValue(context)?.Data;
 
-    public ValueType? ValueToSetType => Inputs.ElementAtOrDefault(2)?.GetValue()?.ValueType;
+    public ValueType? GetValueToSetType(NodeContext? context) => Inputs.ElementAtOrDefault(2)?.GetValue(context)?.ValueType;
 
     public ArraySetElementAtNode(VisSystem? interpreter) : base(interpreter)
     {
@@ -19,23 +19,23 @@ public class ArraySetElementAtNode : ExecutionNode
     public ArraySetElementAtNode()
     {
     }
-    public override void Execute()
+    public override void Execute(NodeContext? context = null)
     {
         if (Interpreter == null)
         {
             throw new NullReferenceException("Interpreter system is null");
         }
-        if (Array == null)
+        if (GetInputArray(context) == null)
         {
             throw new NullReferenceException("Attempted set value of the array element but array is null");
         }
-        if (Value == null)
+        if (GetInputValue(context) == null)
         {
             throw new NullReferenceException("Attempted set value of the array element but provided value is null");
         }
-        if (Array.Data is List<Value> arr)
+        if (GetInputArray(context)?.Data is List<Value> arr)
         {
-            arr[Index] = Inputs.ElementAtOrDefault(2)?.GetValue() ?? throw new NullReferenceException("Value must not be null");
+            arr[GetInputIndex(context)] = Inputs.ElementAtOrDefault(2)?.GetValue(context) ?? throw new NullReferenceException("Value must not be null");
         }
     }
 }

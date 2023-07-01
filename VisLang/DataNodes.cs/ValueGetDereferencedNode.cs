@@ -9,20 +9,20 @@ public class ValueGetDereferencedNode : DataNode
     {
     }
 
-    public override Value? GetValue()
+    public override Value? GetValue(NodeContext? context = null)
     {
         if (Inputs.FirstOrDefault() == null)
         {
             return null;
         }
-        if (Inputs.FirstOrDefault().GetValue() == null)
+        if (Inputs.FirstOrDefault()?.GetValue(context) == null)
         {
             return null;
         }
-        if (Inputs.FirstOrDefault().GetValue().ValueType != ValueType.Address)
+        if (Inputs.FirstOrDefault()?.GetValue(context)?.ValueType != ValueType.Address)
         {
             return null;
         }
-        return Interpreter?.VisSystemMemory.Memory[(uint)Inputs.FirstOrDefault().GetValue().Data];
+        return Interpreter?.VisSystemMemory.Memory[(uint)Inputs.FirstOrDefault().GetValue(context).Data];
     }
 }

@@ -6,8 +6,8 @@ public class EqualsNode : BinaryOperationNodeBase
     {
     }
 
-    public override Value? GetValue()
+    public override Value? GetValue(NodeContext? context = null)
     {
-        return new Value(ValueType.Bool, ValueLeft.EqualsTo(ValueRight));
+        return new Value(ValueType.Bool, GetValueLeft(context).EqualsTo(GetValueRight(context)));
     }
 }

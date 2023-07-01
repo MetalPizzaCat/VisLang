@@ -11,8 +11,9 @@ public class ProcedureCallNode : ExecutionNode
 
     private Value? _procedureReturn = null;
 
-    public override void Execute()
+    public override void Execute(NodeContext? context = null)
     {
+        // if this function appears overcommented, then it's because i was writing algorithms in comments without code to not  forgoer what i was doing :3
         base.Execute();
         if (Interpreter == null)
         {
@@ -27,9 +28,7 @@ public class ProcedureCallNode : ExecutionNode
         {
             throw new NullReferenceException("Interpreter system does not contain a function with a given name");
         }
-       
-        VisSystem subSystem = proc.SubSystem;
-        proc.Reset();
+        Dictionary<string, uint> variables = new Dictionary<string, uint>();
 
         // to pass arguments we also use a simple solution of just creating variables inside new system
         // this is done to ensure that we don't need to create special handling for when code is run from procedure
@@ -37,7 +36,7 @@ public class ProcedureCallNode : ExecutionNode
         int currentArgumentId = 0;
         foreach ((string argName, ValueType argType) in proc.Arguments)
         {
-            subSystem.VisSystemMemory.CreateVariable(argName, argType, Inputs.ElementAtOrDefault(currentArgumentId)?.GetValue()?.Data);
+            Interpreter.VisSystemMemory.CreateVariable(ref variables, argName, argType, Inputs.ElementAtOrDefault(currentArgumentId)?.GetValue(context)?.Data);
             // this solution could cause issues if arguments are messed up and don't match function signature
             // but will make editors and parsers deal with this problem :3
             currentArgumentId++;
@@ -49,14 +48,30 @@ public class ProcedureCallNode : ExecutionNode
         // If ANY procedure wants to have return value it WILL have to write into @output variable 
         if (proc.OutputValueType != null)
         {
-            subSystem.VisSystemMemory.CreateVariable("@output", proc.OutputValueType.Value);
+            Interpreter.VisSystemMemory.CreateVariable(ref variables, "@output", proc.OutputValueType.Value);
         }
-        subSystem.Entrance = proc.ProcedureNodesRoot;
-        subSystem.Execute();
-
+        // TODO: Figure out how to point system to this node specifically
+        // record where we were called from, like putting return address on the stack
+        // this will technically be pointing to *this* node actually since this is what is happening
+        ExecutionNode? callSource = this;
+        // set new destination to function root
+        Interpreter.Current = proc.ProcedureNodesRoot;
+        // execute all given nodes
+        while (Interpreter.ExecuteNext(new NodeContext(Interpreter, variables)))
+        {
+            // the whole thing is in the condition idk what do you want me to do here -_-
+        }
+        // store output(if we have one)
         if (proc.OutputValueType != null)
         {
-            _procedureReturn = subSystem.VisSystemMemory["@output"];
+            _procedureReturn = Interpreter.VisSystemMemory.Memory[variables["@output"]];
         }
+        // and clear the memory
+        foreach ((string name, uint address) in variables)
+        {
+            Interpreter.VisSystemMemory.FreeAddress(address);
+        }
+        // if we set it back to callSource itself we will get stuck calling the same node until system dies
+        Interpreter.Current = callSource?.DefaultNext;
     }
 }

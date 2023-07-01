@@ -8,8 +8,8 @@ public class AdditionNode : ArithmeticOperationNodeBase
 
     public AdditionNode() { }
 
-    public override Value? GetValue()
+    public override Value? GetValue(NodeContext? context = null)
     {
-        return new Value(ValueType.Float, ValueLeft + ValueRight);
+        return new Value(ValueType.Float, GetValueLeft(context) + GetValueRight(context));
     }
 }

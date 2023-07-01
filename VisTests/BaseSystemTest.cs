@@ -259,7 +259,7 @@ public class BasicSystemTest
     public void TestProcedureCallPrint()
     {
         VisSystem system = new VisSystem();
-        system.Procedures.Add(new VisProcedure(system)
+        system.Procedures.Add(new VisProcedure()
         {
             Name = "TestLolYourMom",
             Arguments = new(),
@@ -267,7 +267,7 @@ public class BasicSystemTest
         });
         VisProcedure? proc = system.GetProcedure("TestLolYourMom");
         Assert.IsNotNull(proc);
-        proc.ProcedureNodesRoot = new PrintNode(proc.SubSystem)
+        proc.ProcedureNodesRoot = new PrintNode(system)
         {
             Inputs = new List<VisNode>()
                 {
@@ -287,7 +287,7 @@ public class BasicSystemTest
     public void TestProcedureCallPrintArgument()
     {
         VisSystem system = new VisSystem();
-        system.Procedures.Add(new VisProcedure(system)
+        system.Procedures.Add(new VisProcedure()
         {
             Name = "TestLolYourMom",
             Arguments = new() { { "arg_text", VisLang.ValueType.String } },
@@ -295,11 +295,11 @@ public class BasicSystemTest
         });
         VisProcedure? proc = system.GetProcedure("TestLolYourMom");
         Assert.IsNotNull(proc);
-        proc.ProcedureNodesRoot = new PrintNode(proc.SubSystem)
+        proc.ProcedureNodesRoot = new PrintNode(system)
         {
             Inputs = new List<VisNode>()
                 {
-                    new VariableGetNode(proc.SubSystem)
+                    new VariableGetNode(system)
                     {
                         Name = "arg_text"
                     }
@@ -325,7 +325,7 @@ public class BasicSystemTest
     public void TestProcedureCustomDataNode()
     {
         VisSystem system = new VisSystem();
-        system.Procedures.Add(new VisProcedure(system)
+        system.Procedures.Add(new VisProcedure()
         {
             Name = "AddOne",
             Arguments = new() { { "arg_num", VisLang.ValueType.Float } },
@@ -333,11 +333,11 @@ public class BasicSystemTest
         });
         VisProcedure? proc = system.GetProcedure("AddOne");
         Assert.IsNotNull(proc);
-        proc.ProcedureNodesRoot = new PrintNode(proc.SubSystem)
+        proc.ProcedureNodesRoot = new PrintNode(system)
         {
             Inputs = new List<VisNode>()
                 {
-                    new VariableGetNode(proc.SubSystem)
+                    new VariableGetNode(system)
                     {
                         Name = "arg_num"
                     }
@@ -363,7 +363,7 @@ public class BasicSystemTest
     public void TestFunctionDoMathWithArgument()
     {
         VisSystem system = new VisSystem();
-        system.Functions.Add(new VisFunction(system)
+        system.Functions.Add(new VisFunction()
         {
             Name = "CoolMath",
             Arguments = new() { { "arg", VisLang.ValueType.Float } },
@@ -372,12 +372,12 @@ public class BasicSystemTest
 
         VisFunction? func = system.GetFunction("CoolMath");
         Assert.IsNotNull(func);
-        func.Root = new AdditionNode(func.SubSystem)
+        func.Root = new AdditionNode(system)
         {
             Inputs = new()
             {
-                new VariableGetNode(func.SubSystem){Name = "arg"},
-                new VariableGetNode(func.SubSystem){Name = "arg"}
+                new VariableGetNode(system){Name = "arg"},
+                new VariableGetNode(system){Name = "arg"}
             }
         };
         system.Entrance = new PrintNode(system)

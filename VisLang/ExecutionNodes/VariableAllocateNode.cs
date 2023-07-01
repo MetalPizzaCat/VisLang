@@ -9,7 +9,7 @@ public class VariableAllocateNode : ExecutionNode
 
     public ValueType ValueType { get; set; } = ValueType.Bool;
 
-    public object Value => Inputs.FirstOrDefault()?.GetValue()?.Data ?? DefaultValue;
+    public object GetInputValue(NodeContext? context) => Inputs.FirstOrDefault()?.GetValue(context)?.Data ?? DefaultValue;
 
     public uint? _createdVariableAddress = null;
 
@@ -17,7 +17,7 @@ public class VariableAllocateNode : ExecutionNode
     {
     }
 
-    public override void Execute()
+    public override void Execute(NodeContext? context = null)
     {
         if (Interpreter == null)
         {
@@ -26,7 +26,7 @@ public class VariableAllocateNode : ExecutionNode
         _createdVariableAddress = Interpreter?.VisSystemMemory.AllocateValue(ValueType, DefaultValue);
     }
 
-    public override Value? GetValue()
+    public override Value? GetValue(NodeContext? context = null)
     {
         return _createdVariableAddress.HasValue ? new Value(ValueType.Address, _createdVariableAddress) : null;
     }

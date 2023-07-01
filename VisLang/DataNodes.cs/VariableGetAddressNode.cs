@@ -10,12 +10,12 @@ public class VariableGetAddressNode : DataNode
     }
 
     public string Name { get; set; } = "Default";
-    public override Value? GetValue()
+    public override Value? GetValue(NodeContext? context = null)
     {
-        if (Interpreter?.VisSystemMemory[Name] == null)
+        if (Interpreter?.VisSystemMemory.GetValue(Name, null) == null)
         {
             return new Value(ValueType.Address, 0);
         }
-        return new Value(ValueType.Address, Interpreter?.VisSystemMemory[Name].Address);
+        return new Value(ValueType.Address, Interpreter?.VisSystemMemory.GetValue(Name, null).Address);
     }
 }

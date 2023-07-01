@@ -5,10 +5,10 @@ namespace VisLang;
 /// </summary>
 public class ArrayAppendElement : ExecutionNode
 {
-    public Value? Array => Inputs.ElementAtOrDefault(0)?.GetValue();
-    public object? Value => Inputs.ElementAtOrDefault(1)?.GetValue()?.Data;
+    public Value? GetInputArray(NodeContext? context) => Inputs.ElementAtOrDefault(0)?.GetValue(context);
+    public object? GetInputValue(NodeContext? context) => Inputs.ElementAtOrDefault(1)?.GetValue(context)?.Data;
 
-    public ValueType? ValueToSetType => Inputs.ElementAtOrDefault(1)?.GetValue()?.ValueType;
+    public ValueType? GetValueToSetType(NodeContext? context) => Inputs.ElementAtOrDefault(1)?.GetValue(context)?.ValueType;
 
     public ArrayAppendElement(VisSystem? interpreter) : base(interpreter)
     {
@@ -17,35 +17,38 @@ public class ArrayAppendElement : ExecutionNode
     public ArrayAppendElement()
     {
     }
-    public override void Execute()
+    public override void Execute(NodeContext? context = null)
     {
         if (Interpreter == null)
         {
             throw new NullReferenceException("Interpreter system is null");
         }
-        if (Array == null)
+        Value? arr = GetInputArray(context);
+        object? value = GetInputValue(context);
+        ValueType? type = GetValueToSetType(context);
+        if (arr == null)
         {
             throw new NullReferenceException("Attempted set value of the array element but array is null");
         }
-        if (Value == null)
+        if (value == null)
         {
             throw new NullReferenceException("Attempted set value of the array element but provided value is null");
         }
-        if (Array.ValueType != ValueType.Array)
+        if (arr.ValueType != ValueType.Array)
         {
-            throw new Interpreter.ValueTypeMismatchException($"Attempted to append to array but given value is not an array. Value type: {Array.ValueType}", this);
+            throw new Interpreter.ValueTypeMismatchException($"Attempted to append to array but given value is not an array. Value type: {arr.ValueType}", this);
         }
-        if (Array.ArrayDataType != null && ValueToSetType != null)
+        if (arr.ArrayDataType != null && type != null)
         {
-            if (Array.ArrayDataType.Value != ValueToSetType.Value)
+            if (arr.ArrayDataType.Value != type.Value)
             {
-                throw new Interpreter.ValueTypeMismatchException($"Attempted to add element to the array but type does not match array data. Expected {Array.ArrayDataType.Value}, got {ValueToSetType.Value}", this);
+                throw new Interpreter.ValueTypeMismatchException($"Attempted to add element to the array but type does not match array data. Expected {arr.ArrayDataType.Value}, got {type.Value}", this);
             }
         }
 
-        if (Array.Data is List<Value> arr && ValueToSetType != null)
+        if (arr.Data is List<Value> internalArray && type != null)
         {
-            arr.Add(new Value(ValueToSetType.Value, Value));
+            internalArray.Add(new Value(type.Value, GetInputValue(context)));
         }
     }
 }
