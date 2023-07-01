@@ -6,17 +6,19 @@ public static class Program
 {
     public static void Main(string[] args)
     {
-        string code = @"program{
-            let a : int
-            let b : int
-            let hello : string
-            let array : int[]
-            b = -9
-            print(b)
-            b = 5 - -(b * b)
-            b = 6
-            print(-(b * b))
-        }";
+        string code = @"
+program{
+    let a : int;
+    let b : int;
+    let hello : string;
+    let array : int[];
+    b = -9,9;
+    print(b);
+    b = 5 - -(b * b);
+    b = 6.66;
+    print(-(b * b));
+}
+        ";
         try
         {
 

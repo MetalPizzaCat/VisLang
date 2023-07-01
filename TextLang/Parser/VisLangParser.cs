@@ -42,7 +42,13 @@ public class ParsedProgramInfo
 
 public static class VisLangParser
 {
-    private static readonly Parser<string> _variableName = Parse.Identifier(Parse.Letter.Or(Parse.Char('_')), Parse.LetterOrDigit.Or(Parse.Char('_'))).Text();
+    private static readonly Parser<string> _variableName = Parse.Identifier(Parse.Letter.Or(Parse.Char('_')), Parse.LetterOrDigit.Or(Parse.Char('_'))).Text()
+    .Except(
+        // key words
+        Parse.String("print")
+        .Or(Parse.String("program"))
+        .Or(Parse.String("let"))
+    );
     private static readonly Parser<string> _quotedText = (
         from open in Parse.Char('\'')
         from content in Parse.CharExcept('\'').Many().Text()
@@ -67,11 +73,12 @@ public static class VisLangParser
                             .Or<VisLang.DataNode>(_expression)
                             .Or<VisLang.DataNode>(_operand)).Named("string or variable name")
         from rb in Parse.Char(')').Token()
+        from end in Parse.Char(';').Token()
         select new VisLang.PrintNode() { Inputs = new() { content } }
     );
 
     private static readonly Parser<VisLang.DataNode> _operand = _variableName.Token().Select(p => new VariableGetNode() { Name = p })
-                    .Or<VisLang.DataNode>(Parse.Number.Select(num => new VariableGetConstNode() { Value = new Value(ValueType.Float, float.Parse(num)) }));
+                    .Or<VisLang.DataNode>(Parse.DecimalInvariant.Or(Parse.Number).Select(num => new VariableGetConstNode() { Value = new Value(ValueType.Float, float.Parse(num)) }));
 
 
     private static DataNode MakeBinaryExpression(OperationType op, DataNode left, DataNode right)
@@ -147,7 +154,7 @@ public static class VisLangParser
         from name in _variableName.Token()
         from ass in Parse.Char('=').Token()
         from other in _quotedText.Select(p => new VariableGetConstNode() { Value = new Value(ValueType.String, p) }).Or(_expression)
-
+        from end in Parse.Char(';').Token()
         select new VisLang.VariableSetNode()
         {
             Name = name,
@@ -165,6 +172,7 @@ public static class VisLangParser
         from name in _variableName.Token()
         from colon in Parse.Char(':').Token()
         from type in _typeParser
+        from ending in Parse.Char(';').Token()
         select new VariableInitInfo(name, type)
     );
 
@@ -173,11 +181,11 @@ public static class VisLangParser
         from keyword in Parse.String("program").Token()
         from name in Parse.Letter.AtLeastOnce().Text().Token().Optional()
         from lb in Parse.Char('{').Token()
-        from vars in _variableInit.Many()
+        from vars in _variableInit.XMany()
         from functions in
             (
                 _printFunctionParser.Or<VisLang.ExecutionNode>(_assignmentParser)
-            ).Many()
+            ).XMany()
         from rb in Parse.Char('}').Token()
         select new ParsedProgramInfo(vars, functions)
     );

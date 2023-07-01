@@ -1,5 +1,10 @@
 namespace VisLang;
 
+/// <summary>
+/// Callable represents a function(like the ones in C or C#) which can be executed and have return values. <para></para>
+/// Callables work by creating a sub interpreter system(or using provided one) and executing their code inside it, recording the output(if present) after the execution<para></para>
+/// Unlike VisFunction which is meant only as a way to store collections of DataNodes, Callables can store both executable and data nodes, as they act as program inside program
+/// </summary>
 public class VisCallable
 {
     public VisCallable() { }
