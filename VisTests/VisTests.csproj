@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\VisLang\VisLang.csproj" />
+    <ProjectReference Include="..\TextLang\TextLang.csproj" />
   </ItemGroup>
 
 </Project>

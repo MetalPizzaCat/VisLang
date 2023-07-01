@@ -60,6 +60,34 @@ public class Value
     private object? _data = null;
 
     /// <summary>
+    /// Return default value for a given type. Default value is the value that variable should be set to when created
+    /// </summary>
+    /// <param name="type">Type to process</param>
+    /// <returns>Default value of given type passed via object</returns>
+    public static object GetDefaultValueForType(ValueType type)
+    {
+        switch (type)
+        {
+            case ValueType.Bool:
+                return false;
+            case ValueType.Char:
+                return (char)0;
+            case ValueType.Integer:
+                return 0;
+            case ValueType.Float:
+                return 0f;
+            case ValueType.String:
+                return string.Empty;
+            case ValueType.Address:
+                return 0;
+            case ValueType.Array:
+                // should be caught during creation but still keep this here just in case
+                return new List<Value>();
+        }
+        return null;
+    }
+
+    /// <summary>
     /// The actual data object stored in the value. When setting value type must match type in ValueType 
     /// </summary>
     public object? Data
@@ -140,7 +168,14 @@ public class Value
         }
         else
         {
-            _data = data;
+            if (data == null)
+            {
+                _data = GetDefaultValueForType(variableType);
+            }
+            else
+            {
+                _data = data;
+            }
         }
         ArrayDataType = arrayDataType;
         Address = address;
@@ -166,7 +201,14 @@ public class Value
         }
         else
         {
-            _data = data;
+            if (data == null)
+            {
+                _data = GetDefaultValueForType(variableType);
+            }
+            else
+            {
+                _data = data;
+            }
         }
         ArrayDataType = arrayDataType;
         Address = null;
