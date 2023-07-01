@@ -92,7 +92,7 @@ public class BasicSystemTest
 
         EqualsNode eq = new EqualsNode(system)
         {
-            Inputs = new List<VisNode>()
+            Inputs = new()
             {
                  new VariableGetNode(system) { Name = "a" },
                  new VariableGetNode(system) { Name = "b" }
@@ -103,7 +103,7 @@ public class BasicSystemTest
         {
             SuccessNext = new VariableSetNode(system) { Name = "result", DefaultValue = 1f },
             FailureNext = new VariableSetNode(system) { Name = "result", DefaultValue = 0f },
-            Inputs = new List<VisNode>() { eq }
+            Inputs = new() { eq }
         };
         system.Entrance = cond;
         system.Execute();
@@ -164,7 +164,7 @@ public class BasicSystemTest
         VariableSetNode setAddr = new VariableSetNode(system)
         {
             Name = "i_ptr",
-            Inputs = new List<VisNode>()
+            Inputs = new()
             {
                  new VariableGetAddressNode(system) { Name = "i" }
             }
@@ -200,9 +200,9 @@ public class BasicSystemTest
         };
         printer.Inputs.Add(new ValueGetDereferencedNode(system)
         {
-            Inputs = new List<VisNode>()
+            Inputs = new()
             {
-                alloc
+                new VisLang.Internal.PopItemFromReturnStackNode(system)
             }
         });
         system.Entrance = alloc;
@@ -232,9 +232,9 @@ public class BasicSystemTest
         };
         printer.Inputs.Add(new ValueGetDereferencedNode(system)
         {
-            Inputs = new List<VisNode>()
+            Inputs = new()
             {
-                alloc
+                new VisLang.Internal.PeekAtItemFromReturnStackNode(system)
             }
         });
         VariableSetNode setAddr = new VariableSetNode(system)
@@ -242,7 +242,7 @@ public class BasicSystemTest
             Name = "i",
             Inputs = new()
             {
-                alloc
+                new VisLang.Internal.PopItemFromReturnStackNode(system)
             }
         };
         printer.DefaultNext = setAddr;
@@ -269,7 +269,7 @@ public class BasicSystemTest
         Assert.IsNotNull(proc);
         proc.ProcedureNodesRoot = new PrintNode(system)
         {
-            Inputs = new List<VisNode>()
+            Inputs = new()
                 {
                     new VariableGetConstNode()
                     {
@@ -297,7 +297,7 @@ public class BasicSystemTest
         Assert.IsNotNull(proc);
         proc.ProcedureNodesRoot = new PrintNode(system)
         {
-            Inputs = new List<VisNode>()
+            Inputs = new()
                 {
                     new VariableGetNode(system)
                     {
@@ -335,7 +335,7 @@ public class BasicSystemTest
         Assert.IsNotNull(proc);
         proc.ProcedureNodesRoot = new PrintNode(system)
         {
-            Inputs = new List<VisNode>()
+            Inputs = new()
                 {
                     new VariableGetNode(system)
                     {
@@ -405,7 +405,7 @@ public class BasicSystemTest
         };
         proc.ProcedureNodesRoot = new PrintNode(system)
         {
-            Inputs = new List<VisNode>()
+            Inputs = new()
                 {
                     new VariableGetNode(system)
                     {
@@ -575,7 +575,7 @@ public class BasicSystemTest
                 {
                     new ArrayGetElementAtNode(system)
                     {
-                        Inputs = new List<VisNode>()
+                        Inputs = new ()
                         {
                             // array
                             new VariableGetNode(system)
@@ -626,7 +626,7 @@ public class BasicSystemTest
                 {
                     new ArrayGetElementAtNode(system)
                     {
-                        Inputs = new List<VisNode>()
+                        Inputs = new ()
                         {
                             // array
                             new VariableGetNode(system)
@@ -658,7 +658,7 @@ public class BasicSystemTest
                         {
                             new ArrayGetElementAtNode(system)
                             {
-                                Inputs = new List<VisNode>()
+                                Inputs = new ()
                                 {
                                     // array
                                     new VariableGetNode(system)

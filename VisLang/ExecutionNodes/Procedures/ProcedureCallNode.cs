@@ -9,7 +9,6 @@ public class ProcedureCallNode : ExecutionNode
 
     public string? ProcedureName { get; set; }
 
-    private Value? _procedureReturn = null;
 
     public override void Execute(NodeContext? context = null)
     {
@@ -64,7 +63,7 @@ public class ProcedureCallNode : ExecutionNode
         // store output(if we have one)
         if (proc.OutputValueType != null)
         {
-            _procedureReturn = Interpreter.VisSystemMemory.Memory[variables["@output"]];
+            Interpreter.VisSystemMemory.FunctionReturnAddressesStack.Push(Interpreter.VisSystemMemory.Memory[variables["@output"]]);
         }
         // and clear the memory
         foreach ((string name, uint address) in variables)

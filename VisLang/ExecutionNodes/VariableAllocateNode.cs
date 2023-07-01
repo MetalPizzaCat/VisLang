@@ -11,7 +11,6 @@ public class VariableAllocateNode : ExecutionNode
 
     public object GetInputValue(NodeContext? context) => Inputs.FirstOrDefault()?.GetValue(context)?.Data ?? DefaultValue;
 
-    public uint? _createdVariableAddress = null;
 
     public VariableAllocateNode(VisSystem? interpreter) : base(interpreter)
     {
@@ -23,11 +22,6 @@ public class VariableAllocateNode : ExecutionNode
         {
             throw new NullReferenceException("Interpreter system is null");
         }
-        _createdVariableAddress = Interpreter?.VisSystemMemory.AllocateValue(ValueType, DefaultValue);
-    }
-
-    public override Value? GetValue(NodeContext? context = null)
-    {
-        return _createdVariableAddress.HasValue ? new Value(ValueType.Address, _createdVariableAddress) : null;
+        Interpreter?.VisSystemMemory.FunctionReturnAddressesStack.Push(new Value(ValueType.Address, Interpreter.VisSystemMemory.AllocateValue(ValueType, DefaultValue)));
     }
 }

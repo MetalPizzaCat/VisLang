@@ -39,6 +39,12 @@ public class VisSystemMemory
     public Dictionary<string, uint> Variables { get; set; } = new();
 
     /// <summary>
+    /// The stack where functions can puts their return values, for other nodes to grab from<para></para>
+    /// This is alternative to storing node results in the node itself. This also in theory allows for multiple return values
+    /// </summary>
+    public Stack<Value> FunctionReturnAddressesStack { get; set; } = new();
+
+    /// <summary>
     ///  Returns value of the variable stored under the given name.<para></para>
     /// </summary>
     public Value? this[string name]

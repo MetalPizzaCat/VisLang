@@ -3,7 +3,7 @@ namespace VisLang;
 /// <summary>
 /// Retrieves data by calling the data node tree
 /// </summary>
-public class FunctionCallNode : ExecutionNode
+public class FunctionCallNode : DataNode
 {
     public FunctionCallNode() { }
     public FunctionCallNode(VisSystem? interpreter) : base(interpreter)

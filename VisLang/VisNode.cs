@@ -30,7 +30,7 @@ public class VisNode
     /// All nodes that can be used to retrieve data.
     /// </summary>
     /// <returns></returns>
-    public List<VisNode> Inputs { get; set; } = new();
+    public List<DataNode> Inputs { get; set; } = new();
 
     /// <summary>
     /// Reference to the actual system that stores memory and logic values
@@ -49,13 +49,4 @@ public class VisNode
     /// By limiting function access to a specific set of variables we can create a system for local variables
     /// </summary>
     public Dictionary<string, uint>? AvailableVariableList => _availableVariableList ?? Interpreter?.VisSystemMemory.Variables;
-
-    /// <summary>
-    /// Get current value that this node wants to return. Each node can only have one value output
-    /// <param name = "context">Additional context for the node value retrieval </param>
-    /// </summary>
-    public virtual Value? GetValue(NodeContext? context)
-    {
-        return null;
-    }
 }

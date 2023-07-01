@@ -15,14 +15,20 @@ public class ValueGetDereferencedNode : DataNode
         {
             return null;
         }
-        if (Inputs.FirstOrDefault()?.GetValue(context) == null)
+        Value? val = Inputs.FirstOrDefault()?.GetValue(context);
+        if (val == null)
         {
             return null;
         }
-        if (Inputs.FirstOrDefault()?.GetValue(context)?.ValueType != ValueType.Address)
+        if (val.ValueType != ValueType.Address)
         {
             return null;
         }
-        return Interpreter?.VisSystemMemory.Memory[(uint)Inputs.FirstOrDefault().GetValue(context).Data];
+        uint addr = (uint)(val?.Data ?? 0u);
+        if (addr == 0)
+        {
+            throw new Interpreter.VisLangNullException("Attempted to dereference a value by address by address is NULL (address is 0)", this);
+        }
+        return Interpreter?.VisSystemMemory.Memory[addr];
     }
 }
