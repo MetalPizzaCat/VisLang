@@ -4,7 +4,7 @@
 
 [resource]
 script = ExtResource("1_3r481")
-AnyColor = Color(0.176471, 0.176471, 0.176471, 1)
+AnyColor = Color(1, 0.258824, 0.905882, 1)
 BoolColor = Color(0.501961, 0, 0, 1)
 CharColor = Color(0.517647, 0, 0.521569, 1)
 IntegerColor = Color(0.164706, 0.654902, 0.301961, 1)

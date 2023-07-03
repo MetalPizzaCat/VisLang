@@ -1,0 +1,61 @@
+[gd_scene load_steps=6 format=3 uid="uid://xge0jqowey4e"]
+
+[ext_resource type="Script" path="res://Script/Editor/NodeEditCanvas.cs" id="1_6hlyh"]
+[ext_resource type="PackedScene" uid="uid://dkq7ocn28tkg0" path="res://Editor/EditorGraphNode.tscn" id="2_64vgv"]
+[ext_resource type="Resource" uid="uid://dbhhner37tajl" path="res://Assets/DefaultCodeTheme.tres" id="4_604wj"]
+[ext_resource type="Resource" uid="uid://dpkha8n5rkowh" path="res://Functions/Func_Print.tres" id="5_ktpdh"]
+[ext_resource type="PackedScene" uid="uid://ckx01i2b2svjf" path="res://Editor/Nodes/exec_node.tscn" id="6_f2f1b"]
+
+[node name="GraphEdit" type="GraphEdit"]
+anchors_preset = -1
+anchor_right = 0.84
+anchor_bottom = 0.853
+offset_bottom = 0.299988
+scroll_offset = Vector2(0, -0.299988)
+connection_lines_thickness = 3.0
+show_zoom_label = true
+script = ExtResource("1_6hlyh")
+
+[node name="EditorGraphNode" parent="." instance=ExtResource("2_64vgv")]
+layout_mode = 0
+offset_left = 176.0
+offset_top = 120.0
+offset_right = 496.0
+offset_bottom = 376.0
+mouse_filter = 1
+position_offset = Vector2(176, 119.7)
+Info = ExtResource("5_ktpdh")
+Theme = ExtResource("4_604wj")
+
+[node name="EditorGraphNode2" parent="." instance=ExtResource("2_64vgv")]
+layout_mode = 0
+offset_left = 680.0
+offset_top = 144.0
+offset_right = 1000.0
+offset_bottom = 400.0
+mouse_filter = 1
+position_offset = Vector2(680, 143.7)
+Info = ExtResource("5_ktpdh")
+Theme = ExtResource("4_604wj")
+
+[node name="EditorGraphNode3" parent="." instance=ExtResource("2_64vgv")]
+layout_mode = 0
+offset_left = 624.0
+offset_top = 496.0
+offset_right = 944.0
+offset_bottom = 752.0
+mouse_filter = 1
+position_offset = Vector2(624, 495.7)
+Info = ExtResource("5_ktpdh")
+Theme = ExtResource("4_604wj")
+
+[node name="ExecNode" parent="." instance=ExtResource("6_f2f1b")]
+layout_mode = 0
+offset_left = 64.0
+offset_top = 416.0
+offset_right = 135.0
+offset_bottom = 496.0
+mouse_filter = 1
+position_offset = Vector2(64, 415.7)
+
+[connection signal="connection_request" from="." to="." method="ConnectNodes"]

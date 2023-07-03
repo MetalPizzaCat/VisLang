@@ -66,7 +66,9 @@ public class NodeParser
             return null;
         }
         node.DebugData = root;
-        node.Inputs = GenerateInputs(root);
+
+        //TODO: Fix
+        //node.Inputs = GenerateInputs(root);
         // we record node at this moment because as we will traverse the tree further we need this node to exist to be able to reference it
         _visNodes.Add(node);
         if (root.OutputExecNode != null && root.OutputExecNode.Connection != null && root.OutputExecNode.Connection.OwningNode != null)
@@ -94,7 +96,8 @@ public class NodeParser
             return null;
         }
         node.DebugData = root;
-        node.Inputs = GenerateInputs(root);
+        // TODO: fix
+        //node.Inputs = GenerateInputs(root);
         // record this node so any other code that references this node in editor
         // will use it instead of duplicating the data tree
         _visNodes.Add(node);
