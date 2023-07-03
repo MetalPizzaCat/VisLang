@@ -10,5 +10,5 @@ public class FlowControlIfNode : ExecutionNode
 
     public ExecutionNode? FailureNext { get; set; } = null;
 
-    public override ExecutionNode? GetNext() => (Inputs.FirstOrDefault()?.GetValue()?.TryAsBool() ?? false) ? SuccessNext : FailureNext;
+    public override ExecutionNode? GetNext() => (Inputs.FirstOrDefault()?.GetValue(null)?.TryAsBool() ?? false) ? SuccessNext : FailureNext;
 }

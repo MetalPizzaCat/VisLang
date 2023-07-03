@@ -36,3 +36,12 @@ public class ValueTypeMismatchException : InterpreterException
         System.Runtime.Serialization.SerializationInfo info,
         System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
 }
+
+[System.Serializable]
+public class VisLangNullException : InterpreterException
+{
+    public VisLangNullException(string message, VisNode? node) : base(message, node) { }
+    protected VisLangNullException(
+        System.Runtime.Serialization.SerializationInfo info,
+        System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
+}

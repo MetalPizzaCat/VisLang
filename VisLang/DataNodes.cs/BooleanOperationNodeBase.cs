@@ -9,7 +9,7 @@ public class BinaryOperationNodeBase : DataNode
     public Value DefaultValueLeft { get; set; } = new Value(ValueType.Bool, false);
     public Value DefaultValueRight { get; set; } = new Value(ValueType.Bool, false);
 
-    public Value ValueLeft => Inputs.FirstOrDefault()?.GetValue() ?? DefaultValueLeft;
+    public Value GetValueLeft(NodeContext? context) => Inputs.FirstOrDefault()?.GetValue(context) ?? DefaultValueLeft;
 
-    public Value ValueRight => Inputs.ElementAtOrDefault(1)?.GetValue() ?? DefaultValueRight;
+    public Value GetValueRight(NodeContext? context) => Inputs.ElementAtOrDefault(1)?.GetValue(context) ?? DefaultValueRight;
 }

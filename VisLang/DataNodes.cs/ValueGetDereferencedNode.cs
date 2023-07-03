@@ -9,20 +9,26 @@ public class ValueGetDereferencedNode : DataNode
     {
     }
 
-    public override Value? GetValue()
+    public override Value? GetValue(NodeContext? context = null)
     {
         if (Inputs.FirstOrDefault() == null)
         {
             return null;
         }
-        if (Inputs.FirstOrDefault().GetValue() == null)
+        Value? val = Inputs.FirstOrDefault()?.GetValue(context);
+        if (val == null)
         {
             return null;
         }
-        if (Inputs.FirstOrDefault().GetValue().ValueType != ValueType.Address)
+        if (val.ValueType != ValueType.Address)
         {
             return null;
         }
-        return Interpreter?.VisSystemMemory.Memory[(uint)Inputs.FirstOrDefault().GetValue().Data];
+        uint addr = (uint)(val?.Data ?? 0u);
+        if (addr == 0)
+        {
+            throw new Interpreter.VisLangNullException("Attempted to dereference a value by address by address is NULL (address is 0)", this);
+        }
+        return Interpreter?.VisSystemMemory.Memory[addr];
     }
 }

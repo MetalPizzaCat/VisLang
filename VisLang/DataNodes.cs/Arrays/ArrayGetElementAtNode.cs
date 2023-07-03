@@ -15,14 +15,14 @@ public class ArrayGetElementAtNode : DataNode
 
     public int DefaultIndex = 0;
 
-    public Value? Array => Inputs.ElementAtOrDefault(0)?.GetValue();
-    public int Index => Inputs.ElementAtOrDefault(1)?.GetValue()?.AsInteger() ?? DefaultIndex;
+    public Value? GetInputArray(NodeContext? context) => Inputs.ElementAtOrDefault(0)?.GetValue(context);
+    public int GetInputIndex(NodeContext? context) => Inputs.ElementAtOrDefault(1)?.GetValue(context)?.AsInteger() ?? DefaultIndex;
 
-    public override Value? GetValue()
+    public override Value? GetValue(NodeContext? context = null)
     {
-        if (Array?.Data is List<Value> arr)
+        if (GetInputArray(context)?.Data is List<Value> arr)
         {
-            return arr[Index];
+            return arr[GetInputIndex(context)];
         }
         return null;
     }

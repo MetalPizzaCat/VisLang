@@ -9,20 +9,20 @@ public class ValueGetAddressNode : DataNode
     {
     }
 
-    public override Value? GetValue()
+    public override Value? GetValue(NodeContext? context = null)
     {
         if (Inputs.FirstOrDefault() == null)
         {
             return null;
         }
-        if (Inputs.FirstOrDefault().GetValue() == null)
+        if (Inputs.FirstOrDefault()?.GetValue(context) == null)
         {
             return null;
         }
-        if (Inputs.FirstOrDefault().GetValue().ValueType != ValueType.Address)
+        if (Inputs.FirstOrDefault()?.GetValue(context).ValueType != ValueType.Address)
         {
             return null;
         }
-        return new Value(ValueType.Address, (uint)(Inputs.FirstOrDefault().GetValue().Address ?? 0));
+        return new Value(ValueType.Address, (uint)(Inputs.FirstOrDefault()?.GetValue(context)?.Address ?? 0));
     }
 }

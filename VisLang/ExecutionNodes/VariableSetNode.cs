@@ -6,7 +6,7 @@ public class VariableSetNode : ExecutionNode
 
     public object DefaultValue = -1;
 
-    public object Value => Inputs.FirstOrDefault()?.GetValue()?.Data ?? DefaultValue;
+    public object GetInputValue(NodeContext? context) => Inputs.FirstOrDefault()?.GetValue(context)?.Data ?? DefaultValue;
 
     public VariableSetNode(VisSystem? interpreter) : base(interpreter)
     {
@@ -16,19 +16,22 @@ public class VariableSetNode : ExecutionNode
     {
     }
 
-    public override void Execute()
+    public override void Execute(NodeContext? context = null)
     {
-        if (Interpreter == null)
+        VisSystem? sys = (context?.Interpreter ?? Interpreter);
+        if (sys == null)
         {
             throw new NullReferenceException("Interpreter system is null");
         }
-        if (Interpreter?.VisSystemMemory[Name] == null)
+        Value? value = context?.Variables == null ? (sys.VisSystemMemory.GetValue(Name, null)) : (sys.VisSystemMemory.Memory[context.Variables[Name]]);
+
+        if (value == null)
         {
             throw new Interpreter.MissingVariableException($"No variable with name {Name} found", this);
         }
         try
         {
-            Interpreter.VisSystemMemory[Name].Data = Value;
+            value.Data = GetInputValue(context);
         }
         catch (Interpreter.ValueTypeMismatchException e)
         {

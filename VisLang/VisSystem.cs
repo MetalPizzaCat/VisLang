@@ -38,7 +38,65 @@ public class VisSystemMemory
     /// </summary>
     public Dictionary<string, uint> Variables { get; set; } = new();
 
-    public Value? this[string name] => Variables.ContainsKey(name) ? (Memory.ContainsKey(Variables[name]) ? Memory[Variables[name]] : null) : null;
+    /// <summary>
+    /// The stack where functions can puts their return values, for other nodes to grab from<para></para>
+    /// This is alternative to storing node results in the node itself. This also in theory allows for multiple return values
+    /// </summary>
+    public Stack<Value> FunctionReturnAddressesStack { get; set; } = new();
+
+    /// <summary>
+    ///  Returns value of the variable stored under the given name.<para></para>
+    /// </summary>
+    public Value? this[string name]
+    {
+        get
+        {
+            // we must have a record with this name
+            if (!Variables.ContainsKey(name))
+            {
+                return null;
+            }
+            // and we must have an actual value in memory with this name
+            if (!Memory.ContainsKey(Variables[name]))
+            {
+                return null;
+            }
+            return Memory[Variables[name]];
+        }
+    }
+
+    public Value? GetValue(string name, Dictionary<string, uint>? context)
+    {
+        if (context == null)
+        {
+            // we must have a record with this name
+            if (!Variables.ContainsKey(name))
+            {
+                return null;
+            }
+            // and we must have an actual value in memory with this name
+            if (!Memory.ContainsKey(Variables[name]))
+            {
+                return null;
+            }
+            return Memory[Variables[name]];
+        }
+        else
+        {
+            // we must have a record with this name
+            if (!context.ContainsKey(name))
+            {
+                return null;
+            }
+            // and we must have an actual value in memory with this name
+            if (!Memory.ContainsKey(context[name]))
+            {
+                return null;
+            }
+            return Memory[context[name]];
+        }
+    }
+
 
     public uint AllocateValue(ValueType type, object? value = null, ValueType? arrayDataType = null)
     {
@@ -47,6 +105,36 @@ public class VisSystemMemory
         return _memoryCounter - 1;
     }
 
+    /// <summary>
+    /// Creates a new variable in the system and allocates memory for that variable.<para></para>
+    /// This overload operates on a provided variable list. 
+    /// </summary>
+    /// <param name="variableList">Variable list that stores variable names, and where information about allocated value will be written to</param>
+    /// <param name="name">Name of the variable</param>
+    /// <param name="type">Type of the variable</param>
+    /// <param name="value">Possible init value or null if default should be used</param>
+    /// <param name="arrayDataType">If type is an array, this will define what type of data the array stores. Or null if array accepts anything</param>
+    /// <returns>True if variable can be created or false if variable name is already taken</returns>
+    public bool CreateVariable(ref Dictionary<string, uint> variableList, string name, ValueType type, object? value = null, ValueType? arrayDataType = null)
+    {
+        // this still works since all values are stored in the system even if variable names are not
+        if (variableList.ContainsKey(name) && Memory.ContainsKey(variableList[name]))
+        {
+            return false;
+        }
+        uint addr = AllocateValue(type, value, arrayDataType);
+        variableList.Add(name, addr);
+        return true;
+    }
+
+    /// <summary>
+    /// Creates a new variable in the system and allocates memory for that variable
+    /// </summary>
+    /// <param name="name">Name of the variable</param>
+    /// <param name="type">Type of the variable</param>
+    /// <param name="value">Possible init value or null if default should be used</param>
+    /// <param name="arrayDataType">If type is an array, this will define what type of data the array stores. Or null if array accepts anything</param>
+    /// <returns>True if variable can be created or false if variable name is already taken</returns>
     public bool CreateVariable(string name, ValueType type, object? value = null, ValueType? arrayDataType = null)
     {
         if (this[name] != null)
@@ -56,6 +144,15 @@ public class VisSystemMemory
         uint addr = AllocateValue(type, value, arrayDataType);
         Variables.Add(name, addr);
         return true;
+    }
+
+    /// <summary>
+    /// Removes whatever data was stored at the given address
+    /// </summary>
+    /// <param name="address"></param>
+    public void FreeAddress(uint address)
+    {
+        Memory.Remove(address);
     }
 
     /// <summary>
@@ -105,20 +202,45 @@ public class VisSystem
     /// <value></value>
     public ExecutionNode? Entrance { get; set; } = null;
 
+    public ExecutionNode? Current { get; set; } = null;
+
     public void AddOutput(string output)
     {
         OnOutputAdded?.Invoke(output);
         Output.Add(output);
     }
 
+    /// <summary>
+    /// Execute next item in the tree
+    /// </summary>
+    /// <returns>True if there is a next node that can be executed or false if no further nodes available</returns>
+    public bool ExecuteNext(NodeContext? context)
+    {
+        if (Current == null)
+        {
+            return false;
+        }
+        Current.Execute(context);
+        // second check here because some nodes might alter value of the Current(for example nodes that jump to a different set of instructions )
+        if (Current == null)
+        {
+            return false;
+        }
+        Current = Current.GetNext();
+        return Current != null;
+    }
+
+    /// <summary>
+    /// Begins the execution from the first node and continues as long as there are nodes in the list
+    /// </summary>
     public void Execute()
     {
         Entrance?.Execute();
-        ExecutionNode? next = Entrance?.GetNext();
-        while (next != null)
+        Current = Entrance?.GetNext();
+        while (ExecuteNext(null) && Current != null)
         {
-            next.Execute();
-            next = next.GetNext();
+            Current.Execute();
+            Current = Current.GetNext();
         }
     }
 
