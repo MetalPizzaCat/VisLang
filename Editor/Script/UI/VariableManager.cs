@@ -6,9 +6,9 @@ using System.Linq;
 
 public partial class VariableManager : Control
 {
-    public delegate void SetterRequestedEventHandler(VariableInfo info);
-    public delegate void GetterRequestedEventHandler(VariableInfo info);
-    public delegate void VariableDeletedEventHandler(VariableInfo info);
+    public delegate void SetterRequestedEventHandler(VisLang.Editor.VariableInfo info);
+    public delegate void GetterRequestedEventHandler(VisLang.Editor.VariableInfo info);
+    public delegate void VariableDeletedEventHandler(VisLang.Editor.VariableInfo info);
 
     public event SetterRequestedEventHandler? SetterRequested;
     public event GetterRequestedEventHandler? GetterRequested;
@@ -25,22 +25,19 @@ public partial class VariableManager : Control
         {
             throw new Exception("Unable to create variable management control");
         }
-        variable.SetterRequested += (VariableInfo info) => { SetterRequested?.Invoke(info); };
-        variable.GetterRequested += (VariableInfo info) => { GetterRequested?.Invoke(info); };
-        variable.Info.NameChanged += CheckAndNotifyVariableNames;
+        variable.SetterRequested += (VisLang.Editor.VariableInfo info) => { SetterRequested?.Invoke(info); };
+        variable.GetterRequested += (VisLang.Editor.VariableInfo info) => { GetterRequested?.Invoke(info); };
+        variable.NameChanged += CheckAndNotifyVariableNames;
         VariableControlButtons.Add(variable);
         Container?.AddChild(variable);
-        CheckAndNotifyVariableNames(variable.Info, variable.Info.Name, variable.Info.Name);
+        CheckAndNotifyVariableNames(variable.Info, variable.Info.Name);
     }
 
-    private void CheckAndNotifyVariableNames(VariableInfo? sender, string oldName, string newName)
+    private void CheckAndNotifyVariableNames(VisLang.Editor.VariableInfo sender, string newName)
     {
         foreach (VariableControl variable in VariableControlButtons)
         {
-            // because event is called before the name change actually applies we have to do this little on the go check 
-            // to use the correct name, otherwise it will always be slightly lagging behind
-            string name = (variable.Info == sender) ? newName : variable.Info.Name;
-            if (VariableControlButtons.Any(p => (sender == p.Info ? newName : p.Info.Name) == name && p != variable))
+            if (VariableControlButtons.Any(p => p.Name == newName && p != variable))
             {
                 variable.DisplayDuplicateNameError();
             }

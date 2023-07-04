@@ -5,11 +5,12 @@ namespace VisLang.Editor;
 
 public partial class NodeEditCanvas : GraphEdit
 {
-    [Export]
-    public EditorGraphNode TestNode1 { get; private set; }
 
     [Export]
-    public EditorGraphNode TestNode2 { get; private set; }
+    public NodeCreationMenu CreationMenu { get; private set; }
+
+    [Export]
+    public CodeColorTheme CodeTheme { get; set; }
 
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
@@ -19,7 +20,7 @@ public partial class NodeEditCanvas : GraphEdit
             AddValidConnectionType((int)val + 2, EditorGraphNode.AnyTypeId);
             AddValidConnectionType(EditorGraphNode.AnyTypeId, (int)val + 2);
         }
-
+        CreationMenu.FunctionSelected += SpawnFunction;
     }
 
     // Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -57,6 +58,48 @@ public partial class NodeEditCanvas : GraphEdit
         }
 
 
-        GD.Print($"sourceNode: {sourceNode}, sourcePort: {sourcePort}, destNode: {destNode}, destPort{destPort}");
+        GD.Print($"Connect -> sourceNode: {sourceNode}, sourcePort: {sourcePort}, destNode: {destNode}, destPort{destPort}");
+    }
+
+    private void OpenCreationMenu(Vector2 position)
+    {
+        CreationMenu.Position = new Vector2I((int)position.X, (int)position.Y);
+        CreationMenu.Popup();
+    }
+
+
+    /// <summary>
+    /// Generation function node at runtime based of provided function signature of given node type
+    /// </summary>
+    /// <param name="info">Function signature used to generate inputs</param>
+    /// <typeparam name="EditorNodeType">Type of the node</typeparam>
+    /// <returns>Generated node or null if generation failed for any reason</returns>
+    public EditorNodeType? MakeNodeFromSignature<EditorNodeType>(FunctionInfo info) where EditorNodeType : EditorGraphNode, new()
+    {
+        EditorNodeType? node = new EditorNodeType();
+        if (node == null)
+        {
+            return null;
+        }
+        node.CodeTheme = CodeTheme;
+        AddChild(node);
+        node.Position = GetGlobalMousePosition();
+        node.GenerateFunction(info);
+        return node;
+    }
+
+    /// <summary>
+    /// Generate function node at runtime based on provided function signature.<para></para> 
+    /// This version only creates base node type
+    /// </summary>
+    /// <param name="info">Function signature to use for node generation</param>
+    private void SpawnFunction(FunctionInfo info)
+    {
+        MakeNodeFromSignature<EditorGraphNode>(info);
+    }
+
+    private void DisconnectNodes(string sourceNode, int sourcePort, string destNode, int destPort)
+    {
+        GD.Print($"Disconnect -> sourceNode: {sourceNode}, sourcePort: {sourcePort}, destNode: {destNode}, destPort{destPort}");
     }
 }

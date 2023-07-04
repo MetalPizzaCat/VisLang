@@ -10,7 +10,7 @@ public partial class EditorGraphNode : GraphNode
     [Export]
     public FunctionInfo? Info { get; set; }
     [Export]
-    public CodeColorTheme? Theme { get; set; }
+    public CodeColorTheme? CodeTheme { get; set; }
 
     public bool IsExecutable => Info?.IsExecutable ?? false;
 
@@ -38,6 +38,10 @@ public partial class EditorGraphNode : GraphNode
 
     public void GenerateFunction(FunctionInfo info)
     {
+        if (info != Info)
+        {
+            Info = info;
+        }
         Inputs.Clear();
         Title = info.FunctionName;
         TooltipText = info.FunctionDescription;
@@ -58,10 +62,10 @@ public partial class EditorGraphNode : GraphNode
                     slotIndex,
                     true,
                     arg.TypeMatchingPermissions == FunctionInputInfo.TypePermissions.AllowAny ? AnyTypeId : GetTypeIdForValueType(arg.InputType),
-                    (arg.TypeMatchingPermissions == FunctionInputInfo.TypePermissions.AllowAny ? Theme?.AnyColor : Theme?.GetColorForType(arg.InputType)) ?? new Color(1, 1, 1),
+                    (arg.TypeMatchingPermissions == FunctionInputInfo.TypePermissions.AllowAny ? CodeTheme?.AnyColor : CodeTheme?.GetColorForType(arg.InputType)) ?? new Color(1, 1, 1),
                     true,
                     GetTypeIdForValueType(info.OutputType.Value),
-                    Theme?.GetColorForType(info.OutputType ?? VisLang.ValueType.Bool) ?? new Color(1, 1, 1)
+                    CodeTheme?.GetColorForType(info.OutputType ?? VisLang.ValueType.Bool) ?? new Color(1, 1, 1)
                 );
             }
             else
@@ -71,7 +75,7 @@ public partial class EditorGraphNode : GraphNode
                     slotIndex,
                     true,
                     arg.TypeMatchingPermissions == FunctionInputInfo.TypePermissions.AllowAny ? AnyTypeId : GetTypeIdForValueType(arg.InputType),
-                    (arg.TypeMatchingPermissions == FunctionInputInfo.TypePermissions.AllowAny ? Theme?.AnyColor : Theme?.GetColorForType(arg.InputType)) ?? new Color(1, 1, 1),
+                    (arg.TypeMatchingPermissions == FunctionInputInfo.TypePermissions.AllowAny ? CodeTheme?.AnyColor : CodeTheme?.GetColorForType(arg.InputType)) ?? new Color(1, 1, 1),
                     false,
                     0,
                     new Color()
@@ -79,6 +83,21 @@ public partial class EditorGraphNode : GraphNode
             }
             Inputs.Add(null);
             slotIndex++;
+        }
+        // if we have no arguments the output generation will be skipped because it uses arg0 for position
+        if (info.Inputs.Count == 0 && info.HasOutput && info.OutputType != null)
+        {
+            AddChild(new Label() { Text = "Value" });
+            SetSlot
+                (
+                    0,
+                    false,
+                    0,
+                    new Color(),
+                    true,
+                    GetTypeIdForValueType(info.OutputType.Value),
+                    CodeTheme?.GetColorForType(info.OutputType ?? VisLang.ValueType.Bool) ?? new Color(1, 1, 1)
+                );
         }
     }
 

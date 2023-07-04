@@ -5,11 +5,14 @@ using System.Text.RegularExpressions;
 
 public partial class VariableControl : HBoxContainer
 {
-    public delegate void SetterRequestedEventHandler(VariableInfo info);
-    public delegate void GetterRequestedEventHandler(VariableInfo info);
+    public delegate void SetterRequestedEventHandler(VisLang.Editor.VariableInfo info);
+    public delegate void GetterRequestedEventHandler(VisLang.Editor.VariableInfo info);
+
+    public delegate void NameChangedEventHandler(VisLang.Editor.VariableInfo info, string newName);
 
     public event SetterRequestedEventHandler? SetterRequested;
     public event GetterRequestedEventHandler? GetterRequested;
+    public event NameChangedEventHandler? NameChanged;
 
 
     [Export]
@@ -25,9 +28,9 @@ public partial class VariableControl : HBoxContainer
     [Export]
     public Control? ErrorDisplayControl { get; set; }
 
-    private VariableInfo _info = new VariableInfo("Default", VisLang.ValueType.Bool, null);
+    private VisLang.Editor.VariableInfo _info = new VisLang.Editor.VariableInfo("Default", VisLang.ValueType.Bool, null, false);
 
-    public VariableInfo Info => _info;
+    public VisLang.Editor.VariableInfo Info => _info;
 
     public string VariableName => NameEdit.Text;
 
@@ -85,6 +88,7 @@ public partial class VariableControl : HBoxContainer
         }
 
         _info.Name = newName;
+        NameChanged?.Invoke(_info, newName);
     }
 
     public void DisplayDuplicateNameError()
@@ -121,8 +125,8 @@ public partial class VariableControl : HBoxContainer
 
     private void SelectType(int type)
     {
-        _info.ValueType = (VisLang.ValueType)type;
-        ArrayTypeOptionButton.Visible = _info.ValueType == VisLang.ValueType.Array;
+        _info.Type = (VisLang.ValueType)type;
+        ArrayTypeOptionButton.Visible = _info.Type == VisLang.ValueType.Array;
     }
 
     private void CreateSetter()
@@ -148,6 +152,6 @@ public partial class VariableControl : HBoxContainer
 
     private void SetArrayType(int type)
     {
-        _info.ArrayDataType = (type < Enum.GetNames(typeof(VisLang.ValueType)).Length ) ? ((VisLang.ValueType)type) : null;
+        _info.ArrayDataType = (type < Enum.GetNames(typeof(VisLang.ValueType)).Length) ? ((VisLang.ValueType)type) : null;
     }
 }

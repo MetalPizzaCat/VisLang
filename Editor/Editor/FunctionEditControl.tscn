@@ -1,0 +1,26 @@
+[gd_scene load_steps=4 format=3 uid="uid://xt83rs5upyhm"]
+
+[ext_resource type="PackedScene" uid="uid://xge0jqowey4e" path="res://Editor/GraphEditCanvas.tscn" id="1_354bi"]
+[ext_resource type="Script" path="res://Script/Editor/FunctionEditControl.cs" id="1_jidqd"]
+[ext_resource type="PackedScene" uid="uid://cggls8480xaxq" path="res://Editor/UserInteraction/variable_control.tscn" id="2_qfxht"]
+
+[node name="FunctionEditControl" type="Control" node_paths=PackedStringArray("VariableManager", "NodeCanvas")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_jidqd")
+VariableManager = NodePath("VariableControl")
+NodeCanvas = NodePath("GraphEdit")
+
+[node name="GraphEdit" parent="." instance=ExtResource("1_354bi")]
+layout_mode = 1
+scroll_offset = Vector2(0, -0.299988)
+
+[node name="VariableControl" parent="." instance=ExtResource("2_qfxht")]
+layout_mode = 1
+offset_left = 128.0
+offset_top = 0.0
+offset_bottom = 40.3

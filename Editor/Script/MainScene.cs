@@ -94,11 +94,6 @@ public partial class MainScene : Node2D
         EntranceInput.Selected += ExecConnectionSelected;
         NodeCreationMenu.FunctionSelected += CreateNode;
         NodeCreationMenu.SpecialFunctionSelected += CreateSpecialNode;
-        if (VariableManager != null)
-        {
-            VariableManager.GetterRequested += CreateGetter;
-            VariableManager.SetterRequested += CreateSetter;
-        }
     }
 
     private void FinishExecution()

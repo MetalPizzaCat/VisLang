@@ -1,19 +1,35 @@
-[gd_scene load_steps=2 format=3 uid="uid://cy3ayxdr8tp2a"]
+[gd_scene load_steps=5 format=3 uid="uid://cy3ayxdr8tp2a"]
 
-[ext_resource type="PackedScene" uid="uid://xge0jqowey4e" path="res://Editor/GraphEditCanvas.tscn" id="1_ea5wb"]
+[ext_resource type="Script" path="res://Script/Editor/ProjectEditorScene.cs" id="1_rr1ug"]
+[ext_resource type="PackedScene" uid="uid://4i8ijrxpht43" path="res://Editor/UserInteraction/OutputBox.tscn" id="3_fbxd7"]
+[ext_resource type="PackedScene" uid="uid://xt83rs5upyhm" path="res://Editor/FunctionEditControl.tscn" id="4_ik76o"]
+[ext_resource type="Script" path="res://Script/ExecutionManager.cs" id="4_rl06k"]
 
-[node name="Control" type="Control"]
+[node name="ProjectEditorCanvas" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_rr1ug")
 
-[node name="GraphEdit" parent="." instance=ExtResource("1_ea5wb")]
+[node name="TabBar" type="TabBar" parent="."]
 layout_mode = 0
-anchors_preset = 0
-anchor_right = 0.0
-anchor_bottom = 0.0
-offset_right = 1472.0
-offset_bottom = 768.0
+offset_top = 24.0
+offset_right = 40.0
+offset_bottom = 64.0
+clip_tabs = false
+tab_close_display_policy = 1
+tab_count = 1
+tab_0/title = "Main"
+
+[node name="Control" parent="." instance=ExtResource("3_fbxd7")]
+
+[node name="Interpreter" type="Node" parent="."]
+script = ExtResource("4_rl06k")
+
+[node name="FunctionEditControl" parent="." instance=ExtResource("4_ik76o")]
+layout_mode = 1
+offset_right = 8.0
+offset_bottom = -60.0
