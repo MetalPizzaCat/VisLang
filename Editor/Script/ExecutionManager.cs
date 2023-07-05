@@ -1,3 +1,4 @@
+namespace VisLang.Editor;
 using Godot;
 using System;
 

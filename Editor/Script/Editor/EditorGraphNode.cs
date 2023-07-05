@@ -7,10 +7,15 @@ using System.Linq;
 
 public partial class EditorGraphNode : GraphNode
 {
+    public delegate void DeleteRequestedEventHandler(EditorGraphNode? sender);
+    public event DeleteRequestedEventHandler? DeleteRequested;
+
     [Export]
     public FunctionInfo? Info { get; set; }
     [Export]
     public CodeColorTheme? CodeTheme { get; set; }
+
+    public bool CanBeDeleted { get; protected set; } = true;
 
     public bool IsExecutable => Info?.IsExecutable ?? false;
 
@@ -35,6 +40,7 @@ public partial class EditorGraphNode : GraphNode
         // 1 is for any
         return (int)type + 2;
     }
+
 
     public void GenerateFunction(FunctionInfo info)
     {
@@ -107,11 +113,44 @@ public partial class EditorGraphNode : GraphNode
         {
             GenerateFunction(Info);
         }
+        CustomMinimumSize = new Vector2(200, 50);
+        ShowClose = CanBeDeleted;
+        if (CanBeDeleted)
+        {
+            CloseRequest += () => DeleteRequested?.Invoke(this);
+        }
     }
 
     public void AddConnection(int dstPort, EditorGraphNode node, int srcPort)
     {
         Inputs[dstPort] = new EditorGraphNodeInput(node, srcPort);
+    }
+
+    /// <summary>
+    /// Destroyed connection on selected port
+    /// </summary>
+    /// <param name="port">Port id </param>
+    /// <param name="left">If true left(input side) connection will be destroyed otherwise right(output side)</param>
+    public virtual void DestroyConnectionOnPort(int port, bool left)
+    {
+        // base executables will always have port0 reserved for exec line
+        if (IsExecutable && port == 0)
+        {
+            if (left)
+            {
+                PreviousExecutable = null;
+            }
+            else
+            {
+                NextExecutable = null;
+            }
+        }
+        // we don't care about what's on the right since data connections work right to left
+        // as opposed to left to right of the exec connections
+        else if (left)
+        {
+            Inputs[port] = null;
+        }
     }
 
     public bool CanConnectOnPortExec(int port, bool asSource)
@@ -121,10 +160,5 @@ public partial class EditorGraphNode : GraphNode
     public bool CanConnectOnPort(int dstPort)
     {
         return Inputs.ElementAtOrDefault(dstPort) == null;
-    }
-
-    // Called every frame. 'delta' is the elapsed time since the previous frame.
-    public override void _Process(double delta)
-    {
     }
 }

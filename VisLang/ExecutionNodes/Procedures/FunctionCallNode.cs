@@ -33,7 +33,7 @@ public class FunctionCallNode : DataNode
         // this is done to ensure that we don't need to create special handling for when code is run from function
         // the reason why it is done inside caller instead of the function itself is so we could pass the argument values
         int currentArgumentId = 0;
-        foreach ((string argName, ValueType argType) in proc.Arguments)
+        foreach ((string argName, ValueTypeData argType) in proc.Arguments)
         {
             Interpreter.VisSystemMemory.CreateVariable(ref variables, argName, argType, Inputs.ElementAtOrDefault(currentArgumentId)?.GetValue(context)?.Data);
             // this solution could cause issues if arguments are messed up and don't match function signature

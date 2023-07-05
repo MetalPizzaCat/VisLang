@@ -14,8 +14,8 @@ public class VariableGetAddressNode : DataNode
     {
         if (Interpreter?.VisSystemMemory.GetValue(Name, null) == null)
         {
-            return new Value(ValueType.Address, 0);
+            return new Value(new ValueTypeData(ValueType.Address), 0);
         }
-        return new Value(ValueType.Address, Interpreter?.VisSystemMemory.GetValue(Name, null).Address);
+        return new Value(new ValueTypeData(ValueType.Address), Interpreter?.VisSystemMemory.GetValue(Name, null).Address);
     }
 }

@@ -28,7 +28,7 @@ public class DivisionNode : ArithmeticOperationNodeBase
 
     public override Value? GetValue(NodeContext? context = null)
     {
-        return new Value(ValueType.Float, GetValueLeft(context) / GetValueRight(context));
+        return new Value(new ValueTypeData(ValueType.Float), GetValueLeft(context) / GetValueRight(context));
     }
 }
 
@@ -42,7 +42,7 @@ public class MultiplicationNode : ArithmeticOperationNodeBase
 
     public override Value? GetValue(NodeContext? context = null)
     {
-        return new Value(ValueType.Float, GetValueLeft(context) * GetValueRight(context));
+        return new Value(new ValueTypeData(ValueType.Float), GetValueLeft(context) * GetValueRight(context));
     }
 }
 
@@ -56,6 +56,6 @@ public class SubtractionNode : ArithmeticOperationNodeBase
 
     public override Value? GetValue(NodeContext? context = null)
     {
-        return new Value(ValueType.Float, GetValueLeft(context) - GetValueRight(context));
+        return new Value(new ValueTypeData(ValueType.Float), GetValueLeft(context) - GetValueRight(context));
     }
 }

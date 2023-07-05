@@ -10,6 +10,6 @@ public class AdditionNode : ArithmeticOperationNodeBase
 
     public override Value? GetValue(NodeContext? context = null)
     {
-        return new Value(ValueType.Float, GetValueLeft(context) + GetValueRight(context));
+        return new Value(new ValueTypeData(ValueType.Float), GetValueLeft(context) + GetValueRight(context));
     }
 }

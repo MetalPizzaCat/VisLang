@@ -7,7 +7,11 @@ public class VariableAllocateNode : ExecutionNode
 {
     public object DefaultValue = -1;
 
-    public ValueType ValueType { get; set; } = ValueType.Bool;
+    /// <summary>
+    /// Type of the value that will be created
+    /// </summary>
+    /// <value></value>
+    public ValueTypeData AllocatedValueType { get; set; } = new ValueTypeData();
 
     public object GetInputValue(NodeContext? context) => Inputs.FirstOrDefault()?.GetValue(context)?.Data ?? DefaultValue;
 
@@ -22,6 +26,6 @@ public class VariableAllocateNode : ExecutionNode
         {
             throw new NullReferenceException("Interpreter system is null");
         }
-        Interpreter?.VisSystemMemory.FunctionReturnAddressesStack.Push(new Value(ValueType.Address, Interpreter.VisSystemMemory.AllocateValue(ValueType, DefaultValue)));
+        Interpreter?.VisSystemMemory.FunctionReturnAddressesStack.Push(new Value(new ValueTypeData(ValueType.Address), Interpreter.VisSystemMemory.AllocateValue(AllocatedValueType, DefaultValue)));
     }
 }

@@ -34,6 +34,28 @@ public enum ValueType
 }
 
 /// <summary>
+/// Stores full information about a type
+/// </summary>
+public struct ValueTypeData
+{
+    public ValueType Type = ValueType.Bool;
+    public ValueType? ArrayType = null;
+
+    public ValueTypeData(ValueType type, ValueType? arrayType)
+    {
+        Type = type;
+        ArrayType = arrayType;
+    }
+
+    public ValueTypeData(ValueType type)
+    {
+        Type = type;
+    }
+    public ValueTypeData() { }
+
+}
+
+/// <summary>
 /// Special object used for representing data in the VisLang memory
 /// </summary>
 public class Value
@@ -42,15 +64,35 @@ public class Value
     /// Address of the variable in the interpreter memory list or null if value is not recorded in the memory list
     /// </summary>
     public uint? Address { get; }
+
+    private ValueTypeData _typeData = new ValueTypeData();
+
+    /// <summary>
+    ///  Full structure that stores information about type of the given value
+    /// </summary>
+    /// <value></value>
+    public ValueTypeData TypeData
+    {
+        get => _typeData;
+        set => _typeData = value;
+    }
     /// <summary>
     /// Current type of the value
     /// </summary>
-    public ValueType ValueType { get; set; } = ValueType.Bool;
+    public ValueType ValueType
+    {
+        get => _typeData.Type;
+        set => _typeData.Type = value;
+    }
 
     /// <summary>
     /// Type of the value stored in the array(if array is typed)
     /// </summary>
-    public ValueType? ArrayDataType { get; set; } = null;
+    public ValueType? ArrayDataType
+    {
+        get => _typeData.ArrayType;
+        set => _typeData.ArrayType = value;
+    }
 
     public bool IsArray => ValueType == ValueType.Array;
 
@@ -155,9 +197,9 @@ public class Value
     /// <param name="address"> Address of the variable in the memory</param>
     /// <param name="isArray">If true value will be an array that uses List</param>
     /// <param name="data">Possible init data or null if no data is needed.</param>
-    public Value(ValueType variableType, uint address, object? data, ValueType? arrayDataType = null)
+    public Value(ValueTypeData variableType, uint address, object? data)
     {
-        ValueType = variableType;
+        _typeData = variableType;
         if (IsArray)
         {
             // arrays are stored as list of value objects
@@ -170,14 +212,13 @@ public class Value
         {
             if (data == null)
             {
-                _data = GetDefaultValueForType(variableType);
+                _data = GetDefaultValueForType(this.ValueType);
             }
             else
             {
                 _data = data;
             }
         }
-        ArrayDataType = arrayDataType;
         Address = address;
     }
 
@@ -188,9 +229,9 @@ public class Value
     /// <param name="isArray">If true value will be an array that uses List</param>
     /// <param name="data">Possible init data or null if no data is needed.</param>
     /// <param name="arrayDataType">Type of the data stored in the array or null if array accepts any type</param>
-    public Value(ValueType variableType, object? data, ValueType? arrayDataType = null)
+    public Value(ValueTypeData variableType, object? data)
     {
-        ValueType = variableType;
+        _typeData = variableType;
         if (IsArray && data == null)
         {
             // arrays are stored as list of value objects
@@ -203,14 +244,13 @@ public class Value
         {
             if (data == null)
             {
-                _data = GetDefaultValueForType(variableType);
+                _data = GetDefaultValueForType(variableType.Type);
             }
             else
             {
                 _data = data;
             }
         }
-        ArrayDataType = arrayDataType;
         Address = null;
     }
 

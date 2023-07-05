@@ -2,20 +2,9 @@ namespace TextLang.Parser;
 using Sprache;
 using VisLang;
 
-public class TypeInfo
-{
-    public TypeInfo(VisLang.ValueType type, VisLang.ValueType? arrayDataType)
-    {
-        Type = type;
-        ArrayDataType = arrayDataType;
-    }
-
-    public VisLang.ValueType Type { get; set; }
-    public VisLang.ValueType? ArrayDataType { get; set; }
-}
 public class VariableInitInfo
 {
-    public VariableInitInfo(string name, TypeInfo type)
+    public VariableInitInfo(string name, ValueTypeData type)
     {
         Name = name;
         Type = type;
@@ -23,7 +12,7 @@ public class VariableInitInfo
 
     public string Name { get; set; }
 
-    public TypeInfo Type { get; set; }
+    public ValueTypeData Type { get; set; }
 
 }
 
@@ -56,7 +45,7 @@ public static class VisLangParser
         select content
     ).Named("quoted text");
 
-    private static readonly Parser<TypeInfo> _typeParser =
+    private static readonly Parser<ValueTypeData> _typeParser =
        (from type in (Parse.String("char").Token().Return(VisLang.ValueType.Char)
             .Or(Parse.String("int").Token().Return(VisLang.ValueType.Integer))
             .Or(Parse.String("float").Token().Return(VisLang.ValueType.Float))
@@ -64,12 +53,12 @@ public static class VisLangParser
             .Or(Parse.String("string").Token().Return(VisLang.ValueType.String))
             .Or(Parse.String("ptr").Token().Return(VisLang.ValueType.Address)))
         from array in Parse.String("[]").Token().Optional()
-        select array.IsEmpty ? new TypeInfo(type, null) : new TypeInfo(VisLang.ValueType.Array, type));
+        select array.IsEmpty ? new ValueTypeData(type, null) : new ValueTypeData(VisLang.ValueType.Array, type));
 
     private static readonly Parser<VisLang.PrintNode> _printFunctionParser = (
         from keyword in Parse.String("print").Token()
         from lb in Parse.Char('(').Token()
-        from content in (_quotedText.Token().Select(p => new VisLang.VariableGetConstNode() { Value = new VisLang.Value(VisLang.ValueType.String, p) })
+        from content in (_quotedText.Token().Select(p => new VisLang.VariableGetConstNode() { Value = new VisLang.Value(new ValueTypeData(VisLang.ValueType.String), p) })
                             .Or<VisLang.DataNode>(_expression)
                             .Or<VisLang.DataNode>(_operand)).Named("string or variable name")
         from rb in Parse.Char(')').Token()
@@ -78,7 +67,7 @@ public static class VisLangParser
     );
 
     private static readonly Parser<VisLang.DataNode> _operand = _variableName.Token().Select(p => new VariableGetNode() { Name = p })
-                    .Or<VisLang.DataNode>(Parse.DecimalInvariant.Or(Parse.Number).Select(num => new VariableGetConstNode() { Value = new Value(ValueType.Float, float.Parse(num)) }));
+                    .Or<VisLang.DataNode>(Parse.DecimalInvariant.Or(Parse.Number).Select(num => new VariableGetConstNode() { Value = new Value(new ValueTypeData(ValueType.Float), float.Parse(num)) }));
 
 
     private static DataNode MakeBinaryExpression(OperationType op, DataNode left, DataNode right)
@@ -153,7 +142,7 @@ public static class VisLangParser
     private static readonly Parser<VisLang.VariableSetNode> _assignmentParser = (
         from name in _variableName.Token()
         from ass in Parse.Char('=').Token()
-        from other in _quotedText.Select(p => new VariableGetConstNode() { Value = new Value(ValueType.String, p) }).Or(_expression)
+        from other in _quotedText.Select(p => new VariableGetConstNode() { Value = new Value(new ValueTypeData(ValueType.String), p) }).Or(_expression)
         from end in Parse.Char(';').Token()
         select new VisLang.VariableSetNode()
         {
@@ -209,7 +198,7 @@ public static class VisLangParser
         VisLang.VisSystem system = new VisLang.VisSystem();
         foreach (VariableInitInfo info in program.Variables)
         {
-            system.VisSystemMemory.CreateVariable(info.Name, info.Type.Type, null, info.Type.ArrayDataType);
+            system.VisSystemMemory.CreateVariable(info.Name, info.Type, null);
         }
         VisLang.ExecutionNode? root = null;
         VisLang.ExecutionNode? prev = null;
