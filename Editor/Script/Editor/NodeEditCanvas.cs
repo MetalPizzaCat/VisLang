@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace VisLang.Editor;
 
@@ -150,5 +151,27 @@ public partial class NodeEditCanvas : GraphEdit
             DisconnectNode(node.Name, toPort, dict["to"].AsString(), dict["to_port"].AsInt32());
             node.QueueFree();
         }
+    }
+
+    /// <summary>
+    /// Get data from GetConnectionList() as a collection of records<para></para>
+    /// Removes the necessity of dealing with godot's python like Godot.Collections.Dictionary
+    /// </summary>
+    /// <returns></returns>
+    private List<Parsing.ConnectionInfo> GetNodeConnections()
+    {
+        return GetConnectionList().Select(conn => new Parsing.ConnectionInfo
+            (
+                GetNode<EditorGraphNode>(conn["from"].AsString()),
+                conn["from_port"].AsInt32(),
+                GetNode<EditorGraphNode>(conn["to"].AsString()),
+                conn["to_port"].AsInt32()
+            )).ToList();
+    }
+
+    public void GenerateNodeTree()
+    {
+        List<Parsing.ConnectionInfo> connections = GetNodeConnections();
+        
     }
 }

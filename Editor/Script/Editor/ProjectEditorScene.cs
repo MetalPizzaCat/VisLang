@@ -14,8 +14,20 @@ public partial class ProjectEditorScene : Control
     [Export]
     public FunctionEditControl MainFunctionEditor { get; private set; }
 
-    public void PrepareForExecution()
+    public VisSystem PrepareForExecution()
     {
-        
+        VisSystem system = new VisSystem();
+        foreach (VariableInitInfo variable in MainFunctionEditor.VariableManager.GetVariableInits())
+        {
+            system.VisSystemMemory.CreateVariable(variable.Name, variable.Type);
+        }
+
+        return system;
+    }
+
+    private void StartUserDebug()
+    {
+        GD.Print("BUTTON!");
+        PrepareForExecution();
     }
 }

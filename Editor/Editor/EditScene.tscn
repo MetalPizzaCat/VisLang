@@ -5,14 +5,17 @@
 [ext_resource type="PackedScene" uid="uid://xt83rs5upyhm" path="res://Editor/FunctionEditControl.tscn" id="4_ik76o"]
 [ext_resource type="Script" path="res://Script/ExecutionManager.cs" id="4_rl06k"]
 
-[node name="ProjectEditorCanvas" type="Control"]
+[node name="ProjectEditorCanvas" type="Control" node_paths=PackedStringArray("TabBar", "MainFunctionEditor")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_top = 32.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_rr1ug")
+TabBar = NodePath("TabBar")
+MainFunctionEditor = NodePath("FunctionEditControl")
 
 [node name="TabBar" type="TabBar" parent="."]
 layout_mode = 0
@@ -33,3 +36,11 @@ script = ExtResource("4_rl06k")
 layout_mode = 1
 offset_right = 8.0
 offset_bottom = -60.0
+
+[node name="Button" type="Button" parent="."]
+layout_mode = 0
+offset_top = -32.0
+offset_right = 107.0
+text = "Lunch(Tasty)"
+
+[connection signal="pressed" from="Button" to="." method="StartUserDebug"]

@@ -24,7 +24,7 @@ public class NodeParser
         {
             if (input.Connection == null || input.Connection.OwningNode == null)
             {
-                inputs.Add(new VisLang.VariableGetConstNode() { Value = new VisLang.Value(input.InputType, input.Data) });
+                inputs.Add(new VisLang.VariableGetConstNode() { Value = new VisLang.Value(new VisLang.ValueTypeData(input.InputType), input.Data) });
                 continue;
             }
             // we will not generate executable functions that are used as input but we will have to connect them somehow

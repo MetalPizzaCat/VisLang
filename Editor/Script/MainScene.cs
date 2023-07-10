@@ -9,7 +9,7 @@ public partial class MainScene : Node2D
 {
 
     [Export]
-    public VariableManager? VariableManager { get; set; }
+    public VisLang.Editor.VariableManager? VariableManager { get; set; }
     [Export]
     public FunctionSignatureManager? FunctionSignatureManager { get; set; }
 
@@ -284,7 +284,7 @@ public partial class MainScene : Node2D
                     AddErrorMessage($"Fatal error. Duplicate variable name: \"{va.Info.Name}\" appears more then once");
                     success = false;
                 }
-                _debugger.System.VisSystemMemory.CreateVariable(va.VariableName, va.VariableType, null);
+                _debugger.System.VisSystemMemory.CreateVariable(va.VariableName, new VisLang.ValueTypeData(va.VariableType), null);
             }
         }
         return success;

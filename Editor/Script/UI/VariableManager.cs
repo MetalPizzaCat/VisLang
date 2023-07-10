@@ -1,8 +1,24 @@
+namespace VisLang.Editor;
+
 using Godot;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
+
+public class VariableInitInfo
+{
+    public VariableInitInfo(string name, ValueTypeData type)
+    {
+        Name = name;
+        Type = type;
+    }
+
+    public string Name { get; set; }
+
+    public ValueTypeData Type { get; set; }
+
+}
 
 public partial class VariableManager : Control
 {
@@ -37,7 +53,7 @@ public partial class VariableManager : Control
     {
         foreach (VariableControl variable in VariableControlButtons)
         {
-            if (VariableControlButtons.Any(p => p.Name == newName && p != variable))
+            if (VariableControlButtons.Any(p => p.Info != sender && p.VariableName == newName))
             {
                 variable.DisplayDuplicateNameError();
             }
@@ -47,5 +63,10 @@ public partial class VariableManager : Control
             }
         }
 
+    }
+
+    public List<VariableInitInfo> GetVariableInits()
+    {
+        return VariableControlButtons.Select(btn => new VariableInitInfo(btn.VariableName, new ValueTypeData(btn.VariableType, btn.ArrayDataType))).ToList();
     }
 }
