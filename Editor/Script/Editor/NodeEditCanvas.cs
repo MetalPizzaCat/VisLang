@@ -2,6 +2,7 @@ using Godot;
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using VisLang.Editor.Parsing;
 
 namespace VisLang.Editor;
 
@@ -118,42 +119,36 @@ public partial class NodeEditCanvas : GraphEdit
             GD.PrintErr("Attempted to remove node but node was null, so there was nothing to remove");
             return;
         }
-        // first clear all incoming connections and then outgoing, no real reason why this order i just felt like it
-        // while we could do so in one loop we have to manually undo connections in nodes that we are disconnecting from
-        // since these connections are only used for visual representation
-        foreach (Godot.Collections.Dictionary dict in GetConnectionList().Where(dict => dict["to"].AsString() == node.Name))
+        IEnumerable<ConnectionInfo> incoming = GetNodeConnections().Where(p => p.Destination == node);
+        IEnumerable<ConnectionInfo> outgoing = GetNodeConnections().Where(p => p.Source == node);
+        // first clear incoming because i chose to do so first
+        // works differently because source node does not care what connections it has on the output end
+        // only exec cares 
+        foreach (ConnectionInfo con in incoming)
         {
-            int destPort = dict["to_port"].AsInt32();
-            // exec ports should always be on line 0
-            if (node.IsExecutable && destPort == 0)
+            // node here is Destination
+            // exec port is on line 0
+            if (con.Destination.IsExecutable && con.DestinationPortId == 0)
             {
-                if (GetNodeOrNull<EditorGraphNode>(dict["from"].AsString()) is EditorGraphNode source)
-                {
-                    source.NextExecutable = null;
-                }
+                con.Source.NextExecutable = null;
             }
-            DisconnectNode(dict["from"].AsString(), dict["from_port"].AsInt32(), node.Name, destPort);
+            DisconnectNode(con.Source.Name, con.SourcePortId, con.Destination.Name, con.DestinationPortId);
         }
-        foreach (Godot.Collections.Dictionary dict in GetConnectionList().Where(dict => dict["from"].AsString() == node.Name))
+        foreach (ConnectionInfo con in outgoing)
         {
-            int toPort = dict["to_port"].AsInt32();
-            if (GetNodeOrNull<EditorGraphNode>(dict["from"].AsString()) is EditorGraphNode dest)
+            // node here is Source
+            // exec port is on line 0
+            if (con.Source.IsExecutable && con.DestinationPortId == 0)
             {
-                // exec ports should always be on line 0
-                if (node.IsExecutable && toPort == 0)
-                {
-
-                    dest.PreviousExecutable = null;
-
-                }
-                else
-                {
-                    dest.Inputs[toPort] = null;
-                }
+                con.Destination.PreviousExecutable = null;
             }
-            DisconnectNode(node.Name, toPort, dict["to"].AsString(), dict["to_port"].AsInt32());
-            node.QueueFree();
+            else
+            {
+                con.Destination.DestroyConnectionOnPort(con.DestinationPortId, true);
+            }
+            DisconnectNode(con.Source.Name, con.SourcePortId, con.Destination.Name, con.DestinationPortId);
         }
+        node.QueueFree();
     }
 
     /// <summary>
