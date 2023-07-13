@@ -21,7 +21,7 @@ public partial class ProjectEditorScene : Control
         {
             system.VisSystemMemory.CreateVariable(variable.Name, variable.Type);
         }
-
+        MainFunctionEditor.NodeCanvas.GenerateNodeTree();
         return system;
     }
 

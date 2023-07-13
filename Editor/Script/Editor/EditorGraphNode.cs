@@ -161,4 +161,36 @@ public partial class EditorGraphNode : GraphNode
     {
         return Inputs.ElementAtOrDefault(dstPort) == null;
     }
+
+    /// <summary>
+    /// Used to apply additional data to the VisNode during node creation to allow for more flexible node creation.<para></para>
+    /// For example Variable nodes should use this function to write variable name
+    /// </summary>
+    /// <param name="node">nNode to add data to</param>
+    /// <typeparam name="NodeType">Node type</typeparam>
+    protected virtual void ApplyAdditionalCreationData<NodeType>(NodeType node) where NodeType : VisLang.VisNode
+    {
+
+    }
+
+    /// <summary>
+    /// Create executable node based on the function info<para></para>
+    /// Due to how nodes are created using reflection, created node must have an empty constructor available
+    /// </summary>
+    /// <typeparam name="NodeType"></typeparam>
+    /// <returns>Node or null if for any reason creation failed</returns>
+    public NodeType? CreateExecutableNode<NodeType>() where NodeType : VisLang.VisNode
+    {
+        if (Info == null)
+        {
+            throw new MissingFunctionInfoException("Attempted to create a function but FunctionInfo is null");
+        }
+        NodeType? node = (NodeType?)Activator.CreateInstance("VisLang", Info.NodeType)?.Unwrap();
+        if(node == null)
+        {
+            return null;
+        }
+        ApplyAdditionalCreationData(node);
+        return node;
+    }
 }

@@ -6,7 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://ckx01i2b2svjf" path="res://Editor/Nodes/exec_node.tscn" id="6_f2f1b"]
 [ext_resource type="Resource" uid="uid://dbhhner37tajl" path="res://Assets/DefaultCodeTheme.tres" id="6_skwwu"]
 
-[node name="GraphEdit" type="GraphEdit" node_paths=PackedStringArray("CreationMenu")]
+[node name="GraphEdit" type="GraphEdit" node_paths=PackedStringArray("CreationMenu", "ExecStart")]
 anchors_preset = -1
 anchor_right = 0.84
 anchor_bottom = 0.853
@@ -18,6 +18,7 @@ show_zoom_label = true
 script = ExtResource("1_6hlyh")
 CreationMenu = NodePath("PopupPanel")
 CodeTheme = ExtResource("6_skwwu")
+ExecStart = NodePath("ExecNode")
 
 [node name="Functions" parent="." instance=ExtResource("2_qr85a")]
 

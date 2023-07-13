@@ -40,4 +40,17 @@ public partial class EditorGraphVariableNode : EditorGraphNode
 
         }
     }
+
+    protected override void ApplyAdditionalCreationData<NodeType>(NodeType node)
+    {
+        base.ApplyAdditionalCreationData(node);
+        if (node is VariableSetNode setter)
+        {
+            setter.Name = Variable.Name;
+        }
+        else if (node is VariableGetNode getter)
+        {
+            getter.Name = Variable.Name;
+        }
+    }
 }

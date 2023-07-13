@@ -14,6 +14,9 @@ public partial class NodeEditCanvas : GraphEdit
     [Export]
     public CodeColorTheme CodeTheme { get; set; }
 
+    [Export]
+    public ExecStartGraphNode? ExecStart { get; private set; }
+
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
@@ -172,6 +175,19 @@ public partial class NodeEditCanvas : GraphEdit
     public void GenerateNodeTree()
     {
         List<Parsing.ConnectionInfo> connections = GetNodeConnections();
-        
+        // in future there could be an option of finding exec on the go
+        // but this seems unnecessary at least for now
+        if (ExecStart == null)
+        {
+            return;
+        }
+        List<VisLang.VisNode?> nodes = new();
+        EditorGraphNode? next = ExecStart.NextExecutable;
+        while (next != null)
+        {
+            nodes.Add(next.CreateExecutableNode<VisLang.ExecutionNode>());
+            next = next.NextExecutable;
+        }
+        GD.Print("Generated");
     }
 }
