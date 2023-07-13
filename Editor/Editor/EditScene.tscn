@@ -1,11 +1,12 @@
-[gd_scene load_steps=5 format=3 uid="uid://cy3ayxdr8tp2a"]
+[gd_scene load_steps=6 format=3 uid="uid://cy3ayxdr8tp2a"]
 
 [ext_resource type="Script" path="res://Script/Editor/ProjectEditorScene.cs" id="1_rr1ug"]
+[ext_resource type="PackedScene" uid="uid://c67wh757rx8s3" path="res://UI/message_label.tscn" id="2_n0htl"]
 [ext_resource type="PackedScene" uid="uid://4i8ijrxpht43" path="res://Editor/UserInteraction/OutputBox.tscn" id="3_fbxd7"]
 [ext_resource type="PackedScene" uid="uid://xt83rs5upyhm" path="res://Editor/FunctionEditControl.tscn" id="4_ik76o"]
 [ext_resource type="Script" path="res://Script/ExecutionManager.cs" id="4_rl06k"]
 
-[node name="ProjectEditorCanvas" type="Control" node_paths=PackedStringArray("TabBar", "MainFunctionEditor")]
+[node name="ProjectEditorCanvas" type="Control" node_paths=PackedStringArray("TabBar", "MainFunctionEditor", "OutputMessageBox")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -16,6 +17,8 @@ grow_vertical = 2
 script = ExtResource("1_rr1ug")
 TabBar = NodePath("TabBar")
 MainFunctionEditor = NodePath("FunctionEditControl")
+OutputMessageBox = NodePath("Control/TabContainer/Output/VBoxContainer")
+OutputMessagePrefab = ExtResource("2_n0htl")
 
 [node name="TabBar" type="TabBar" parent="."]
 layout_mode = 0
@@ -44,3 +47,5 @@ offset_right = 107.0
 text = "Lunch(Tasty)"
 
 [connection signal="pressed" from="Button" to="." method="StartUserDebug"]
+
+[editable path="Control"]

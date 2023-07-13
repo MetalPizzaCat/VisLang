@@ -172,22 +172,70 @@ public partial class NodeEditCanvas : GraphEdit
             )).ToList();
     }
 
-    public void GenerateNodeTree()
+    /// <summary>
+    /// Iterates over all the children 
+    /// </summary>
+    private List<VisLang.DataNode> GenerateDataTreeForNode(EditorGraphNode node, VisSystem system)
+    {
+        List<VisLang.DataNode> inputs = new();
+        foreach (EditorGraphNodeInput? input in node.Inputs)
+        {
+            if (input == null)
+            {
+                // TODO: this should place a const node here, but as nodes don't yet have this feature we just ignore and move on
+                continue;
+            }
+            if (input.Node.IsExecutable)
+            {
+                throw new NotImplementedException("Support for passing result of exec node to exec node is not added yet");
+            }
+            // for data nodes we have to implement tree parsing that goes from left to right
+            VisLang.DataNode? data = input.Node.CreateInterpretableNode<VisLang.DataNode>();
+            if (data == null)
+            {
+                continue;
+            }
+            data.Interpreter = system;
+            // recursively parse the data tree
+            data.Inputs = GenerateDataTreeForNode(input.Node, system);
+            inputs.Add(data);
+        }
+        return inputs;
+    }
+
+    /// <summary>
+    /// Goes through all the nodes created by the user and generates VisLang nodes based on that
+    /// </summary>
+    /// <returns>A single root node</returns>
+    public VisLang.ExecutionNode? GenerateNodeTree(VisSystem system)
     {
         List<Parsing.ConnectionInfo> connections = GetNodeConnections();
         // in future there could be an option of finding exec on the go
         // but this seems unnecessary at least for now
         if (ExecStart == null)
         {
-            return;
+            return null;
         }
         List<VisLang.VisNode?> nodes = new();
         EditorGraphNode? next = ExecStart.NextExecutable;
+        VisLang.ExecutionNode? root = null;
         while (next != null)
         {
-            nodes.Add(next.CreateExecutableNode<VisLang.ExecutionNode>());
+            VisLang.ExecutionNode? node = next.CreateInterpretableNode<VisLang.ExecutionNode>();
+            if (node == null)
+            {
+                // nothing was created, logic can not continue
+                return root;
+            }
+            node.Interpreter = system;
+            root ??= node;
+            node.DebugData = next;
+            node.Inputs = GenerateDataTreeForNode(next, system);
+            nodes.Add(node);
+
             next = next.NextExecutable;
         }
         GD.Print("Generated");
+        return root;
     }
 }

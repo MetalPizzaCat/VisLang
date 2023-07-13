@@ -123,7 +123,9 @@ public partial class EditorGraphNode : GraphNode
 
     public void AddConnection(int dstPort, EditorGraphNode node, int srcPort)
     {
-        Inputs[dstPort] = new EditorGraphNodeInput(node, srcPort);
+        // while ports in godot node count the exec input as port
+        // Inputs are only for data connections, so execs port values are shifted by one
+        Inputs[!IsExecutable ? dstPort : (dstPort - 1)] = new EditorGraphNodeInput(node, srcPort);
     }
 
     /// <summary>
@@ -179,7 +181,7 @@ public partial class EditorGraphNode : GraphNode
     /// </summary>
     /// <typeparam name="NodeType"></typeparam>
     /// <returns>Node or null if for any reason creation failed</returns>
-    public NodeType? CreateExecutableNode<NodeType>() where NodeType : VisLang.VisNode
+    public NodeType? CreateInterpretableNode<NodeType>() where NodeType : VisLang.VisNode
     {
         if (Info == null)
         {
