@@ -5,6 +5,17 @@ public partial class EditorGraphVariableNode : EditorGraphNode
 {
     private VariableInfo _variable;
     public bool IsGetter { get; set; } = true;
+
+    public string VariableName
+    {
+        get => _variable.Name;
+        set
+        {
+            // there is no point in fully recreating the node as name itself does not have any effect on the node function
+            _variable.Name = value;
+            Title = IsGetter ? $"Get: {value}" : $"Set: {value}";
+        }
+    }
     public VariableInfo Variable
     {
         get => _variable;

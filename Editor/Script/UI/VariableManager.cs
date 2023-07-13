@@ -6,6 +6,9 @@ using System.Collections.Generic;
 using System.Linq;
 
 
+/// <summary>
+/// Information necessary to create a variable
+/// </summary>
 public class VariableInitInfo
 {
     public VariableInitInfo(string name, ValueTypeData type)
@@ -20,14 +23,26 @@ public class VariableInitInfo
 
 }
 
+/// <summary>
+/// Variable manager is a user control from which user can create, remove and edit variables present in the function
+/// </summary>
 public partial class VariableManager : Control
 {
     public delegate void SetterRequestedEventHandler(VisLang.Editor.VariableInfo info);
     public delegate void GetterRequestedEventHandler(VisLang.Editor.VariableInfo info);
     public delegate void VariableDeletedEventHandler(VisLang.Editor.VariableInfo info);
+    public delegate void VariableNameChangedEventHandler(VisLang.Editor.VariableInfo info, string name);
 
+    /// <summary>
+    /// Invoked when user presses button for creating a setter node
+    /// </summary>
     public event SetterRequestedEventHandler? SetterRequested;
+    /// <summary>
+    /// Invoked when user presses button for creating a getter node
+    /// </summary>
     public event GetterRequestedEventHandler? GetterRequested;
+
+    public event VariableNameChangedEventHandler? VariableNameChanged;
 
     [Export]
     public PackedScene? VariableControlPlaceholder { get; set; }
@@ -49,8 +64,14 @@ public partial class VariableManager : Control
         CheckAndNotifyVariableNames(variable.Info, variable.Info.Name);
     }
 
+    /// <summary>
+    /// Checks variable names for duplication and updates variables controls to display error if invalid name is present
+    /// </summary>
+    /// <param name="sender">Info of the variable that was changed</param>
+    /// <param name="newName">Name that variable was changed to</param>
     private void CheckAndNotifyVariableNames(VisLang.Editor.VariableInfo sender, string newName)
     {
+        VariableNameChanged?.Invoke(sender, newName);
         foreach (VariableControl variable in VariableControlButtons)
         {
             if (VariableControlButtons.Any(p => p.Info != sender && p.VariableName == newName))

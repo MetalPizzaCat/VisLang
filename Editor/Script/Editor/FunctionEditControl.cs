@@ -2,6 +2,7 @@ namespace VisLang.Editor;
 
 using Godot;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 
 
@@ -19,6 +20,15 @@ public partial class FunctionEditControl : Control
     {
         VariableManager.GetterRequested += SpawnGetter;
         VariableManager.SetterRequested += SpawnSetter;
+        VariableManager.VariableNameChanged += UpdateVariableNodes;
+    }
+
+    public void UpdateVariableNodes(VisLang.Editor.VariableInfo info, string name)
+    {
+        foreach (EditorGraphVariableNode node in _variableNodes.Where(p => p.Variable == info))
+        {
+            node.VariableName = name;
+        }
     }
 
     public void SpawnGetter(VariableInfo info)
