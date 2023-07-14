@@ -4,9 +4,24 @@ using Godot;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using VisLang.Editor.Parsing;
 
 public partial class EditorGraphNode : GraphNode
 {
+    public class InvalidConnectionInfo
+    {
+        public InvalidConnectionInfo(int? currentPortId, int originalPortId, string portName)
+        {
+            CurrentPortId = currentPortId;
+            OriginalPortId = originalPortId;
+            PortName = portName;
+        }
+
+        public int? CurrentPortId { get; set; }
+        public int OriginalPortId { get; set; }
+        public string PortName { get; set; }
+    }
+
     public delegate void DeleteRequestedEventHandler(EditorGraphNode? sender);
     public event DeleteRequestedEventHandler? DeleteRequested;
 
@@ -33,6 +48,12 @@ public partial class EditorGraphNode : GraphNode
     public static readonly int ExecTypeId = 0;
     public static readonly int AnyTypeId = 1;
 
+    /// <summary>
+    /// Canvas that this node belongs to
+    /// </summary>
+    /// <value></value>
+    public NodeEditCanvas? ParentCanvas { get; set; } = null;
+
 
     public static int GetTypeIdForValueType(VisLang.ValueType type)
     {
@@ -41,13 +62,23 @@ public partial class EditorGraphNode : GraphNode
         return (int)type + 2;
     }
 
+    /// <summary>
+    /// Input ports that should be removed once disconnected
+    /// </summary>
+    private List<InvalidConnectionInfo> _invalidInputs = new();
 
-    public void GenerateFunction(FunctionInfo info)
+    private int? _invalidOutputPortId = null;
+    private bool HasInvalidOutput => _invalidOutputPortId != null;
+
+    /// <summary>
+    /// Generate ports for a given function signature and return last used port
+    /// </summary>
+    /// <param name="info">Function signature</param>
+    /// <returns>Index of the last created port</returns>
+    private int GeneratePorts(FunctionInfo info)
     {
-        if (info != Info)
-        {
-            Info = info;
-        }
+        List<Node> kids = GetChildren().ToList();
+        kids.ForEach(p => RemoveChild(p));
         Inputs.Clear();
         Title = info.FunctionName;
         TooltipText = info.FunctionDescription;
@@ -104,6 +135,72 @@ public partial class EditorGraphNode : GraphNode
                     GetTypeIdForValueType(info.OutputType.Value),
                     CodeTheme?.GetColorForType(info.OutputType ?? VisLang.ValueType.Bool) ?? new Color(1, 1, 1)
                 );
+            slotIndex++;
+        }
+
+        return slotIndex;
+    }
+
+    /// <summary>
+    /// Generates ports and updates connection based on the given function signature
+    /// </summary>
+    /// <param name="info">Function signature to use as base</param>
+    public void GenerateFunction(FunctionInfo info)
+    {
+        // get list of all existing connections for safe keeping
+        // once we delete all previous connections we will have to move them to new ports
+        List<ConnectionInfo> oldConnections = ParentCanvas?.GetNodeConnections().Where(p => p.Destination == this || p.Source == this)?.ToList() ?? new();
+        // we keep old names because that makes it easier for use to know what went where
+        Dictionary<int, string> oldInputNames = new();
+        foreach (ConnectionInfo input in oldConnections.Where(p => p.Destination == this))
+        {
+            // this will only grab the valid connections, but could cause an issue with invalid
+            // but since invalid are invalid we just ignore them
+            // the -1 if executable comes from Exec using port 0 while not being a part of function inputs
+            if (info.Inputs.ElementAtOrDefault(input.DestinationPortId - (IsExecutable ? 1 : 0)) is FunctionInputInfo inp)
+            {
+                oldInputNames.Add(input.DestinationPortId, inp.InputName);
+                _invalidInputs.Add(new InvalidConnectionInfo(null, input.DestinationPortId, inp.InputName));
+            }
+            else if (_invalidInputs.FirstOrDefault(p => p.CurrentPortId != null && p.CurrentPortId.Value == input.DestinationPortId) is InvalidConnectionInfo conn)
+            {
+                oldInputNames.Add(input.DestinationPortId, conn.PortName);
+            }
+        }
+        bool anyOutputs = oldConnections.Any(p => p.Source == this);
+
+        if (info != Info)
+        {
+            Info = info;
+        }
+
+        int slotIndex = GeneratePorts(info);
+
+        foreach (ConnectionInfo conn in oldConnections)
+        {
+            if (conn.Destination == this && oldInputNames.ContainsKey(conn.DestinationPortId))
+            {
+                AddChild(new Label() { Text = $"INVALID({oldInputNames[conn.DestinationPortId]})" });
+                SetSlot(slotIndex, conn.Destination == this, 999, new Color(1f, 0, 0, 1), false, 999, new Color(1f, 0, 0, 1));
+                ParentCanvas?.ChangePortsForInputConnection(conn.Source, conn.SourcePortId, conn.Destination, conn.DestinationPortId, slotIndex);
+                if (_invalidInputs.FirstOrDefault(p => p.OriginalPortId == conn.DestinationPortId && p.CurrentPortId == null) is InvalidConnectionInfo invalidInfo)
+                {
+                    invalidInfo.CurrentPortId = slotIndex;
+                }
+                slotIndex++;
+            }
+        }
+        if (anyOutputs)
+        {
+            AddChild(new Label() { Text = $"INVALID(Output)" });
+            SetSlot(slotIndex, false, 0, new Color(), true, 998, new Color(1f, 0, 0, 1));
+            foreach (ConnectionInfo outputs in oldConnections.Where(p => p.Source == this))
+            {
+                ParentCanvas?.ChangePortsForOutputConnection(this, 0, slotIndex, outputs.Destination, outputs.DestinationPortId);
+            }
+            _invalidOutputPortId = slotIndex;
+
+            slotIndex++;
         }
     }
 
@@ -151,7 +248,30 @@ public partial class EditorGraphNode : GraphNode
         // as opposed to left to right of the exec connections
         else if (left)
         {
-            Inputs[port] = null;
+            if (_invalidInputs.FirstOrDefault(p => p.CurrentPortId != null && p.CurrentPortId.Value == port) is InvalidConnectionInfo info)
+            {
+                SetSlot(port, false, 0, new Color(), false, 0, new Color());
+                foreach (InvalidConnectionInfo inp in _invalidInputs)
+                {
+                    if (inp.CurrentPortId > port)
+                    {
+                        inp.CurrentPortId--;
+                    }
+                }
+                RemoveChild(GetChild(port));
+                _invalidInputs.Remove(info);
+            }
+            else
+            {
+                Inputs[port - (IsExecutable ? 1 : 0)] = null;
+            }
+        }
+        // we now care about what's on the right incase there is an invalid connection
+        else if (!left && HasInvalidOutput && (ParentCanvas?.GetNodeConnections().Any(p => p.Source == this && p.SourcePortId == _invalidOutputPortId.Value) ?? false))
+        {
+            SetSlot(port, false, 0, new Color(), false, 0, new Color());
+            RemoveChild(GetChild(port));
+            _invalidOutputPortId = null;
         }
     }
 
@@ -188,7 +308,7 @@ public partial class EditorGraphNode : GraphNode
             throw new MissingFunctionInfoException("Attempted to create a function but FunctionInfo is null");
         }
         NodeType? node = (NodeType?)Activator.CreateInstance("VisLang", Info.NodeType)?.Unwrap();
-        if(node == null)
+        if (node == null)
         {
             return null;
         }

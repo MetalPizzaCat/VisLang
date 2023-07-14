@@ -20,10 +20,19 @@ public partial class FunctionEditControl : Control
     {
         VariableManager.GetterRequested += SpawnGetter;
         VariableManager.SetterRequested += SpawnSetter;
-        VariableManager.VariableNameChanged += UpdateVariableNodes;
+        VariableManager.VariableNameChanged += UpdateVariableNodeNames;
+        VariableManager.VariableTypeChanged += (VisLang.Editor.VariableInfo info, VisLang.ValueType type) => { UpdateVariableNodes(info); };
     }
 
-    public void UpdateVariableNodes(VisLang.Editor.VariableInfo info, string name)
+    public void UpdateVariableNodes(VisLang.Editor.VariableInfo info)
+    {
+        foreach (EditorGraphVariableNode node in _variableNodes.Where(p => p.Variable == info))
+        {
+            node.Variable = info;
+        }
+    }
+
+    public void UpdateVariableNodeNames(VisLang.Editor.VariableInfo info, string name)
     {
         foreach (EditorGraphVariableNode node in _variableNodes.Where(p => p.Variable == info))
         {

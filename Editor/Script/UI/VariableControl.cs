@@ -9,10 +9,12 @@ public partial class VariableControl : HBoxContainer
     public delegate void GetterRequestedEventHandler(VisLang.Editor.VariableInfo info);
 
     public delegate void NameChangedEventHandler(VisLang.Editor.VariableInfo info, string newName);
+    public delegate void TypeChangedEventHandler(VisLang.Editor.VariableInfo info, VisLang.ValueType type);
 
     public event SetterRequestedEventHandler? SetterRequested;
     public event GetterRequestedEventHandler? GetterRequested;
     public event NameChangedEventHandler? NameChanged;
+    public event TypeChangedEventHandler? TypeChanged;
 
 
     [Export]
@@ -127,6 +129,7 @@ public partial class VariableControl : HBoxContainer
     {
         _info.Type = (VisLang.ValueType)type;
         ArrayTypeOptionButton.Visible = _info.Type == VisLang.ValueType.Array;
+        TypeChanged?.Invoke(_info, _info.Type);
     }
 
     private void CreateSetter()

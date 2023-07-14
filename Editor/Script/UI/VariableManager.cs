@@ -32,6 +32,7 @@ public partial class VariableManager : Control
     public delegate void GetterRequestedEventHandler(VisLang.Editor.VariableInfo info);
     public delegate void VariableDeletedEventHandler(VisLang.Editor.VariableInfo info);
     public delegate void VariableNameChangedEventHandler(VisLang.Editor.VariableInfo info, string name);
+    public delegate void VariableTypeChangedEventHandler(VisLang.Editor.VariableInfo info, VisLang.ValueType type);
 
     /// <summary>
     /// Invoked when user presses button for creating a setter node
@@ -43,6 +44,7 @@ public partial class VariableManager : Control
     public event GetterRequestedEventHandler? GetterRequested;
 
     public event VariableNameChangedEventHandler? VariableNameChanged;
+    public event VariableTypeChangedEventHandler? VariableTypeChanged;
 
     [Export]
     public PackedScene? VariableControlPlaceholder { get; set; }
@@ -55,10 +57,14 @@ public partial class VariableManager : Control
         if (variable == null)
         {
             throw new Exception("Unable to create variable management control");
-        }
+        }   
+        // we don't really need to do anything when this happens so we let other objects handle these events 
         variable.SetterRequested += (VisLang.Editor.VariableInfo info) => { SetterRequested?.Invoke(info); };
         variable.GetterRequested += (VisLang.Editor.VariableInfo info) => { GetterRequested?.Invoke(info); };
+        variable.TypeChanged += (VisLang.Editor.VariableInfo info, VisLang.ValueType type) => { VariableTypeChanged?.Invoke(info, type); };
+        // but this one requires additional logic
         variable.NameChanged += CheckAndNotifyVariableNames;
+        
         VariableControlButtons.Add(variable);
         Container?.AddChild(variable);
         CheckAndNotifyVariableNames(variable.Info, variable.Info.Name);

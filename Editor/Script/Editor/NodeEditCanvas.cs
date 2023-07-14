@@ -34,6 +34,34 @@ public partial class NodeEditCanvas : GraphEdit
     {
     }
 
+    /// <summary>
+    /// Updates visual connection for a node by changing where left side of the line is connected
+    /// </summary>
+    /// <param name="source">Node that connection is coming from(will be unaffected)</param>
+    /// <param name="portId">Port on the node that connection is coming from</param>
+    /// <param name="dest">Destination node that needs connection updated</param>
+    /// <param name="oldPortId">Which port it was</param>
+    /// <param name="newPortId">Which port it should become</param>
+    public void ChangePortsForInputConnection(EditorGraphNode source, int portId, EditorGraphNode dest, int oldPortId, int newPortId)
+    {
+        DisconnectNode(source.Name, portId, dest.Name, oldPortId);
+        ConnectNode(source.Name, portId, dest.Name, newPortId);
+    }
+
+    /// <summary>
+    /// Updates visual connection for a node by changing where right side of the line is connected
+    /// </summary>
+    /// <param name="source">Node that connection is coming from and needs to be updated/param>
+    /// <param name="oldPortId">Which port it was</param>
+    /// <param name="newPortId">Which port it should be</param>
+    /// <param name="dest">Left side node that line is connected to</param>
+    /// <param name="portId">Port on the destination node that will be unchanged</param>
+    public void ChangePortsForOutputConnection(EditorGraphNode source, int oldPortId, int newPortId, EditorGraphNode dest, int portId)
+    {
+        DisconnectNode(source.Name, oldPortId, dest.Name, portId);
+        ConnectNode(source.Name, newPortId, dest.Name, portId);
+    }
+
     private void ConnectNodes(string sourceNode, int sourcePort, string destNode, int destPort)
     {
         if (GetNodeOrNull<EditorGraphNode>(sourceNode) is EditorGraphNode source && GetNodeOrNull<EditorGraphNode>(destNode) is EditorGraphNode destination)
@@ -82,6 +110,7 @@ public partial class NodeEditCanvas : GraphEdit
             return null;
         }
         node.CodeTheme = CodeTheme;
+        node.ParentCanvas = this;
         AddChild(node);
         node.Position = GetGlobalMousePosition();
         node.GenerateFunction(info);
@@ -156,7 +185,7 @@ public partial class NodeEditCanvas : GraphEdit
     /// Removes the necessity of dealing with godot's python like Godot.Collections.Dictionary
     /// </summary>
     /// <returns></returns>
-    private List<Parsing.ConnectionInfo> GetNodeConnections()
+    public List<Parsing.ConnectionInfo> GetNodeConnections()
     {
         return GetConnectionList().Select(conn => new Parsing.ConnectionInfo
             (
