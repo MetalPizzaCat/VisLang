@@ -9,6 +9,9 @@ namespace VisLang.Editor;
 public partial class NodeEditCanvas : GraphEdit
 {
 
+    public delegate void NodeDeletedEventHandler(EditorGraphNode node);
+    public event NodeDeletedEventHandler? NodeDeleted;
+
     [Export]
     public NodeCreationMenu CreationMenu { get; private set; }
 
@@ -148,6 +151,7 @@ public partial class NodeEditCanvas : GraphEdit
             GD.PrintErr("Attempted to remove node but node was null, so there was nothing to remove");
             return;
         }
+        NodeDeleted?.Invoke(node);
         IEnumerable<ConnectionInfo> incoming = GetNodeConnections().Where(p => p.Destination == node);
         IEnumerable<ConnectionInfo> outgoing = GetNodeConnections().Where(p => p.Source == node);
         // first clear incoming because i chose to do so first

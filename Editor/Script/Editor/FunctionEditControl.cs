@@ -22,6 +22,15 @@ public partial class FunctionEditControl : Control
         VariableManager.SetterRequested += SpawnSetter;
         VariableManager.VariableNameChanged += UpdateVariableNodeNames;
         VariableManager.VariableTypeChanged += (VisLang.Editor.VariableInfo info, VisLang.ValueType type) => { UpdateVariableNodes(info); };
+        NodeCanvas.NodeDeleted += RemoveVariableNode;
+    }
+
+    private void RemoveVariableNode(EditorGraphNode node)
+    {
+        if(node is EditorGraphVariableNode varNode)
+        {
+            _variableNodes.Remove(varNode);
+        }
     }
 
     public void UpdateVariableNodes(VisLang.Editor.VariableInfo info)
