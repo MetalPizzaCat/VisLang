@@ -32,7 +32,7 @@ public partial class VariableManager : Control
     public delegate void GetterRequestedEventHandler(VisLang.Editor.VariableInfo info);
     public delegate void VariableDeletedEventHandler(VisLang.Editor.VariableInfo info);
     public delegate void VariableNameChangedEventHandler(VisLang.Editor.VariableInfo info, string name);
-    public delegate void VariableTypeChangedEventHandler(VisLang.Editor.VariableInfo info, VisLang.ValueType type);
+    public delegate void VariableTypeChangedEventHandler(VisLang.Editor.VariableInfo info, VisLang.ValueTypeData type);
 
     /// <summary>
     /// Invoked when user presses button for creating a setter node
@@ -61,7 +61,7 @@ public partial class VariableManager : Control
         // we don't really need to do anything when this happens so we let other objects handle these events 
         variable.SetterRequested += (VisLang.Editor.VariableInfo info) => { SetterRequested?.Invoke(info); };
         variable.GetterRequested += (VisLang.Editor.VariableInfo info) => { GetterRequested?.Invoke(info); };
-        variable.TypeChanged += (VisLang.Editor.VariableInfo info, VisLang.ValueType type) => { VariableTypeChanged?.Invoke(info, type); };
+        variable.TypeChanged += (VisLang.Editor.VariableInfo info, VisLang.ValueTypeData type) => { VariableTypeChanged?.Invoke(info, type); };
         // but this one requires additional logic
         variable.NameChanged += CheckAndNotifyVariableNames;
         

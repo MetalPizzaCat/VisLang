@@ -10,8 +10,6 @@ using Godot.Collections;
 [MonoCustomResourceRegistry.RegisteredType("FunctionInfo")]
 public partial class FunctionInfo : Resource
 {
-
-
     [Export]
     public string FunctionName { get; set; } = "Invalid node name :3";
 
@@ -29,6 +27,12 @@ public partial class FunctionInfo : Resource
     /// </summary>
     [Export]
     public bool IsArrayTypeDependent { get; set; } = false;
+    /// <summary>
+    /// If IsArrayTypeDependent is set to true, connections to port that handles argument number ArrayTypeDefiningArgumentId 
+    /// will cause changes of to the node type
+    /// </summary>
+    [Export]
+    public int ArrayTypeDefiningArgumentId { get; set; } = 0;
 
     /// <summary>
     /// Information about all of the function arguments. Using additional class and Godot array due to a bug with c# dictionaries in godot(they don't work :3)
@@ -39,6 +43,8 @@ public partial class FunctionInfo : Resource
     [ExportGroup("Output")]
     [Export]
     private VisLang.ValueType _output;
+    [Export]
+    public bool IsOutputArrayTypeDependent { get; set; } = false;
 
     /// <summary>
     /// If true output type is know and can be used during preprocessing stage checks
@@ -60,6 +66,7 @@ public partial class FunctionInfo : Resource
     public bool HasOutputTypeArrayType => _hasOutputArrayType;
     public VisLang.ValueType? OutputArrayType => HasOutput && _hasOutputArrayType ? _outputArrayType : null;
 
+    [ExportGroup("Execution")]
     /// <summary>
     /// Typename of the node for creating nodes at runtime via reflection.
     /// Type used here *must* have a constructor that takes no arguments

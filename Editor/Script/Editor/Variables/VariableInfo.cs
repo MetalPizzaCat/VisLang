@@ -9,7 +9,7 @@ public class VariableInfo
         Name = name;
         Type = type;
         ArrayDataType = arrayDataType;
-        Array = array;
+        IsArray = array;
     }
 
     public Guid Id { get; private set; }
@@ -18,5 +18,5 @@ public class VariableInfo
     public VisLang.ValueType Type { get; set; }
 
     public VisLang.ValueType? ArrayDataType { get; set; } = null;
-    public bool Array { get; set; } = false;
+    public bool IsArray { get; set; } = false;
 }

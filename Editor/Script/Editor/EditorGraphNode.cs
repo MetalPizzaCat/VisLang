@@ -70,6 +70,8 @@ public partial class EditorGraphNode : GraphNode
     private int? _invalidOutputPortId = null;
     private bool HasInvalidOutput => _invalidOutputPortId != null;
 
+    protected int? ArrayTypeListeningPort { get; set; }
+
     /// <summary>
     /// Generate ports for a given function signature and return last used port
     /// </summary>
@@ -89,6 +91,8 @@ public partial class EditorGraphNode : GraphNode
             SetSlot(slotIndex, true, ExecTypeId, new Color(1, 1, 1), true, ExecTypeId, new Color(1, 1, 1));
             slotIndex++;
         }
+        // in the original node implementation we created a special input object and listened to it
+        // but because all of the connections in this variation are handled inside of the node we don't need to manually create any object
         foreach (FunctionInputInfo arg in info.Inputs)
         {
             AddChild(new Label() { Text = arg.InputName });
@@ -137,7 +141,10 @@ public partial class EditorGraphNode : GraphNode
                 );
             slotIndex++;
         }
-
+        if (info.IsArrayTypeDependent)
+        {
+            ArrayTypeListeningPort = info.ArrayTypeDefiningArgumentId + (info.IsExecutable ? 1 : 0);
+        }
         return slotIndex;
     }
 
@@ -218,11 +225,77 @@ public partial class EditorGraphNode : GraphNode
         }
     }
 
+    /// <summary>
+    /// Update types of all ports that represent array type dependent arguments<para></para>
+    /// This will cause any inputs that have connections and that will have their connections invalidated to create "Invalid" ports
+    /// </summary>
+    /// <param name="type">Type to change to, or any if type is null</param>
+    protected void UpdateArrayDependentInputs(VisLang.ValueType? type)
+    {
+        GD.Print($"Changing to {type}");
+        if (Info == null)
+        {
+            GD.PrintErr("Tried to change node inputs to array type but no function was set");
+            return;
+        }
+        // port0 is reserved for executable inputs
+        int portId = Info.IsExecutable ? 1 : 0;
+        foreach (FunctionInputInfo input in Info.Inputs)
+        {
+            if (input.IsArrayTypeDependent && portId != ArrayTypeListeningPort.Value)
+            {
+                int typeId = type == null ? AnyTypeId : GetTypeIdForValueType(type.Value);
+                SetSlot
+                (
+                    portId,
+                    IsSlotEnabledLeft(portId),
+                    typeId,
+                    CodeTheme?.GetColorForType(type) ?? new Color(),
+                    IsSlotEnabledRight(portId),
+                    GetSlotTypeRight(portId),
+                    GetSlotColorRight(portId)
+                );
+            }
+            portId++;
+        }
+    }
+
+    protected void UpdateArrayDependentOutput(VisLang.ValueType? type)
+    {
+        if (Info == null)
+        {
+            GD.PrintErr("Tried to change node inputs to array type but no function was set");
+            return;
+        }
+        if (Info.HasOutput && Info.IsOutputArrayTypeDependent)
+        {
+            int typeId = type == null ? AnyTypeId : GetTypeIdForValueType(type.Value);
+            int portId = Info.IsExecutable ? 1 : 0;
+            SetSlot
+            (
+                portId,
+                IsSlotEnabledLeft(portId),
+                GetSlotTypeLeft(portId),
+                GetSlotColorLeft(portId),
+                IsSlotEnabledRight(portId),
+                typeId,
+                CodeTheme?.GetColorForType(type) ?? new Color()
+            );
+        }
+    }
+
     public void AddConnection(int dstPort, EditorGraphNode node, int srcPort)
     {
         // while ports in godot node count the exec input as port
         // Inputs are only for data connections, so execs port values are shifted by one
         Inputs[!IsExecutable ? dstPort : (dstPort - 1)] = new EditorGraphNodeInput(node, srcPort);
+        if (ArrayTypeListeningPort != null && ArrayTypeListeningPort.Value == dstPort)
+        {
+            // a node can have only one data output and if we are connecting it's output to our input then we are connecting the output
+            // right?
+            UpdateArrayDependentInputs(node.Info?.OutputArrayType);
+            UpdateArrayDependentOutput(node.Info?.OutputArrayType);
+        }
     }
 
     /// <summary>

@@ -35,9 +35,18 @@ public partial class CodeColorTheme : Resource
     [Export]
     public Color ProcedureColor { get; set; }
 
-    public Color GetColorForType(VisLang.ValueType type)
+    /// <summary>
+    /// Get color used for given type, if type is null AnyColor is returned
+    /// </summary>
+    /// <param name="type">Type or null if any type</param>
+    /// <returns>Color that is defined in the theme</returns>
+    public Color GetColorForType(VisLang.ValueType? type)
     {
-        switch (type)
+        if (type == null)
+        {
+            return AnyColor;
+        }
+        switch (type.Value)
         {
             case VisLang.ValueType.Bool:
                 return BoolColor;

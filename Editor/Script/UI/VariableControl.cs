@@ -9,7 +9,7 @@ public partial class VariableControl : HBoxContainer
     public delegate void GetterRequestedEventHandler(VisLang.Editor.VariableInfo info);
 
     public delegate void NameChangedEventHandler(VisLang.Editor.VariableInfo info, string newName);
-    public delegate void TypeChangedEventHandler(VisLang.Editor.VariableInfo info, VisLang.ValueType type);
+    public delegate void TypeChangedEventHandler(VisLang.Editor.VariableInfo info, VisLang.ValueTypeData type);
 
     public event SetterRequestedEventHandler? SetterRequested;
     public event GetterRequestedEventHandler? GetterRequested;
@@ -129,7 +129,12 @@ public partial class VariableControl : HBoxContainer
     {
         _info.Type = (VisLang.ValueType)type;
         ArrayTypeOptionButton.Visible = _info.Type == VisLang.ValueType.Array;
-        TypeChanged?.Invoke(_info, _info.Type);
+        _info.IsArray = _info.Type == VisLang.ValueType.Array;
+        if (_info.IsArray && _info.ArrayDataType == null)
+        {
+            _info.ArrayDataType = VisLang.ValueType.Bool;
+        }
+        TypeChanged?.Invoke(_info, new VisLang.ValueTypeData(_info.Type, _info.ArrayDataType));
     }
 
     private void CreateSetter()
@@ -155,6 +160,9 @@ public partial class VariableControl : HBoxContainer
 
     private void SetArrayType(int type)
     {
+        // type is either a type or if 'Any' is selected it is a null value
+        // since any exists outside of the enum range we just check for that
         _info.ArrayDataType = (type < Enum.GetNames(typeof(VisLang.ValueType)).Length) ? ((VisLang.ValueType)type) : null;
+        TypeChanged?.Invoke(_info, new VisLang.ValueTypeData(_info.Type, _info.ArrayDataType));
     }
 }

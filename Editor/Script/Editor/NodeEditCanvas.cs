@@ -24,10 +24,11 @@ public partial class NodeEditCanvas : GraphEdit
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
+        // every type can only be connected to itself or "any" type
         foreach (VisLang.ValueType val in Enum.GetValues(typeof(VisLang.ValueType)))
         {
-            AddValidConnectionType((int)val + 2, EditorGraphNode.AnyTypeId);
-            AddValidConnectionType(EditorGraphNode.AnyTypeId, (int)val + 2);
+            AddValidConnectionType(EditorGraphNode.GetTypeIdForValueType(val), EditorGraphNode.AnyTypeId);
+            AddValidConnectionType(EditorGraphNode.AnyTypeId, EditorGraphNode.GetTypeIdForValueType(val));
         }
         CreationMenu.FunctionSelected += SpawnFunction;
     }
