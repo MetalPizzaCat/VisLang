@@ -207,13 +207,27 @@ public partial class NodeEditCanvas : GraphEdit
     private List<VisLang.DataNode> GenerateDataTreeForNode(EditorGraphNode node, VisSystem system)
     {
         List<VisLang.DataNode> inputs = new();
-        foreach (EditorGraphNodeInput? input in node.Inputs)
+        for (int i = 0; i < node.Inputs.Count; i++)
         {
+            EditorGraphNodeInput? input = node.Inputs.ElementAtOrDefault(i);
+            // if no input then we have to assume that there is a const value that can be read
+            // technically some types don't have this but passing null to constructor will work well enough
+            // because value type has checks in place for that, if not then oops :3
             if (input == null)
             {
-                // TODO: this should place a const node here, but as nodes don't yet have this feature we just ignore and move on
+                VisLang.VariableGetConstNode con = new()
+                {
+                    Value = new VisLang.Value(new VisLang.ValueTypeData(node.InputControls[i].InputType), node.InputControls[i].InputData)
+                };
+                inputs.Add(con);
                 continue;
             }
+            // TODO: Implement using result of exec
+            // this should not be hard but it requires to know how many objects actually do refer to this result
+            // as one solution, a result can be stored in the internal variable and any object could refer to it
+            // as other count how many references to this input are present and call peek/pop enough times
+            // first solution avoids possible issues when input is used down the line
+            // can choose between solutions based on how many connections exec has
             if (input.Node.IsExecutable)
             {
                 throw new NotImplementedException("Support for passing result of exec node to exec node is not added yet");
@@ -247,6 +261,7 @@ public partial class NodeEditCanvas : GraphEdit
         }
         List<VisLang.VisNode?> nodes = new();
         EditorGraphNode? next = ExecStart.NextExecutable;
+        VisLang.ExecutionNode? prev = null;
         VisLang.ExecutionNode? root = null;
         while (next != null)
         {
@@ -262,6 +277,13 @@ public partial class NodeEditCanvas : GraphEdit
             node.Inputs = GenerateDataTreeForNode(next, system);
             nodes.Add(node);
 
+            // if we have already created something that means it should know
+            // about what we created right now 
+            if(prev != null)
+            {
+                prev.DefaultNext = node;
+            }
+            prev = node;
             next = next.NextExecutable;
         }
         GD.Print("Generated");

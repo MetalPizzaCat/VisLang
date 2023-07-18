@@ -13,6 +13,7 @@ IsArrayTypeDependent = true
 ArrayTypeDefiningArgumentId = 0
 Inputs = [ExtResource("1_gaoay"), ExtResource("2_p73ex")]
 _output = 0
+IsOutputArrayTypeDependent = false
 _isOutputTypeKnown = true
 HasOutput = false
 _hasOutputArrayType = false

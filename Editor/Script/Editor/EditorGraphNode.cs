@@ -45,6 +45,7 @@ public partial class EditorGraphNode : GraphNode
     public EditorGraphNode? PreviousExecutable { get; set; } = null;
 
     public List<EditorGraphNodeInput?> Inputs { get; set; } = new();
+    public List<EditorGraphInputControl> InputControls { get; private set; } = new();
     public static readonly int ExecTypeId = 0;
     public static readonly int AnyTypeId = 1;
 
@@ -79,11 +80,20 @@ public partial class EditorGraphNode : GraphNode
     /// <returns>Index of the last created port</returns>
     private int GeneratePorts(FunctionInfo info)
     {
-        List<Node> kids = GetChildren().ToList();
-        kids.ForEach(p => RemoveChild(p));
+        // we don't quite care what happens to the inputs so we let garbage collector deal with it
         Inputs.Clear();
+        // but we have to manually remove input controls because other wise godot's node will keep them alive
+        // not using InputControls list for this because exec ports should be deleted as well
+        GetChildren().ToList().ForEach(p =>
+        {
+            RemoveChild(p);
+            p.QueueFree();
+        });
+        InputControls.Clear();
+
         Title = info.FunctionName;
         TooltipText = info.FunctionDescription;
+
         int slotIndex = 0;
         if (info.IsExecutable)
         {
@@ -95,7 +105,9 @@ public partial class EditorGraphNode : GraphNode
         // but because all of the connections in this variation are handled inside of the node we don't need to manually create any object
         foreach (FunctionInputInfo arg in info.Inputs)
         {
-            AddChild(new Label() { Text = arg.InputName });
+            EditorGraphInputControl inp = new(arg);
+            InputControls.Add(inp);
+            AddChild(inp);
             if (slotIndex == 0 && info.HasOutput && info.OutputType != null)
             {
                 SetSlot
@@ -288,13 +300,17 @@ public partial class EditorGraphNode : GraphNode
     {
         // while ports in godot node count the exec input as port
         // Inputs are only for data connections, so execs port values are shifted by one
-        Inputs[!IsExecutable ? dstPort : (dstPort - 1)] = new EditorGraphNodeInput(node, srcPort);
+        Inputs[IsExecutable ? (dstPort - 1) : dstPort] = new EditorGraphNodeInput(node, srcPort);
         if (ArrayTypeListeningPort != null && ArrayTypeListeningPort.Value == dstPort)
         {
             // a node can have only one data output and if we are connecting it's output to our input then we are connecting the output
             // right?
             UpdateArrayDependentInputs(node.Info?.OutputArrayType);
             UpdateArrayDependentOutput(node.Info?.OutputArrayType);
+        }
+        else
+        {
+            InputControls[IsExecutable ? (dstPort - 1) : dstPort].HasManualInput = false;
         }
     }
 
@@ -337,6 +353,7 @@ public partial class EditorGraphNode : GraphNode
             else
             {
                 Inputs[port - (IsExecutable ? 1 : 0)] = null;
+                InputControls[port - (IsExecutable ? 1 : 0)].HasManualInput = true;
             }
         }
         // we now care about what's on the right incase there is an invalid connection

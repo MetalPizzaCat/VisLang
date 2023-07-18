@@ -43,9 +43,19 @@ public partial class ProjectEditorScene : Control
         OutputMessageBox?.AddChild(label);
     }
 
+    private void ClearOutputs()
+    {
+        foreach(RichTextLabel label in _outputMessages)
+        {
+            OutputMessageBox?.RemoveChild(label);
+            label.QueueFree();
+        }
+        _outputMessages.Clear();
+    }
+
     private void StartUserDebug()
     {
-        GD.Print("BUTTON!");
+        ClearOutputs();
         VisSystem system = PrepareForExecution();
         system.OnOutputAdded += PrintOutputMessage;
         system.Execute();

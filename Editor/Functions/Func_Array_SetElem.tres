@@ -14,6 +14,7 @@ IsArrayTypeDependent = true
 ArrayTypeDefiningArgumentId = 0
 Inputs = [ExtResource("1_sr12k"), ExtResource("2_byamq"), ExtResource("3_1xx02")]
 _output = 0
+IsOutputArrayTypeDependent = false
 _isOutputTypeKnown = true
 HasOutput = false
 _hasOutputArrayType = false
