@@ -1,7 +1,0 @@
-[gd_scene load_steps=3 format=3 uid="uid://i02krelguajp"]
-
-[ext_resource type="PackedScene" uid="uid://bqtugitvy6nko" path="res://Nodes/vis_node_exectuable.tscn" id="1_602mb"]
-[ext_resource type="Script" path="res://Script/Nodes/ArrayEditorVisNode.cs" id="2_oysch"]
-
-[node name="VisNodeExectuableArray" instance=ExtResource("1_602mb")]
-script = ExtResource("2_oysch")

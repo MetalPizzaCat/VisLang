@@ -1,6 +1,6 @@
-[gd_resource type="Resource" load_steps=2 format=3 uid="uid://dbhhner37tajl"]
+[gd_resource type="Resource" load_steps=2 format=3]
 
-[ext_resource type="Script" path="res://Script/Nodes/CodeColorTheme.cs" id="1_3r481"]
+[ext_resource type="Script" path="res://Script/Editor/CodeColorTheme.cs" id="1_3r481"]
 
 [resource]
 script = ExtResource("1_3r481")
