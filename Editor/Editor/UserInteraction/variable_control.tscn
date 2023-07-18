@@ -1,0 +1,47 @@
+[gd_scene load_steps=3 format=3 uid="uid://cggls8480xaxq"]
+
+[ext_resource type="Script" path="res://Script/UI/VariableManager.cs" id="1_pifaf"]
+[ext_resource type="PackedScene" uid="uid://cjc6nifn3qyy7" path="res://UI/variable_control.tscn" id="2_0yr42"]
+
+[node name="VariableControl" type="Control" node_paths=PackedStringArray("Container")]
+layout_mode = 3
+anchor_left = 0.76
+anchor_right = 1.0
+anchor_bottom = 0.373
+offset_left = -32.0
+offset_top = 8.0
+offset_bottom = -7.69998
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_pifaf")
+VariableControlPlaceholder = ExtResource("2_0yr42")
+Container = NodePath("ScrollContainer/VBoxContainer")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.435294)
+
+[node name="ScrollContainer" type="ScrollContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 32.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ScrollContainer"]
+layout_mode = 2
+
+[node name="Button" type="Button" parent="."]
+layout_mode = 0
+offset_right = 8.0
+offset_bottom = 8.0
+text = "Add variable"
+
+[connection signal="pressed" from="Button" to="." method="AddVariable"]

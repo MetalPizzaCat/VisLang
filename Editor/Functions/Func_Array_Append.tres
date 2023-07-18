@@ -1,5 +1,6 @@
-[gd_resource type="Resource" load_steps=3 format=3 uid="uid://l1eetdpg8ut5"]
+[gd_resource type="Resource" load_steps=4 format=3 uid="uid://l1eetdpg8ut5"]
 
+[ext_resource type="Resource" uid="uid://ddwn3h05q6wkm" path="res://Functions/Arguments/Func_Arg_Any.tres" id="1_gaoay"]
 [ext_resource type="Script" path="res://Script/Function/FunctionInfo.cs" id="1_ge8mp"]
 [ext_resource type="Resource" uid="uid://cf7eah7fgi0i2" path="res://Functions/Arguments/Func_Arg_Any_Arr.tres" id="2_p73ex"]
 
@@ -9,8 +10,10 @@ FunctionName = "Append to array"
 FunctionDescription = "Appends a value to array"
 IsExecutable = true
 IsArrayTypeDependent = true
-Inputs = [ExtResource("2_p73ex")]
+ArrayTypeDefiningArgumentId = 0
+Inputs = [ExtResource("1_gaoay"), ExtResource("2_p73ex")]
 _output = 0
+IsOutputArrayTypeDependent = false
 _isOutputTypeKnown = true
 HasOutput = false
 _hasOutputArrayType = false

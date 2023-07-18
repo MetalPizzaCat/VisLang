@@ -8,6 +8,6 @@ public class UnaryNegateOperationNodeBase : DataNode
 
     public override Value? GetValue(NodeContext? context = null)
     {
-        return new Value(ValueType.Float, -GetInputValue(context));
+        return new Value(new ValueTypeData(ValueType.Float), -GetInputValue(context));
     }
 }

@@ -33,12 +33,16 @@ public class ProcedureCallNode : ExecutionNode
         // this is done to ensure that we don't need to create special handling for when code is run from procedure
         // the reason why it is done inside caller instead of the Procedure itself is so we could pass the argument values
         int currentArgumentId = 0;
-        foreach ((string argName, ValueType argType) in proc.Arguments)
+        foreach ((string argName, ValueTypeData argType) in proc.Arguments)
         {
             Interpreter.VisSystemMemory.CreateVariable(ref variables, argName, argType, Inputs.ElementAtOrDefault(currentArgumentId)?.GetValue(context)?.Data);
             // this solution could cause issues if arguments are messed up and don't match function signature
             // but will make editors and parsers deal with this problem :3
             currentArgumentId++;
+        }
+        foreach ((string argName, ValueTypeData argType) in proc.DefaultVariables)
+        {
+            Interpreter.VisSystemMemory.CreateVariable(ref variables, argName, argType, null);
         }
         // a bit of a cheaty way to create variable returns 
         // technically this leaves the door open for functions that return multiple values

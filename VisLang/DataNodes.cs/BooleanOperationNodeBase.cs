@@ -6,8 +6,8 @@ public class BinaryOperationNodeBase : DataNode
     {
     }
 
-    public Value DefaultValueLeft { get; set; } = new Value(ValueType.Bool, false);
-    public Value DefaultValueRight { get; set; } = new Value(ValueType.Bool, false);
+    public Value DefaultValueLeft { get; set; } = new Value(new ValueTypeData(ValueType.Bool), false);
+    public Value DefaultValueRight { get; set; } = new Value(new ValueTypeData(ValueType.Bool), false);
 
     public Value GetValueLeft(NodeContext? context) => Inputs.FirstOrDefault()?.GetValue(context) ?? DefaultValueLeft;
 

@@ -1,0 +1,22 @@
+[gd_scene load_steps=2 format=3 uid="uid://ckx01i2b2svjf"]
+
+[ext_resource type="Script" path="res://Script/Editor/Nodes/ExecStartGraphNode.cs" id="1_kv6qg"]
+
+[node name="ExecNode" type="GraphNode"]
+offset_right = 36.0
+offset_bottom = 54.0
+title = "Exec"
+slot/0/left_enabled = false
+slot/0/left_type = 0
+slot/0/left_color = Color(1, 1, 1, 1)
+slot/0/left_icon = null
+slot/0/right_enabled = true
+slot/0/right_type = 0
+slot/0/right_color = Color(1, 1, 1, 1)
+slot/0/right_icon = null
+slot/0/draw_stylebox = true
+script = ExtResource("1_kv6qg")
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 2
+text = "Exec"

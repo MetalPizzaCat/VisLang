@@ -8,7 +8,7 @@ public class ArrayAppendElement : ExecutionNode
     public Value? GetInputArray(NodeContext? context) => Inputs.ElementAtOrDefault(0)?.GetValue(context);
     public object? GetInputValue(NodeContext? context) => Inputs.ElementAtOrDefault(1)?.GetValue(context)?.Data;
 
-    public ValueType? GetValueToSetType(NodeContext? context) => Inputs.ElementAtOrDefault(1)?.GetValue(context)?.ValueType;
+    public ValueTypeData? GetValueToSetType(NodeContext? context) => Inputs.ElementAtOrDefault(1)?.GetValue(context)?.TypeData;
 
     public ArrayAppendElement(VisSystem? interpreter) : base(interpreter)
     {
@@ -25,7 +25,7 @@ public class ArrayAppendElement : ExecutionNode
         }
         Value? arr = GetInputArray(context);
         object? value = GetInputValue(context);
-        ValueType? type = GetValueToSetType(context);
+        ValueTypeData? type = GetValueToSetType(context);
         if (arr == null)
         {
             throw new NullReferenceException("Attempted set value of the array element but array is null");
@@ -40,7 +40,7 @@ public class ArrayAppendElement : ExecutionNode
         }
         if (arr.ArrayDataType != null && type != null)
         {
-            if (arr.ArrayDataType.Value != type.Value)
+            if (arr.ArrayDataType.Value != type.Value.Type)
             {
                 throw new Interpreter.ValueTypeMismatchException($"Attempted to add element to the array but type does not match array data. Expected {arr.ArrayDataType.Value}, got {type.Value}", this);
             }
@@ -48,6 +48,7 @@ public class ArrayAppendElement : ExecutionNode
 
         if (arr.Data is List<Value> internalArray && type != null)
         {
+            //TODO: account for appending arrays
             internalArray.Add(new Value(type.Value, GetInputValue(context)));
         }
     }

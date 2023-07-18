@@ -16,9 +16,9 @@ public class TextLangTests
     public void BasicParsingVariableDeclaration()
     {
         string code = @"program{
-            let a : int
-            let b : float
-            let c : string
+            let a : int;
+            let b : float;
+            let c : string;
         }";
         VisSystem? system = TextLang.Parser.VisLangParser.ParseCodeNoComments(code);
         Assert.IsNotNull(system);
@@ -35,9 +35,9 @@ public class TextLangTests
     public void BasicParsingVariableDeclarationExtendedNames()
     {
         string code = @"program{
-            let a23 : int
-            let ba_3ba : float
-            let c23ss__ : string
+            let a23 : int;
+            let ba_3ba : float;
+            let c23ss__ : string;
         }";
         VisSystem? system = TextLang.Parser.VisLangParser.ParseCodeNoComments(code);
         Assert.IsNotNull(system);
@@ -54,10 +54,10 @@ public class TextLangTests
     public void TestAssignment()
     {
         string code = @"program{
-            let a : float
-            let b : float
-            a = 2
-            b = a
+            let a : float;
+            let b : float;
+            a = 2;
+            b = a;
         }";
         VisSystem? system = TextLang.Parser.VisLangParser.ParseCodeNoComments(code);
         system.Execute();
@@ -77,12 +77,12 @@ public class TextLangTests
     public void TestAssignmentWithMath()
     {
         string code = @"program{
-            let a : float
-            let b : float
-            let c : float
-            a = 2
-            b = a*a
-            c = -a + a
+            let a : float;
+            let b : float;
+            let c : float;
+            a = 2;
+            b = a*a;
+            c = -a + a;
         }";
         VisSystem? system = TextLang.Parser.VisLangParser.ParseCodeNoComments(code);
         system.Execute();

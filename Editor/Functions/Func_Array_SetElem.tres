@@ -2,7 +2,7 @@
 
 [ext_resource type="Resource" uid="uid://ef36r8dt8b7w" path="res://Functions/Arguments/Func_Arg_Array.tres" id="1_sr12k"]
 [ext_resource type="Resource" uid="uid://b32ijxen53jk" path="res://Functions/Arguments/Func_Arg_Array_Index.tres" id="2_byamq"]
-[ext_resource type="Resource" uid="uid://ddwn3h05q6wkm" path="res://Functions/Arguments/Func_Arg_Any.tres" id="3_t7cfi"]
+[ext_resource type="Resource" uid="uid://cf7eah7fgi0i2" path="res://Functions/Arguments/Func_Arg_Any_Arr.tres" id="3_1xx02"]
 [ext_resource type="Script" path="res://Script/Function/FunctionInfo.cs" id="3_xvpqm"]
 
 [resource]
@@ -10,9 +10,11 @@ script = ExtResource("3_xvpqm")
 FunctionName = "Set element at"
 FunctionDescription = "Sets value of the element at given index"
 IsExecutable = true
-IsArrayTypeDependent = false
-Inputs = [ExtResource("1_sr12k"), ExtResource("2_byamq"), ExtResource("3_t7cfi")]
+IsArrayTypeDependent = true
+ArrayTypeDefiningArgumentId = 0
+Inputs = [ExtResource("1_sr12k"), ExtResource("2_byamq"), ExtResource("3_1xx02")]
 _output = 0
+IsOutputArrayTypeDependent = false
 _isOutputTypeKnown = true
 HasOutput = false
 _hasOutputArrayType = false

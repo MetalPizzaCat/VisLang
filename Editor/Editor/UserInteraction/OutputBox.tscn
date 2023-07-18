@@ -1,0 +1,44 @@
+[gd_scene format=3 uid="uid://4i8ijrxpht43"]
+
+[node name="OutputBox" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_top = 768.0
+offset_right = 1600.0
+offset_bottom = 896.0
+
+[node name="TabContainer" type="TabContainer" parent="."]
+layout_mode = 0
+offset_top = -56.0
+offset_right = 1600.0
+offset_bottom = 128.0
+
+[node name="Output" type="ScrollContainer" parent="TabContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="TabContainer/Output"]
+layout_mode = 2
+
+[node name="Errors" type="ScrollContainer" parent="TabContainer"]
+visible = false
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="TabContainer/Errors"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 1280.0
+offset_top = -64.0
+offset_right = 1600.0
+offset_bottom = -24.0
+alignment = 2
+
+[node name="ButtonHide" type="Button" parent="HBoxContainer"]
+layout_mode = 2
+text = "Hide"
+
+[node name="ButtonShow" type="Button" parent="HBoxContainer"]
+visible = false
+layout_mode = 2
+text = "Show"

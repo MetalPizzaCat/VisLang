@@ -98,31 +98,30 @@ public class VisSystemMemory
     }
 
 
-    public uint AllocateValue(ValueType type, object? value = null, ValueType? arrayDataType = null)
+    public uint AllocateValue(ValueTypeData type, object? value = null)
     {
-        Memory.Add(_memoryCounter, new Value(type, _memoryCounter, value, arrayDataType));
+        Memory.Add(_memoryCounter, new Value(type, _memoryCounter, value));
         _memoryCounter++;
         return _memoryCounter - 1;
     }
 
     /// <summary>
     /// Creates a new variable in the system and allocates memory for that variable.<para></para>
-    /// This overload operates on a provided variable list. 
+    /// This overload operates on a provided variable list.  
     /// </summary>
     /// <param name="variableList">Variable list that stores variable names, and where information about allocated value will be written to</param>
     /// <param name="name">Name of the variable</param>
     /// <param name="type">Type of the variable</param>
     /// <param name="value">Possible init value or null if default should be used</param>
-    /// <param name="arrayDataType">If type is an array, this will define what type of data the array stores. Or null if array accepts anything</param>
     /// <returns>True if variable can be created or false if variable name is already taken</returns>
-    public bool CreateVariable(ref Dictionary<string, uint> variableList, string name, ValueType type, object? value = null, ValueType? arrayDataType = null)
+    public bool CreateVariable(ref Dictionary<string, uint> variableList, string name, ValueTypeData type, object? value = null)
     {
         // this still works since all values are stored in the system even if variable names are not
         if (variableList.ContainsKey(name) && Memory.ContainsKey(variableList[name]))
         {
             return false;
         }
-        uint addr = AllocateValue(type, value, arrayDataType);
+        uint addr = AllocateValue(type, value);
         variableList.Add(name, addr);
         return true;
     }
@@ -135,13 +134,13 @@ public class VisSystemMemory
     /// <param name="value">Possible init value or null if default should be used</param>
     /// <param name="arrayDataType">If type is an array, this will define what type of data the array stores. Or null if array accepts anything</param>
     /// <returns>True if variable can be created or false if variable name is already taken</returns>
-    public bool CreateVariable(string name, ValueType type, object? value = null, ValueType? arrayDataType = null)
+    public bool CreateVariable(string name, ValueTypeData type, object? value = null)
     {
         if (this[name] != null)
         {
             return false;
         }
-        uint addr = AllocateValue(type, value, arrayDataType);
+        uint addr = AllocateValue(type, value);
         Variables.Add(name, addr);
         return true;
     }

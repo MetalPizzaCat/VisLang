@@ -17,7 +17,7 @@ ResourceScriptDirectories=["res://"]
 [application]
 
 config/name="Vis"
-run/main_scene="res://MainScene/MainScene.tscn"
+run/main_scene="res://Editor/EditScene.tscn"
 config/features=PackedStringArray("4.0", "C#", "Forward Plus")
 config/icon="res://icon.svg"
 
