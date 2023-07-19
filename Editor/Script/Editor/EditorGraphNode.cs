@@ -37,12 +37,7 @@ public partial class EditorGraphNode : GraphNode
     /// <summary>
     /// Node that is connected to be executed next
     /// </summary>
-    public EditorGraphNode? NextExecutable { get; set; } = null;
-
-    /// <summary>
-    /// Node that is connected to be executed next
-    /// </summary>
-    public EditorGraphNode? PreviousExecutable { get; set; } = null;
+    public EditorGraphNodeInput? NextExecutable { get; set; } = null;
 
     public List<EditorGraphNodeInput?> Inputs { get; set; } = new();
     public List<EditorGraphInputControl> InputControls { get; private set; } = new();
@@ -73,12 +68,47 @@ public partial class EditorGraphNode : GraphNode
 
     protected int? ArrayTypeListeningPort { get; set; }
 
+    protected void CreatePort(FunctionInputInfo arg, int slotIndex, bool displayOutput = false, VisLang.ValueType? outputType = null)
+    {
+        EditorGraphInputControl inp = new(arg);
+        InputControls.Add(inp);
+        AddChild(inp);
+
+        if (displayOutput && outputType != null)
+        {
+            SetSlot
+            (
+                slotIndex,
+                true,
+                arg.TypeMatchingPermissions == FunctionInputInfo.TypePermissions.AllowAny ? AnyTypeId : GetTypeIdForValueType(arg.InputType),
+                (arg.TypeMatchingPermissions == FunctionInputInfo.TypePermissions.AllowAny ? CodeTheme?.AnyColor : CodeTheme?.GetColorForType(arg.InputType)) ?? new Color(1, 1, 1),
+                true,
+                GetTypeIdForValueType(outputType.Value),
+                CodeTheme?.GetColorForType(outputType ?? VisLang.ValueType.Bool) ?? new Color(1, 1, 1)
+            );
+        }
+        else
+        {
+            SetSlot
+            (
+                slotIndex,
+                true,
+                arg.TypeMatchingPermissions == FunctionInputInfo.TypePermissions.AllowAny ? AnyTypeId : GetTypeIdForValueType(arg.InputType),
+                (arg.TypeMatchingPermissions == FunctionInputInfo.TypePermissions.AllowAny ? CodeTheme?.AnyColor : CodeTheme?.GetColorForType(arg.InputType)) ?? new Color(1, 1, 1),
+                false,
+                0,
+                new Color()
+            );
+        }
+        Inputs.Add(null);
+    }
+
     /// <summary>
     /// Generate ports for a given function signature and return last used port
     /// </summary>
     /// <param name="info">Function signature</param>
     /// <returns>Index of the last created port</returns>
-    private int GeneratePorts(FunctionInfo info)
+    protected int GeneratePorts(FunctionInfo info)
     {
         // we don't quite care what happens to the inputs so we let garbage collector deal with it
         Inputs.Clear();
@@ -105,36 +135,7 @@ public partial class EditorGraphNode : GraphNode
         // but because all of the connections in this variation are handled inside of the node we don't need to manually create any object
         foreach (FunctionInputInfo arg in info.Inputs)
         {
-            EditorGraphInputControl inp = new(arg);
-            InputControls.Add(inp);
-            AddChild(inp);
-            if (slotIndex == 0 && info.HasOutput && info.OutputType != null)
-            {
-                SetSlot
-                (
-                    slotIndex,
-                    true,
-                    arg.TypeMatchingPermissions == FunctionInputInfo.TypePermissions.AllowAny ? AnyTypeId : GetTypeIdForValueType(arg.InputType),
-                    (arg.TypeMatchingPermissions == FunctionInputInfo.TypePermissions.AllowAny ? CodeTheme?.AnyColor : CodeTheme?.GetColorForType(arg.InputType)) ?? new Color(1, 1, 1),
-                    true,
-                    GetTypeIdForValueType(info.OutputType.Value),
-                    CodeTheme?.GetColorForType(info.OutputType ?? VisLang.ValueType.Bool) ?? new Color(1, 1, 1)
-                );
-            }
-            else
-            {
-                SetSlot
-                (
-                    slotIndex,
-                    true,
-                    arg.TypeMatchingPermissions == FunctionInputInfo.TypePermissions.AllowAny ? AnyTypeId : GetTypeIdForValueType(arg.InputType),
-                    (arg.TypeMatchingPermissions == FunctionInputInfo.TypePermissions.AllowAny ? CodeTheme?.AnyColor : CodeTheme?.GetColorForType(arg.InputType)) ?? new Color(1, 1, 1),
-                    false,
-                    0,
-                    new Color()
-                );
-            }
-            Inputs.Add(null);
+            CreatePort(arg, slotIndex, slotIndex == (info.IsExecutable ? 1 : 0) && info.HasOutput, info.OutputArrayType);
             slotIndex++;
         }
         // if we have no arguments the output generation will be skipped because it uses arg0 for position
@@ -164,7 +165,7 @@ public partial class EditorGraphNode : GraphNode
     /// Generates ports and updates connection based on the given function signature
     /// </summary>
     /// <param name="info">Function signature to use as base</param>
-    public void GenerateFunction(FunctionInfo info)
+    public virtual void GenerateFunction(FunctionInfo info)
     {
         // get list of all existing connections for safe keeping
         // once we delete all previous connections we will have to move them to new ports
@@ -296,6 +297,12 @@ public partial class EditorGraphNode : GraphNode
         }
     }
 
+    /// <summary>
+    /// Records a new connection to a node 
+    /// </summary>
+    /// <param name="dstPort">Port on this node that is being connected to</param>
+    /// <param name="node">Node that connection is coming from</param>
+    /// <param name="srcPort">Port on the node from which connection is coming</param>
     public void AddConnection(int dstPort, EditorGraphNode node, int srcPort)
     {
         // while ports in godot node count the exec input as port
@@ -315,6 +322,19 @@ public partial class EditorGraphNode : GraphNode
     }
 
     /// <summary>
+    /// Records a new exec line connection<para></para>
+    /// Unlike data connection exec connection is left to right meaning that THIS node is the source node<para></para>
+    /// By default dstPort value is ignored because only one exec port can be present on a function node
+    /// </summary>
+    /// <param name="dstPort">Port on this node that connection is coming from</param>
+    /// <param name="node">Node to connect to</param>
+    /// <param name="srcPort">Port on the node where line is connecting</param>
+    public virtual void AddExecConnection(int dstPort, EditorGraphNode node, int srcPort)
+    {
+        NextExecutable = new EditorGraphNodeInput(node, srcPort);
+    }
+
+    /// <summary>
     /// Destroyed connection on selected port
     /// </summary>
     /// <param name="port">Port id </param>
@@ -322,16 +342,17 @@ public partial class EditorGraphNode : GraphNode
     public virtual void DestroyConnectionOnPort(int port, bool left)
     {
         // base executables will always have port0 reserved for exec line
-        if (IsExecutable && port == 0)
+        // check for left because otherwise disconnecting on the left  will disconnect right
+        // although it never occurred before the check was added so who knows?
+        if (IsExecutable && port == 0 && !left)
         {
-            if (left)
-            {
-                PreviousExecutable = null;
-            }
-            else
-            {
-                NextExecutable = null;
-            }
+            NextExecutable = null;
+        }
+        // this should only occur when we are trying to detach a connection on the exec right
+        // a connection that we don't keep any record about
+        else if (IsExecutable && port == 0)
+        {
+            return;
         }
         // we don't care about what's on the right since data connections work right to left
         // as opposed to left to right of the exec connections
@@ -365,11 +386,11 @@ public partial class EditorGraphNode : GraphNode
         }
     }
 
-    public bool CanConnectOnPortExec(int port, bool asSource)
+    public virtual bool CanConnectOnPortExec(int port)
     {
-        return (asSource ? NextExecutable : PreviousExecutable) == null;
+        return NextExecutable == null;
     }
-    public bool CanConnectOnPort(int dstPort)
+    public virtual bool CanConnectOnPort(int dstPort)
     {
         return Inputs.ElementAtOrDefault(dstPort) == null;
     }

@@ -31,6 +31,7 @@ public partial class NodeEditCanvas : GraphEdit
             AddValidConnectionType(EditorGraphNode.AnyTypeId, EditorGraphNode.GetTypeIdForValueType(val));
         }
         CreationMenu.FunctionSelected += SpawnFunction;
+        CreationMenu.ConditionalNodeSelected +=  SpawnConditionalNode;
     }
 
     // Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -72,13 +73,12 @@ public partial class NodeEditCanvas : GraphEdit
         {
             if (source.GetSlotTypeRight(sourcePort) == EditorGraphNode.ExecTypeId)
             {
-                if (!destination.CanConnectOnPortExec(destPort, false) || !source.CanConnectOnPortExec(destPort, true))
+                if (!source.CanConnectOnPortExec(sourcePort))
                 {
                     return;
                 }
                 ConnectNode(sourceNode, sourcePort, destNode, destPort);
-                source.NextExecutable = destination;
-                destination.PreviousExecutable = source;
+                source.AddExecConnection(sourcePort, destination, destPort);
             }
             else
             {
@@ -120,6 +120,11 @@ public partial class NodeEditCanvas : GraphEdit
         node.GenerateFunction(info);
         node.DeleteRequested += DeleteNode;
         return node;
+    }
+
+    private void SpawnConditionalNode()
+    {
+        MakeNodeFromSignature<EditorGraphBranchNode>(null);
     }
 
     /// <summary>
@@ -174,7 +179,10 @@ public partial class NodeEditCanvas : GraphEdit
             // exec port is on line 0
             if (con.Source.IsExecutable && con.DestinationPortId == 0)
             {
-                con.Destination.PreviousExecutable = null;
+                // con.Destination.PreviousExecutable = null;
+                // we used to destroy reference to on the next node, but since exec lines are a one directional list now
+                // there is nothing to destroy
+                // TODO: Check if there is anything else that needs to be done here
             }
             else
             {
@@ -260,7 +268,7 @@ public partial class NodeEditCanvas : GraphEdit
             return null;
         }
         List<VisLang.VisNode?> nodes = new();
-        EditorGraphNode? next = ExecStart.NextExecutable;
+        EditorGraphNode? next = ExecStart.NextExecutable?.Node;
         VisLang.ExecutionNode? prev = null;
         VisLang.ExecutionNode? root = null;
         while (next != null)
@@ -279,12 +287,12 @@ public partial class NodeEditCanvas : GraphEdit
 
             // if we have already created something that means it should know
             // about what we created right now 
-            if(prev != null)
+            if (prev != null)
             {
                 prev.DefaultNext = node;
             }
             prev = node;
-            next = next.NextExecutable;
+            next = next.NextExecutable?.Node;
         }
         GD.Print("Generated");
         return root;
