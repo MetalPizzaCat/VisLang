@@ -8,6 +8,7 @@ namespace VisLang.Editor;
 
 public partial class NodeEditCanvas : GraphEdit
 {
+    protected record struct ProcessedNodeInfo(EditorGraphNode Node, VisLang.ExecutionNode CompiledNode);
 
     public delegate void NodeDeletedEventHandler(EditorGraphNode node);
     public event NodeDeletedEventHandler? NodeDeleted;
@@ -31,6 +32,7 @@ public partial class NodeEditCanvas : GraphEdit
             AddValidConnectionType(EditorGraphNode.AnyTypeId, EditorGraphNode.GetTypeIdForValueType(val));
         }
         CreationMenu.FunctionSelected += SpawnFunction;
+        CreationMenu.ConditionalNodeSelected += SpawnConditionalNode;
     }
 
     // Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -72,13 +74,12 @@ public partial class NodeEditCanvas : GraphEdit
         {
             if (source.GetSlotTypeRight(sourcePort) == EditorGraphNode.ExecTypeId)
             {
-                if (!destination.CanConnectOnPortExec(destPort, false) || !source.CanConnectOnPortExec(destPort, true))
+                if (!source.CanConnectOnPortExec(sourcePort))
                 {
                     return;
                 }
                 ConnectNode(sourceNode, sourcePort, destNode, destPort);
-                source.NextExecutable = destination;
-                destination.PreviousExecutable = source;
+                source.AddExecConnection(sourcePort, destination, destPort);
             }
             else
             {
@@ -120,6 +121,11 @@ public partial class NodeEditCanvas : GraphEdit
         node.GenerateFunction(info);
         node.DeleteRequested += DeleteNode;
         return node;
+    }
+
+    private void SpawnConditionalNode()
+    {
+        MakeNodeFromSignature<EditorGraphBranchNode>(null);
     }
 
     /// <summary>
@@ -166,6 +172,7 @@ public partial class NodeEditCanvas : GraphEdit
             {
                 con.Source.NextExecutable = null;
             }
+            con.Source.DestroyConnectionOnPort(con.SourcePortId, false);
             DisconnectNode(con.Source.Name, con.SourcePortId, con.Destination.Name, con.DestinationPortId);
         }
         foreach (ConnectionInfo con in outgoing)
@@ -174,7 +181,10 @@ public partial class NodeEditCanvas : GraphEdit
             // exec port is on line 0
             if (con.Source.IsExecutable && con.DestinationPortId == 0)
             {
-                con.Destination.PreviousExecutable = null;
+                // con.Destination.PreviousExecutable = null;
+                // we used to destroy reference to on the next node, but since exec lines are a one directional list now
+                // there is nothing to destroy
+                // TODO: Check if there is anything else that needs to be done here
             }
             else
             {
@@ -201,6 +211,8 @@ public partial class NodeEditCanvas : GraphEdit
             )).ToList();
     }
 
+    // These functions are meant for parsing the tree created by player into usable objects 
+    #region Compilation
     /// <summary>
     /// Iterates over all the children 
     /// </summary>
@@ -246,6 +258,78 @@ public partial class NodeEditCanvas : GraphEdit
         return inputs;
     }
 
+    private VisLang.ExecutionNode? GenerateExecNode(EditorGraphNode sourceNode, VisSystem system)
+    {
+        VisLang.ExecutionNode? node = sourceNode.CreateInterpretableNode<VisLang.ExecutionNode>();
+        if (node == null)
+        {
+            // nothing was created, logic can not continue
+            return null;
+        }
+        node.Interpreter = system;
+        node.DebugData = sourceNode;
+        node.Inputs = GenerateDataTreeForNode(sourceNode, system);
+        return node;
+    }
+
+    private VisLang.ExecutionNode? ProcessLineOfExecutables
+    (
+        ref List<EditorGraphBranchNode> branches, // these might not need to be passed as references but i'll still mark them as such to make it clear that these WILL be edited
+        ref List<ProcessedNodeInfo> nodes,
+        EditorGraphNode? start,
+        VisSystem system
+    )
+    {
+        EditorGraphNode? next = start;
+        VisLang.ExecutionNode? prev = null;
+        VisLang.ExecutionNode? root = null;
+        while (next != null)
+        {
+            // we hit a node that we processed already
+            // but we still want to continue towards this node
+            if (nodes.Any(p => p.Node == next))
+            {
+                if (prev != null)
+                {
+                    prev.DefaultNext = nodes.First(p => p.Node == next).CompiledNode;
+                    break;
+                }
+                // there can be a situation where we start the loop and immediately hit an existing node
+                // in this case no point in running the loop cause it would just be duplication
+                return nodes.First(p => p.Node == next).CompiledNode;
+
+            }
+            EditorGraphNode? nodeToSwitchTo = null;
+            if (next is EditorGraphBranchNode branch)
+            {
+                branches.Add(branch);
+                nodeToSwitchTo = branch.SuccessNextExecutable?.Node;
+            }
+            else
+            {
+                nodeToSwitchTo = next.NextExecutable?.Node;
+            }
+            VisLang.ExecutionNode? node = GenerateExecNode(next, system);
+            if (node == null)
+            {
+                // nothing was created, logic can not continue
+                return root;
+            }
+            root ??= node;
+            nodes.Add(new ProcessedNodeInfo(next, node));
+
+            // if we have already created something that means it should know
+            // about what we created right now 
+            if (prev != null)
+            {
+                prev.DefaultNext = node;
+            }
+            prev = node;
+            next = nodeToSwitchTo;
+        }
+        return root;
+    }
+
     /// <summary>
     /// Goes through all the nodes created by the user and generates VisLang nodes based on that
     /// </summary>
@@ -259,34 +343,26 @@ public partial class NodeEditCanvas : GraphEdit
         {
             return null;
         }
-        List<VisLang.VisNode?> nodes = new();
-        EditorGraphNode? next = ExecStart.NextExecutable;
-        VisLang.ExecutionNode? prev = null;
-        VisLang.ExecutionNode? root = null;
-        while (next != null)
-        {
-            VisLang.ExecutionNode? node = next.CreateInterpretableNode<VisLang.ExecutionNode>();
-            if (node == null)
-            {
-                // nothing was created, logic can not continue
-                return root;
-            }
-            node.Interpreter = system;
-            root ??= node;
-            node.DebugData = next;
-            node.Inputs = GenerateDataTreeForNode(next, system);
-            nodes.Add(node);
+        List<ProcessedNodeInfo> nodes = new();
+        List<EditorGraphBranchNode> branches = new();
+        VisLang.ExecutionNode? root = ProcessLineOfExecutables(ref branches, ref nodes, ExecStart.NextExecutable?.Node, system);
 
-            // if we have already created something that means it should know
-            // about what we created right now 
-            if(prev != null)
+        while (branches.Count > 0)
+        {
+            EditorGraphBranchNode? start = branches.FirstOrDefault();
+            if (start == null)
             {
-                prev.DefaultNext = node;
+                break;
             }
-            prev = node;
-            next = next.NextExecutable;
+            if (nodes.FirstOrDefault(p => p.Node == start).CompiledNode is VisLang.FlowControlIfNode branch)
+            {
+                VisLang.ExecutionNode? failLine = ProcessLineOfExecutables(ref branches, ref nodes, start.FailureNextExecutable?.Node, system);
+                branch.FailureNext = failLine;
+            }
+            branches.Remove(start);
         }
         GD.Print("Generated");
         return root;
     }
+    #endregion
 }

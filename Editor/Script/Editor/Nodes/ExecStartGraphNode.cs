@@ -10,6 +10,7 @@ public partial class ExecStartGraphNode : EditorGraphNode
 
     public override void _Ready()
     {
+        Info = new FunctionInfo("Start", true, new(), string.Empty, false);
         if (Theme != null)
         {
             SetSlotTypeRight(0, EditorGraphNode.ExecTypeId);

@@ -6,8 +6,10 @@ using System.Linq;
 public partial class NodeCreationMenu : PopupPanel
 {
     public delegate void FunctionSelectedEventHandler(FunctionInfo info);
-    public event FunctionSelectedEventHandler? FunctionSelected;
     public delegate void SpecialFunctionSelectedEventHandler(SpecialFunctionInfo info);
+    public delegate void ConditionalNodeSelectedEventHandler();
+    public event FunctionSelectedEventHandler? FunctionSelected;
+    public event ConditionalNodeSelectedEventHandler? ConditionalNodeSelected;
     public event SpecialFunctionSelectedEventHandler? SpecialFunctionSelected;
 
     [Export]
@@ -22,9 +24,12 @@ public partial class NodeCreationMenu : PopupPanel
 
     public List<NodeCreationButtonBase> Buttons { get; set; } = new();
 
+    private Button _conditionalNodeSpawnerButton = new Button();
+
     public override void _Ready()
     {
         base._Ready();
+        CreateConditionalSpawnButton();
         if (Functions == null)
         {
             return;
@@ -57,9 +62,19 @@ public partial class NodeCreationMenu : PopupPanel
         }
     }
 
+    private void CreateConditionalSpawnButton()
+    {
+        _conditionalNodeSpawnerButton.Pressed += () => { ConditionalNodeSelected?.Invoke(); };
+        _conditionalNodeSpawnerButton.Text = "If / Branch";
+        _conditionalNodeSpawnerButton.Alignment = HorizontalAlignment.Left;
+        ItemContainer.AddChild(_conditionalNodeSpawnerButton);
+    }
+
     private void SearchTextChanged(string text)
     {
-        Buttons.ForEach(p => p.Visible = p.FunctionName?.StartsWith(text, true, null) ?? false);
+        Buttons.ForEach(p => p.Visible = p.FunctionName?.ToLower().StartsWith(text, true, null) ?? false);
+        // unreal uses 'branch', code uses 'if'  and i want more :3
+        _conditionalNodeSpawnerButton.Visible = "If".ToLower().StartsWith(text, true, null) || "Branch".ToLower().StartsWith(text, true, null) || "Conditional".ToLower().StartsWith(text, true, null);
     }
 
     private void NodeSelected(NodeCreationButton? button, FunctionInfo info)

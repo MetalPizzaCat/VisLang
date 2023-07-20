@@ -1,4 +1,4 @@
-[gd_resource type="Resource" load_steps=2 format=3]
+[gd_resource type="Resource" load_steps=2 format=3 uid="uid://d3qpdfwf0ne30"]
 
 [ext_resource type="Script" path="res://Script/Editor/CodeColorTheme.cs" id="1_3r481"]
 
