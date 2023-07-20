@@ -101,7 +101,7 @@ public class BasicSystemTest
 
         FlowControlIfNode cond = new FlowControlIfNode(system)
         {
-            SuccessNext = new VariableSetNode(system) { Name = "result", DefaultValue = 1f },
+            DefaultNext = new VariableSetNode(system) { Name = "result", DefaultValue = 1f },
             FailureNext = new VariableSetNode(system) { Name = "result", DefaultValue = 0f },
             Inputs = new() { eq }
         };
