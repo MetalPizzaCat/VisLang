@@ -172,6 +172,7 @@ public partial class NodeEditCanvas : GraphEdit
             {
                 con.Source.NextExecutable = null;
             }
+            con.Source.DestroyConnectionOnPort(con.SourcePortId, false);
             DisconnectNode(con.Source.Name, con.SourcePortId, con.Destination.Name, con.DestinationPortId);
         }
         foreach (ConnectionInfo con in outgoing)
