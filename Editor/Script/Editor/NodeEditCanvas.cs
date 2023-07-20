@@ -282,8 +282,22 @@ public partial class NodeEditCanvas : GraphEdit
         EditorGraphNode? next = start;
         VisLang.ExecutionNode? prev = null;
         VisLang.ExecutionNode? root = null;
-        while (next != null && !nodes.Any(p => p.Node == next))
+        while (next != null)
         {
+            // we hit a node that we processed already
+            // but we still want to continue towards this node
+            if (nodes.Any(p => p.Node == next))
+            {
+                if (prev != null)
+                {
+                    prev.DefaultNext = nodes.First(p => p.Node == next).CompiledNode;
+                    break;
+                }
+                // there can be a situation where we start the loop and immediately hit an existing node
+                // in this case no point in running the loop cause it would just be duplication
+                return nodes.First(p => p.Node == next).CompiledNode;
+
+            }
             EditorGraphNode? nodeToSwitchTo = null;
             if (next is EditorGraphBranchNode branch)
             {
