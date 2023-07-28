@@ -3,6 +3,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using VisLang.Editor.Parsing;
+using VisLang.Editor.Files;
 
 namespace VisLang.Editor;
 
@@ -33,11 +34,6 @@ public partial class NodeEditCanvas : GraphEdit
         }
         CreationMenu.FunctionSelected += SpawnFunction;
         CreationMenu.ConditionalNodeSelected += SpawnConditionalNode;
-    }
-
-    // Called every frame. 'delta' is the elapsed time since the previous frame.
-    public override void _Process(double delta)
-    {
     }
 
     /// <summary>
@@ -364,5 +360,25 @@ public partial class NodeEditCanvas : GraphEdit
         GD.Print("Generated");
         return root;
     }
+    #endregion
+
+    #region SaveSystem
+    public List<EditorNodeSaveData> GenerateSaveData()
+    {
+        return GetChildren().Where(p => p is EditorGraphNode && p is not ExecStartGraphNode).Select(p => p as EditorGraphNode).Select(p => p.GetSaveData()).ToList();
+    }
+
+    public void ClearCanvas()
+    {
+        IEnumerable<Node> kids = GetChildren().Where(p => p != ExecStart && p != CreationMenu && p is not FunctionSignatureManager);
+        foreach (Node kid in kids)
+        {
+            kid.QueueFree();
+            RemoveChild(kid);
+        }
+        ClearConnections();
+        ExecStart.NextExecutable = null;    
+    }
+    
     #endregion
 }

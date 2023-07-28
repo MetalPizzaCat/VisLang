@@ -4,7 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://cuw6xf1wlf0ag" path="res://UI/node_creation_menu.tscn" id="2_42ix0"]
 [ext_resource type="PackedScene" uid="uid://wafw1x7x4s1b" path="res://Editor/functions.tscn" id="2_qr85a"]
 [ext_resource type="PackedScene" uid="uid://ckx01i2b2svjf" path="res://Editor/Nodes/exec_node.tscn" id="6_f2f1b"]
-[ext_resource type="Resource" uid="uid://dbhhner37tajl" path="res://Assets/DefaultCodeTheme.tres" id="6_skwwu"]
+[ext_resource type="Resource" uid="uid://d3qpdfwf0ne30" path="res://Assets/DefaultCodeTheme.tres" id="6_skwwu"]
 
 [node name="GraphEdit" type="GraphEdit" node_paths=PackedStringArray("CreationMenu", "ExecStart")]
 anchors_preset = -1

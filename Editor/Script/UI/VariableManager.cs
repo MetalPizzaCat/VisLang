@@ -51,23 +51,35 @@ public partial class VariableManager : Control
     [Export]
     public VBoxContainer? Container { get; set; }
     public List<VariableControl> VariableControlButtons { get; set; } = new();
-    private void AddVariable()
+
+    private VariableControl? CreateVariableControl()
     {
         VariableControl? variable = VariableControlPlaceholder?.InstantiateOrNull<VariableControl>();
         if (variable == null)
         {
-            throw new Exception("Unable to create variable management control");
-        }   
+            return null;
+        }
         // we don't really need to do anything when this happens so we let other objects handle these events 
         variable.SetterRequested += (VisLang.Editor.VariableInfo info) => { SetterRequested?.Invoke(info); };
         variable.GetterRequested += (VisLang.Editor.VariableInfo info) => { GetterRequested?.Invoke(info); };
         variable.TypeChanged += (VisLang.Editor.VariableInfo info, VisLang.ValueTypeData type) => { VariableTypeChanged?.Invoke(info, type); };
         // but this one requires additional logic
         variable.NameChanged += CheckAndNotifyVariableNames;
-        
+
         VariableControlButtons.Add(variable);
         Container?.AddChild(variable);
         CheckAndNotifyVariableNames(variable.Info, variable.Info.Name);
+        return variable;
+    }
+    private void AddVariable()
+    {
+        CreateVariableControl();
+    }
+
+    public void CreateVariableFromInfo(VariableInitInfo info)
+    {
+        VariableControl? variable = CreateVariableControl();
+        variable?.InitWithNewInfo(info);
     }
 
     /// <summary>
@@ -95,5 +107,15 @@ public partial class VariableManager : Control
     public List<VariableInitInfo> GetVariableInits()
     {
         return VariableControlButtons.Select(btn => new VariableInitInfo(btn.VariableName, new ValueTypeData(btn.VariableType, btn.ArrayDataType))).ToList();
+    }
+
+    public void Clear()
+    {
+        foreach (VariableControl control in VariableControlButtons)
+        {
+            Container?.RemoveChild(control);
+            control.QueueFree();
+        }
+        VariableControlButtons.Clear();
     }
 }

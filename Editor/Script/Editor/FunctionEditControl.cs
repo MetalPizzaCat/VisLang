@@ -1,5 +1,7 @@
 namespace VisLang.Editor;
 
+using VisLang.Editor.Files;
+
 using Godot;
 using System;
 using System.Linq;
@@ -27,7 +29,7 @@ public partial class FunctionEditControl : Control
 
     private void RemoveVariableNode(EditorGraphNode node)
     {
-        if(node is EditorGraphVariableNode varNode)
+        if (node is EditorGraphVariableNode varNode)
         {
             _variableNodes.Remove(varNode);
         }
@@ -71,4 +73,26 @@ public partial class FunctionEditControl : Control
         }
     }
 
+    public FunctionSaveData GetSaveData()
+    {
+        FunctionSaveData data = new();
+        data.Nodes = NodeCanvas.GenerateSaveData();
+        data.Variables = VariableManager.GetVariableInits();
+        return data;
+    }
+
+    public void LoadSaveData(FunctionSaveData saveData)
+    {
+        foreach (VariableInitInfo info in saveData.Variables)
+        {
+            VariableManager.CreateVariableFromInfo(info);
+        }
+    }
+
+    public void ClearCanvas()
+    {
+        _variableNodes.Clear();
+        VariableManager.Clear();
+        NodeCanvas.ClearCanvas();
+    }
 }

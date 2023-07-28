@@ -426,4 +426,9 @@ public partial class EditorGraphNode : GraphNode
         ApplyAdditionalCreationData(node);
         return node;
     }
+
+    public Files.EditorNodeSaveData GetSaveData()
+    {
+        return new Files.EditorNodeSaveData(GlobalPosition, Info?.ResourcePath);
+    }
 }
