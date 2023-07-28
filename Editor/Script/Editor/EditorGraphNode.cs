@@ -135,7 +135,7 @@ public partial class EditorGraphNode : GraphNode
         // but because all of the connections in this variation are handled inside of the node we don't need to manually create any object
         foreach (FunctionInputInfo arg in info.Inputs)
         {
-            CreatePort(arg, slotIndex, slotIndex == (info.IsExecutable ? 1 : 0) && info.HasOutput, info.OutputArrayType);
+            CreatePort(arg, slotIndex, slotIndex == (info.IsExecutable ? 1 : 0) && info.HasOutput, info.OutputType);
             slotIndex++;
         }
         // if we have no arguments the output generation will be skipped because it uses arg0 for position
