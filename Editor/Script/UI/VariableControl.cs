@@ -39,10 +39,11 @@ public partial class VariableControl : HBoxContainer
     public void InitWithNewInfo(VariableInitInfo info)
     {
         TypeOptionButton.Selected = (int)info.Type.Type;
-
+        _info.Id = new Guid(info.Id);
         ArrayTypeOptionButton.Visible = info.Type.Type == VisLang.ValueType.Array;
         ArrayTypeOptionButton.Selected = (int?)info.Type.ArrayType ?? _typeOptionCount;
         NameEdit.Text = info.Name;
+
         SelectType(TypeOptionButton.Selected);
         SetArrayType(ArrayTypeOptionButton.Selected);
         ChangeName(info.Name);

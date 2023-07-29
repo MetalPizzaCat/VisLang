@@ -11,11 +11,14 @@ using System.Linq;
 /// </summary>
 public class VariableInitInfo
 {
-    public VariableInitInfo(string name, ValueTypeData type)
+    public VariableInitInfo(string id, string name, ValueTypeData type)
     {
+        Id = id;
         Name = name;
         Type = type;
     }
+
+    public string Id { get; set; }
 
     public string Name { get; set; }
 
@@ -76,10 +79,11 @@ public partial class VariableManager : Control
         CreateVariableControl();
     }
 
-    public void CreateVariableFromInfo(VariableInitInfo info)
+    public VariableInfo? CreateVariableFromInfo(VariableInitInfo info)
     {
         VariableControl? variable = CreateVariableControl();
         variable?.InitWithNewInfo(info);
+        return variable?.Info;
     }
 
     /// <summary>
@@ -106,7 +110,12 @@ public partial class VariableManager : Control
 
     public List<VariableInitInfo> GetVariableInits()
     {
-        return VariableControlButtons.Select(btn => new VariableInitInfo(btn.VariableName, new ValueTypeData(btn.VariableType, btn.ArrayDataType))).ToList();
+        return VariableControlButtons.Select(btn => new VariableInitInfo
+        (
+            btn.Info.Id.ToString(),
+            btn.VariableName,
+            new ValueTypeData(btn.VariableType, btn.ArrayDataType)
+        )).ToList();
     }
 
     public void Clear()

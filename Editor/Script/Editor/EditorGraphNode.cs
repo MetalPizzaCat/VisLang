@@ -427,8 +427,8 @@ public partial class EditorGraphNode : GraphNode
         return node;
     }
 
-    public Files.EditorNodeSaveData GetSaveData()
+    public virtual Files.EditorNodeSaveData GetSaveData()
     {
-        return new Files.EditorNodeSaveData(GlobalPosition, Info?.ResourcePath);
+        return new Files.EditorNodeSaveData(Position, Info?.ResourcePath);
     }
 }

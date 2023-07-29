@@ -10,5 +10,6 @@ public class FunctionSaveData
     }
 
     public List<VariableInitInfo> Variables { get; set; } = new();
-    public List<EditorNodeSaveData> Nodes { get; set; } = new();
+
+    public NodeCollectionSaveData Nodes { get; set; } = new();
 }

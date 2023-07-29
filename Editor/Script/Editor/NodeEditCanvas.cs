@@ -113,7 +113,7 @@ public partial class NodeEditCanvas : GraphEdit
         node.CodeTheme = CodeTheme;
         node.ParentCanvas = this;
         AddChild(node);
-        node.Position = GetGlobalMousePosition();
+        node.PositionOffset = GetGlobalMousePosition() - new Vector2(50, 50);
         node.GenerateFunction(info);
         node.DeleteRequested += DeleteNode;
         return node;
@@ -363,9 +363,23 @@ public partial class NodeEditCanvas : GraphEdit
     #endregion
 
     #region SaveSystem
-    public List<EditorNodeSaveData> GenerateSaveData()
+    public NodeCollectionSaveData GenerateSaveData()
     {
-        return GetChildren().Where(p => p is EditorGraphNode && p is not ExecStartGraphNode).Select(p => p as EditorGraphNode).Select(p => p.GetSaveData()).ToList();
+        NodeCollectionSaveData data = new NodeCollectionSaveData();
+        data.ScrollOffset = ScrollOffset;
+        foreach (EditorGraphNode node in GetChildren().Where(p => p is EditorGraphNode && p is not ExecStartGraphNode))
+        {
+            //.Select(p => p as EditorGraphNode).Select(p => p.GetSaveData()))
+            if (node is EditorGraphVariableNode variableNode)
+            {
+                data.VariableNodes.Add(variableNode.GetVariableSaveData());
+            }
+            else
+            {
+                data.GenericNodes.Add(node.GetSaveData());
+            }
+        }
+        return data;
     }
 
     public void ClearCanvas()
@@ -377,8 +391,29 @@ public partial class NodeEditCanvas : GraphEdit
             RemoveChild(kid);
         }
         ClearConnections();
-        ExecStart.NextExecutable = null;    
+        ExecStart.NextExecutable = null;
     }
-    
+
+    public void LoadSaveData(NodeCollectionSaveData data)
+    {
+        data.ScrollOffset = ScrollOffset;
+        foreach (EditorNodeSaveData node in data.GenericNodes)
+        {
+            if (string.IsNullOrWhiteSpace(node.FunctionInfoResourcePath))
+            {
+                GD.PrintErr("Attempted to load node that does not use default function signature");
+                continue;
+            }
+            FunctionInfo info = ResourceLoader.Load<FunctionInfo>(node.FunctionInfoResourcePath);
+            EditorGraphNode? editorNode = MakeNodeFromSignature<EditorGraphNode>(info);
+            if (editorNode == null)
+            {
+                GD.PrintErr("Failed to create node from signature");
+                continue;
+            }
+            editorNode.GlobalPosition = node.Position;
+        }
+    }
+
     #endregion
 }
