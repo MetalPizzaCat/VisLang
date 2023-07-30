@@ -405,7 +405,7 @@ public partial class NodeEditCanvas : GraphEdit
 
     public void LoadSaveData(NodeCollectionSaveData data)
     {
-        data.ScrollOffset = ScrollOffset;
+        ScrollOffset = data.ScrollOffset;
         foreach (EditorNodeSaveData node in data.GenericNodes)
         {
             if (string.IsNullOrWhiteSpace(node.FunctionInfoResourcePath))
