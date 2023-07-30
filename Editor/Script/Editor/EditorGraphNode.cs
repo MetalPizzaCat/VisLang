@@ -34,6 +34,12 @@ public partial class EditorGraphNode : GraphNode
 
     public bool IsExecutable => Info?.IsExecutable ?? false;
 
+    public Vector2 CanvasPosition
+    {
+        get => PositionOffset;
+        set => PositionOffset = value;
+    }
+
     /// <summary>
     /// Node that is connected to be executed next
     /// </summary>
@@ -429,6 +435,12 @@ public partial class EditorGraphNode : GraphNode
 
     public virtual Files.EditorNodeSaveData GetSaveData()
     {
-        return new Files.EditorNodeSaveData(Position, Info?.ResourcePath);
+        return new Files.EditorNodeSaveData(Name, Position, Info?.ResourcePath);
+    }
+
+    public void LoadData(Files.EditorNodeSaveData data)
+    {
+        CanvasPosition = data.Position;
+        Name = data.Name;
     }
 }

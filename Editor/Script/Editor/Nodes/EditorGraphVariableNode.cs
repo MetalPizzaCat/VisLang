@@ -67,6 +67,6 @@ public partial class EditorGraphVariableNode : EditorGraphNode
 
     public Files.VariableNodeSaveData GetVariableSaveData()
     {
-        return new Files.VariableNodeSaveData(Variable.Id, IsGetter, GlobalPosition);
+        return new Files.VariableNodeSaveData(Variable.Id, IsGetter, Name, GlobalPosition);
     }
 }

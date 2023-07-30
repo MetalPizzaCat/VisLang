@@ -379,6 +379,15 @@ public partial class NodeEditCanvas : GraphEdit
                 data.GenericNodes.Add(node.GetSaveData());
             }
         }
+
+        data.Connections = GetNodeConnections().Select(p => new NodeCollectionSaveData.StoredConnectionInfo
+        (
+            p.Source.Name,
+            p.SourcePortId,
+            p.Destination.Name,
+            p.DestinationPortId
+        )).ToList();
+
         return data;
     }
 
@@ -411,7 +420,21 @@ public partial class NodeEditCanvas : GraphEdit
                 GD.PrintErr("Failed to create node from signature");
                 continue;
             }
-            editorNode.GlobalPosition = node.Position;
+            editorNode.LoadData(node);
+        }
+        foreach (Node node in GetChildren())
+        {
+            GD.Print(node.Name);
+        }
+
+        foreach (NodeCollectionSaveData.StoredConnectionInfo conn in data.Connections)
+        {
+            // because of how godots names nodes a node without a name is "@@" and since 
+            // all editor nodes have no name it adds a number to the end
+            // but we load this number becomes the name of the node
+            // so we have to cut it out
+            // technically i could cut it out when saving but there is no real difference
+            ConnectNodes(conn.Source.TrimPrefix("@@"), conn.SourcePort, conn.Destination.TrimPrefix("@@"), conn.DestinationPort);
         }
     }
 

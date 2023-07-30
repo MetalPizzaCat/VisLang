@@ -91,7 +91,7 @@ public partial class FunctionEditControl : Control
                 variables.Add(variable);
             }
         }
-        NodeCanvas.LoadSaveData(saveData.Nodes);
+
         foreach (VariableNodeSaveData node in saveData.Nodes.VariableNodes)
         {
             VariableInfo? variable = variables.FirstOrDefault(p => p.Id == node.VariableId);
@@ -102,9 +102,11 @@ public partial class FunctionEditControl : Control
             EditorGraphVariableNode? getSet = CreateGetSetNode(variable, node.IsGetter);
             if (getSet != null)
             {
-                getSet.PositionOffset = node.Position;
+                getSet.LoadData(node);
             }
         }
+
+        NodeCanvas.LoadSaveData(saveData.Nodes);
     }
 
     public void ClearCanvas()

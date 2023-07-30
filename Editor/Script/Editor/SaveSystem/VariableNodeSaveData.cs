@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 public class VariableNodeSaveData : EditorNodeSaveData
 {
-    public VariableNodeSaveData(Guid variableId, bool isGetter, Vector2 position) : base(position, functionInfoResourcePath : null)
+    public VariableNodeSaveData(Guid variableId, bool isGetter, string name, Vector2 position) : base(name, position, functionInfoResourcePath: null)
     {
         VariableId = variableId;
         IsGetter = isGetter;
