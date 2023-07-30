@@ -365,14 +365,17 @@ public partial class NodeEditCanvas : GraphEdit
     #region SaveSystem
     public NodeCollectionSaveData GenerateSaveData()
     {
-        NodeCollectionSaveData data = new NodeCollectionSaveData();
+        NodeCollectionSaveData data = new NodeCollectionSaveData() { ExecStartData = ExecStart?.GetSaveData() };
         data.ScrollOffset = ScrollOffset;
         foreach (EditorGraphNode node in GetChildren().Where(p => p is EditorGraphNode && p is not ExecStartGraphNode))
         {
-            //.Select(p => p as EditorGraphNode).Select(p => p.GetSaveData()))
             if (node is EditorGraphVariableNode variableNode)
             {
                 data.VariableNodes.Add(variableNode.GetVariableSaveData());
+            }
+            if (node is EditorGraphBranchNode branch)
+            {
+                data.BranchNodes.Add(node.GetSaveData());
             }
             else
             {
@@ -406,6 +409,10 @@ public partial class NodeEditCanvas : GraphEdit
     public void LoadSaveData(NodeCollectionSaveData data)
     {
         ScrollOffset = data.ScrollOffset;
+        if(ExecStart != null && data.ExecStartData != null)
+        {
+            ExecStart.CanvasPosition = data.ExecStartData.Position;
+        }
         foreach (EditorNodeSaveData node in data.GenericNodes)
         {
             if (string.IsNullOrWhiteSpace(node.FunctionInfoResourcePath))
@@ -422,9 +429,9 @@ public partial class NodeEditCanvas : GraphEdit
             }
             editorNode.LoadData(node);
         }
-        foreach (Node node in GetChildren())
+        foreach (EditorNodeSaveData node in data.BranchNodes)
         {
-            GD.Print(node.Name);
+            MakeNodeFromSignature<EditorGraphBranchNode>(null)?.LoadData(node);
         }
 
         foreach (NodeCollectionSaveData.StoredConnectionInfo conn in data.Connections)
