@@ -11,7 +11,6 @@ public class TextLangTests
         string code = @"program{}";
         Assert.IsNotNull(TextLang.Parser.VisLangParser.ParseCodeNoComments(code));
     }
-
     [TestMethod]
     public void BasicParsingVariableDeclaration()
     {

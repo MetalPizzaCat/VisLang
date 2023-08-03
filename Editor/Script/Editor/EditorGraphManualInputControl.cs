@@ -7,10 +7,6 @@ using System.Linq;
 /// </summary>
 public partial class EditorGraphInputControl : HBoxContainer
 {
-    /// <summary>
-    /// The input info that was used to construct the element
-    /// </summary>
-    public FunctionInputInfo Info { get; private set; }
 
     public Label NameDisplayLabel { get; private set; }
 
@@ -19,6 +15,7 @@ public partial class EditorGraphInputControl : HBoxContainer
     private bool _displayManualInput = true;
 
     private string _inputName = string.Empty;
+    private VisLang.ValueType _valueType = VisLang.ValueType.Bool;
 
     /// <summary>
     /// If true control elements that allow user to type constants will be displayed on the element
@@ -41,7 +38,7 @@ public partial class EditorGraphInputControl : HBoxContainer
     /// <summary>
     /// Type of the value that this input represents
     /// </summary>
-    public VisLang.ValueType InputType => Info.InputType;
+    public VisLang.ValueType InputType => _valueType;
 
     /// <summary>
     ///  Data that was written by user into manual input field(default if there was an error getting data) or null if 
@@ -55,7 +52,7 @@ public partial class EditorGraphInputControl : HBoxContainer
             {
                 return null;
             }
-            switch (Info.InputType)
+            switch (_valueType)
             {
                 case VisLang.ValueType.Bool:
                     return (_inputControl as CheckBox)?.ButtonPressed ?? false;
@@ -128,7 +125,7 @@ public partial class EditorGraphInputControl : HBoxContainer
     public EditorGraphInputControl(FunctionInputInfo info, int slot)
     {
         Slot = slot;
-        Info = info;
+        _valueType = info.InputType;
         _inputName = info.InputName;
         NameDisplayLabel = new Label() { Text = $"{info.InputName}: " };
         AddChild(NameDisplayLabel);
@@ -148,5 +145,7 @@ public partial class EditorGraphInputControl : HBoxContainer
         RemoveChild(_inputControl);
         // add control back because yes
         CreateInputControl(type, defaultData);
+        // also update the type
+        _valueType = type ?? VisLang.ValueType.Bool;
     }
 }

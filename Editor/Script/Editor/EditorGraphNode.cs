@@ -275,6 +275,11 @@ public partial class EditorGraphNode : GraphNode
                     GetSlotColorRight(portId)
                 );
             }
+            // might as well update controls so that user could manually input values
+            if (GetChildren().ElementAtOrDefault(portId) is EditorGraphInputControl control)
+            {
+                control.ChangeInputDataType(type, null);
+            }
             portId++;
         }
     }

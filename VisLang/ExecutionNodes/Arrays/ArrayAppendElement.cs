@@ -42,7 +42,7 @@ public class ArrayAppendElement : ExecutionNode
         {
             if (arr.ArrayDataType.Value != type.Value.Type)
             {
-                throw new Interpreter.ValueTypeMismatchException($"Attempted to add element to the array but type does not match array data. Expected {arr.ArrayDataType.Value}, got {type.Value}", this);
+                throw new Interpreter.ValueTypeMismatchException($"Attempted to add element to the array but type does not match array data. Expected {arr.ArrayDataType.Value}, got {type.Value.Type}", this);
             }
         }
 
