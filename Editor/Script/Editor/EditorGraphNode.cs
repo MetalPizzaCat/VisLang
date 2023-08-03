@@ -76,7 +76,7 @@ public partial class EditorGraphNode : GraphNode
 
     protected void CreatePort(FunctionInputInfo arg, int slotIndex, bool displayOutput = false, VisLang.ValueType? outputType = null)
     {
-        EditorGraphInputControl inp = new(arg);
+        EditorGraphInputControl inp = new(arg, slotIndex);
         InputControls.Add(inp);
         AddChild(inp);
 
@@ -435,12 +435,29 @@ public partial class EditorGraphNode : GraphNode
 
     public virtual Files.EditorNodeSaveData GetSaveData()
     {
-        return new Files.EditorNodeSaveData(Name, Position, Info?.ResourcePath);
+        List<Files.EditorNodeSaveData.NodeInputSaveData> inputs = new();
+        foreach (EditorGraphInputControl input in GetChildren().Where(p => p is EditorGraphInputControl))
+        {
+            if (input.InputData != null)
+            {
+                inputs.Add(new Files.EditorNodeSaveData.NodeInputSaveData(input.InputData, input.InputType));
+            }
+        }
+        return new Files.EditorNodeSaveData(Name, Position, Info?.ResourcePath)
+        {
+            ManualInputs = inputs
+        };
     }
 
     public void LoadData(Files.EditorNodeSaveData data)
     {
         CanvasPosition = data.Position;
         Name = data.Name;
+        IEnumerable<EditorGraphInputControl> inputControls = GetChildren().Where(p => p is EditorGraphInputControl).Cast<EditorGraphInputControl>();
+
+        for (int i = 0; i < data.ManualInputs.Count; i++)
+        {
+            inputControls.ElementAt(i).ChangeInputDataType(data.ManualInputs[i].type, data.ManualInputs[i].data);
+        }
     }
 }

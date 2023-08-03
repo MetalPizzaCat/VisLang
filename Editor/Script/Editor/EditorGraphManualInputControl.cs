@@ -14,7 +14,11 @@ public partial class EditorGraphInputControl : HBoxContainer
 
     public Label NameDisplayLabel { get; private set; }
 
+    public int Slot { get; private set; }
+
     private bool _displayManualInput = true;
+
+    private string _inputName = string.Empty;
 
     /// <summary>
     /// If true control elements that allow user to type constants will be displayed on the element
@@ -62,10 +66,58 @@ public partial class EditorGraphInputControl : HBoxContainer
                 case VisLang.ValueType.String:
                     return (_inputControl as LineEdit)?.Text ?? string.Empty;
                 case VisLang.ValueType.Char:
-                   return (_inputControl as LineEdit)?.Text.FirstOrDefault() ?? ' ';
+                    return (_inputControl as LineEdit)?.Text.FirstOrDefault() ?? ' ';
                 default:
                     return null;
             }
+        }
+    }
+
+    private void CreateInputControl(VisLang.ValueType? type, object? defaultData)
+    {
+        if (type == null)
+        {
+            // while any can be any, for the sake of simplicity we will make it a string
+            _inputControl = new LineEdit();
+            AddChild(_inputControl);
+            return;
+        }
+        switch (type)
+        {
+            case VisLang.ValueType.Bool:
+                _inputControl = new CheckBox() { ButtonPressed = ((bool?)defaultData) ?? false };
+                break;
+            case VisLang.ValueType.Float:
+                _inputControl = new SpinBox()
+                {
+                    Step = 0f,
+                    AllowGreater = true,
+                    AllowLesser = true,
+                    CustomArrowStep = 0.1f,
+                    Value = ((double?)defaultData) ?? 0f
+                };
+                break;
+            case VisLang.ValueType.Integer:
+                _inputControl = new SpinBox()
+                {
+                    AllowGreater = true,
+                    AllowLesser = true,
+                    Value = ((int?)defaultData) ?? 0
+                };
+                break;
+            case VisLang.ValueType.String:
+                _inputControl = new LineEdit() { Text = ((string?)defaultData) ?? string.Empty };
+                break;
+            case VisLang.ValueType.Char:
+                _inputControl = new LineEdit() { MaxLength = 1, Text = ((string?)defaultData) ?? "a" };
+                break;
+            default:
+                NameDisplayLabel.Text = _inputName;
+                break;
+        }
+        if (_inputControl != null)
+        {
+            AddChild(_inputControl);
         }
     }
 
@@ -73,42 +125,28 @@ public partial class EditorGraphInputControl : HBoxContainer
     /// Creates a new instance of the control and if possible adds input controls to itself
     /// </summary>
     /// <param name="info">Input signature to use for generation</param>
-    public EditorGraphInputControl(FunctionInputInfo info)
+    public EditorGraphInputControl(FunctionInputInfo info, int slot)
     {
+        Slot = slot;
         Info = info;
+        _inputName = info.InputName;
         NameDisplayLabel = new Label() { Text = $"{info.InputName}: " };
         AddChild(NameDisplayLabel);
-        if (info.TypeMatchingPermissions == FunctionInputInfo.TypePermissions.AllowAny)
-        {
-            // while any can be any, for the sake of simplicity we will make it a string
-            _inputControl = new LineEdit();
-            AddChild(_inputControl);
-            return;
-        }
-        switch (info.InputType)
-        {
-            case VisLang.ValueType.Bool:
-                _inputControl = new CheckBox();
-                break;
-            case VisLang.ValueType.Float:
-                _inputControl = new SpinBox() { Step = 0f, AllowGreater = true, AllowLesser = true, CustomArrowStep = 0.1f };
-                break;
-            case VisLang.ValueType.Integer:
-                _inputControl = new SpinBox() { AllowGreater = true, AllowLesser = true };
-                break;
-            case VisLang.ValueType.String:
-                _inputControl = new LineEdit();
-                break;
-            case VisLang.ValueType.Char:
-                _inputControl = new LineEdit() { MaxLength = 1 };
-                break;
-            default:
-                NameDisplayLabel.Text = info.InputName;
-                break;
-        }
-        if (_inputControl != null)
-        {
-            AddChild(_inputControl);
-        }
+        CreateInputControl(info.TypeMatchingPermissions == FunctionInputInfo.TypePermissions.AllowAny ? null : info.InputType, null);
+    }
+
+
+    /// <summary>
+    /// Updates control to a new type and assigns default value to the manual input control
+    /// </summary>
+    /// <param name="type">New type of the input, if null "Any" is assumed</param>
+    /// <param name="defaultData">The new data to put into manual input controls, ignored if data type can not be inputted manually </param>
+    public void ChangeInputDataType(VisLang.ValueType? type, object? defaultData)
+    {
+        // remove old control, because there is no point in keeping it
+        _inputControl?.QueueFree();
+        RemoveChild(_inputControl);
+        // add control back because yes
+        CreateInputControl(type, defaultData);
     }
 }
