@@ -462,7 +462,7 @@ public partial class EditorGraphNode : GraphNode
 
         for (int i = 0; i < data.ManualInputs.Count; i++)
         {
-            inputControls.ElementAt(i).ChangeInputDataType(data.ManualInputs[i].type, data.ManualInputs[i].data);
+            inputControls.ElementAtOrDefault(i)?.ChangeInputDataType(data.ManualInputs[i].type, data.ManualInputs[i].data);
         }
     }
 }

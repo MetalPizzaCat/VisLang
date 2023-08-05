@@ -95,11 +95,21 @@ public partial class EditorGraphInputControl : HBoxContainer
                 };
                 break;
             case VisLang.ValueType.Integer:
+                int value = 0;
+                try
+                {
+                    value = ((int?)defaultData) ?? 0;
+                }
+                catch (System.InvalidCastException e)
+                {
+                    // newtonsoft converts to int64 by default and c# has a clear distiction between Int32? and Int64? types
+                    value = (int)(((Int64?)defaultData) ?? 0);
+                }
                 _inputControl = new SpinBox()
                 {
                     AllowGreater = true,
                     AllowLesser = true,
-                    Value = ((int?)defaultData) ?? 0
+                    Value = value
                 };
                 break;
             case VisLang.ValueType.String:
@@ -140,6 +150,11 @@ public partial class EditorGraphInputControl : HBoxContainer
     /// <param name="defaultData">The new data to put into manual input controls, ignored if data type can not be inputted manually </param>
     public void ChangeInputDataType(VisLang.ValueType? type, object? defaultData)
     {
+        if (type != null && type.Value == InputType)
+        {
+            // no point in changing the type when it's already changed
+            return;
+        }
         // remove old control, because there is no point in keeping it
         _inputControl?.QueueFree();
         RemoveChild(_inputControl);
