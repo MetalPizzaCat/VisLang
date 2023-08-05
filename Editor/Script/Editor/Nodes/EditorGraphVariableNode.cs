@@ -1,5 +1,6 @@
 namespace VisLang.Editor;
 using System.Collections.Generic;
+using VisLang.Editor.Files;
 
 public partial class EditorGraphVariableNode : EditorGraphNode
 {
@@ -67,6 +68,17 @@ public partial class EditorGraphVariableNode : EditorGraphNode
 
     public Files.VariableNodeSaveData GetVariableSaveData()
     {
-        return new Files.VariableNodeSaveData(Variable.Id, IsGetter, Name, GlobalPosition);
+        Files.EditorNodeSaveData data = GetSaveData();
+        return new Files.VariableNodeSaveData(Variable.Id, IsGetter, Name, GlobalPosition)
+        {
+            ManualInputs = data.ManualInputs,
+            InvalidInputs = data.InvalidInputs,
+            HasInvalidOutput = data.HasInvalidOutput
+        };
+    }
+
+    public override void LoadData(EditorNodeSaveData data)
+    {
+        base.LoadData(data);
     }
 }

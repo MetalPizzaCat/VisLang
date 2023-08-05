@@ -110,6 +110,44 @@ public partial class EditorGraphNode : GraphNode
     }
 
     /// <summary>
+    /// Creates a dummy "invalid" port with port type 998
+    /// </summary>
+    /// <param name="name">Name to display as the port name</param>
+    /// <param name="slotIndex">Which slot to use as the base for the port</param>
+    /// <param name="leftSide">Which side should the port be created on</param>
+    /// <param name="overrideOtherSide">If true this will erase port on the side opposite to value in leftSide</param>
+    protected void CreateDummyPort(string name, int slotIndex, bool leftSide, bool overrideOtherSide)
+    {
+        AddChild(new Label() { Text = $"INVALID{name}" });
+        if (leftSide)
+        {
+            SetSlot
+            (
+                slotIndex,
+                true,
+                998,
+                new Color(1f, 0, 0),
+                overrideOtherSide,
+                GetSlotTypeRight(slotIndex),
+                GetSlotColorRight(slotIndex)
+            );
+            return;
+        }
+        SetSlot
+        (
+            slotIndex,
+            overrideOtherSide,
+            GetSlotTypeLeft(slotIndex),
+            GetSlotColorLeft(slotIndex),
+            true,
+            998,
+            new Color(1f, 0, 0, 1)
+        );
+
+        //_invalidOutputPortId = slotIndex;
+    }
+
+    /// <summary>
     /// Generate ports for a given function signature and return last used port
     /// </summary>
     /// <param name="info">Function signature</param>
@@ -450,11 +488,13 @@ public partial class EditorGraphNode : GraphNode
         }
         return new Files.EditorNodeSaveData(Name, Position, Info?.ResourcePath)
         {
-            ManualInputs = inputs
+            ManualInputs = inputs,
+            InvalidInputs = _invalidInputs.Select(p => p.PortName).ToList(),
+            HasInvalidOutput = HasInvalidOutput
         };
     }
 
-    public void LoadData(Files.EditorNodeSaveData data)
+    public virtual void LoadData(Files.EditorNodeSaveData data)
     {
         CanvasPosition = data.Position;
         Name = data.Name;
@@ -462,7 +502,11 @@ public partial class EditorGraphNode : GraphNode
 
         for (int i = 0; i < data.ManualInputs.Count; i++)
         {
-            inputControls.ElementAtOrDefault(i)?.ChangeInputDataType(data.ManualInputs[i].type, data.ManualInputs[i].data);
+            inputControls.ElementAtOrDefault(i)?.ChangeInputDataType(data.ManualInputs[i].Type, data.ManualInputs[i].Data);
+        }
+        if (data.HasInvalidOutput)
+        {
+            CreateDummyPort("Output", GetChildCount(), false, false);
         }
     }
 }

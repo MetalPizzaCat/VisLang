@@ -409,25 +409,24 @@ public partial class NodeEditCanvas : GraphEdit
     public void LoadSaveData(NodeCollectionSaveData data)
     {
         ScrollOffset = data.ScrollOffset;
-        if(ExecStart != null && data.ExecStartData != null)
+        if (ExecStart != null && data.ExecStartData != null)
         {
             ExecStart.CanvasPosition = data.ExecStartData.Position;
         }
         foreach (EditorNodeSaveData node in data.GenericNodes)
         {
-            if (string.IsNullOrWhiteSpace(node.FunctionInfoResourcePath))
+            EditorGraphNode? editorNode = null;
+            if (!string.IsNullOrWhiteSpace(node.FunctionInfoResourcePath))
             {
-                GD.PrintErr("Attempted to load node that does not use default function signature");
-                continue;
+                FunctionInfo info = ResourceLoader.Load<FunctionInfo>(node.FunctionInfoResourcePath);
+                editorNode = MakeNodeFromSignature<EditorGraphNode>(info);
+                if (editorNode == null)
+                {
+                    GD.PrintErr("Failed to create node from signature");
+                    continue;
+                }
             }
-            FunctionInfo info = ResourceLoader.Load<FunctionInfo>(node.FunctionInfoResourcePath);
-            EditorGraphNode? editorNode = MakeNodeFromSignature<EditorGraphNode>(info);
-            if (editorNode == null)
-            {
-                GD.PrintErr("Failed to create node from signature");
-                continue;
-            }
-            editorNode.LoadData(node);
+            editorNode?.LoadData(node);
         }
         foreach (EditorNodeSaveData node in data.BranchNodes)
         {
