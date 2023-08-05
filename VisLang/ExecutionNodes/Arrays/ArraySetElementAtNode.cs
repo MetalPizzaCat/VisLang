@@ -5,9 +5,9 @@ namespace VisLang;
 /// </summary>
 public class ArraySetElementAtNode : ExecutionNode
 {
-    public int DefaultIndex = 0;
+    public long DefaultIndex = 0;
     public Value? GetInputArray(NodeContext? context) => Inputs.ElementAtOrDefault(0)?.GetValue(context);
-    public int GetInputIndex(NodeContext? context) => Inputs.ElementAtOrDefault(1)?.GetValue(context)?.AsInteger() ?? DefaultIndex;
+    public long GetInputIndex(NodeContext? context) => Inputs.ElementAtOrDefault(1)?.GetValue(context)?.AsInteger() ?? DefaultIndex;
     public object? GetInputValue(NodeContext? context) => Inputs.ElementAtOrDefault(2)?.GetValue(context)?.Data;
 
     public ValueType? GetValueToSetType(NodeContext? context) => Inputs.ElementAtOrDefault(2)?.GetValue(context)?.ValueType;
@@ -35,7 +35,7 @@ public class ArraySetElementAtNode : ExecutionNode
         }
         if (GetInputArray(context)?.Data is List<Value> arr)
         {
-            arr[GetInputIndex(context)] = Inputs.ElementAtOrDefault(2)?.GetValue(context) ?? throw new NullReferenceException("Value must not be null");
+            arr[(int)GetInputIndex(context)] = Inputs.ElementAtOrDefault(2)?.GetValue(context) ?? throw new NullReferenceException("Value must not be null");
         }
     }
 }

@@ -15,6 +15,15 @@ public partial class ProjectEditorScene : Control
     [Export]
     public FunctionEditControl MainFunctionEditor { get; private set; }
 
+    [Export]
+    public FileDialog? SaveFileDialog { get; private set; }
+
+    [Export]
+    public FileDialog? LoadFileDialog { get; private set; }
+
+    [Export]
+    public FileDialog ExportFileDialog { get; private set; }
+
     [ExportGroup("User code debug")]
     [Export]
     public VBoxContainer? OutputMessageBox { get; private set; }
@@ -45,7 +54,7 @@ public partial class ProjectEditorScene : Control
 
     private void ClearOutputs()
     {
-        foreach(RichTextLabel label in _outputMessages)
+        foreach (RichTextLabel label in _outputMessages)
         {
             OutputMessageBox?.RemoveChild(label);
             label.QueueFree();
@@ -59,5 +68,37 @@ public partial class ProjectEditorScene : Control
         VisSystem system = PrepareForExecution();
         system.OnOutputAdded += PrintOutputMessage;
         system.Execute();
+    }
+
+    private void Save()
+    {
+        SaveFileDialog?.Popup();
+    }
+
+    private void SaveCodeToFile(string file)
+    {
+        Files.ProjectSaveData data = new();
+        data.Functions.Add("Main", MainFunctionEditor.GetSaveData());
+        string code = Newtonsoft.Json.JsonConvert.SerializeObject(data);
+        System.IO.File.WriteAllText(file, code);
+    }
+
+    private void LoadCodeFromFile(string file)
+    {
+        MainFunctionEditor.ClearCanvas();
+        string code = System.IO.File.ReadAllText(file);
+        Files.ProjectSaveData? data = Newtonsoft.Json.JsonConvert.DeserializeObject<Files.ProjectSaveData>(code);
+        if (data == null)
+        {
+            GD.PrintErr($"Failed to load from {file}");
+            return;
+        }
+
+        MainFunctionEditor.LoadSaveData(data.Functions["Main"]);
+    }
+
+    private void Load()
+    {
+        LoadFileDialog?.Popup();
     }
 }

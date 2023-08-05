@@ -3,9 +3,13 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using VisLang.Editor.Parsing;
+using VisLang.Editor.Files;
 
 namespace VisLang.Editor;
 
+/// <summary>
+/// Canvas on which nodes are moved, connected, created and removed
+/// </summary>
 public partial class NodeEditCanvas : GraphEdit
 {
     protected record struct ProcessedNodeInfo(EditorGraphNode Node, VisLang.ExecutionNode CompiledNode);
@@ -33,11 +37,6 @@ public partial class NodeEditCanvas : GraphEdit
         }
         CreationMenu.FunctionSelected += SpawnFunction;
         CreationMenu.ConditionalNodeSelected += SpawnConditionalNode;
-    }
-
-    // Called every frame. 'delta' is the elapsed time since the previous frame.
-    public override void _Process(double delta)
-    {
     }
 
     /// <summary>
@@ -68,6 +67,13 @@ public partial class NodeEditCanvas : GraphEdit
         ConnectNode(source.Name, newPortId, dest.Name, portId);
     }
 
+    /// <summary>
+    /// Connects two nodes by their names
+    /// </summary>
+    /// <param name="sourceNode">Name of the node that connection is coming from(has port on the right)</param>
+    /// <param name="sourcePort">Port on the source node</param>
+    /// <param name="destNode">Name of the node that connection is going to(has port on the left)</param>
+    /// <param name="destPort">Port on the destination node</param>
     private void ConnectNodes(string sourceNode, int sourcePort, string destNode, int destPort)
     {
         if (GetNodeOrNull<EditorGraphNode>(sourceNode) is EditorGraphNode source && GetNodeOrNull<EditorGraphNode>(destNode) is EditorGraphNode destination)
@@ -117,7 +123,7 @@ public partial class NodeEditCanvas : GraphEdit
         node.CodeTheme = CodeTheme;
         node.ParentCanvas = this;
         AddChild(node);
-        node.Position = GetGlobalMousePosition();
+        node.PositionOffset = GetGlobalMousePosition() - new Vector2(50, 50);
         node.GenerateFunction(info);
         node.DeleteRequested += DeleteNode;
         return node;
@@ -151,6 +157,11 @@ public partial class NodeEditCanvas : GraphEdit
         GD.Print($"Disconnect -> sourceNode: {sourceNode}, sourcePort: {sourcePort}, destNode: {destNode}, destPort{destPort}");
     }
 
+    /// <summary>
+    /// Deletes a node and removes all of the connections related to this node from the connected nodes<para/>
+    /// This is the safer way to remove a node from the system as this way other nodes will not keep track of ghost nodes 
+    /// </summary>
+    /// <param name="node">node to delete</param>
     private void DeleteNode(EditorGraphNode? node)
     {
         if (node == null)
@@ -364,5 +375,89 @@ public partial class NodeEditCanvas : GraphEdit
         GD.Print("Generated");
         return root;
     }
+    #endregion
+
+    #region SaveSystem
+    public NodeCollectionSaveData GenerateSaveData()
+    {
+        NodeCollectionSaveData data = new NodeCollectionSaveData() { ExecStartData = ExecStart?.GetSaveData() };
+        data.ScrollOffset = ScrollOffset;
+        foreach (EditorGraphNode node in GetChildren().Where(p => p is EditorGraphNode && p is not ExecStartGraphNode))
+        {
+            if (node is EditorGraphVariableNode variableNode)
+            {
+                data.VariableNodes.Add(variableNode.GetVariableSaveData());
+            }
+            if (node is EditorGraphBranchNode branch)
+            {
+                data.BranchNodes.Add(node.GetSaveData());
+            }
+            else
+            {
+                data.GenericNodes.Add(node.GetSaveData());
+            }
+        }
+
+        data.Connections = GetNodeConnections().Select(p => new NodeCollectionSaveData.StoredConnectionInfo
+        (
+            p.Source.Name,
+            p.SourcePortId,
+            p.Destination.Name,
+            p.DestinationPortId
+        )).ToList();
+
+        return data;
+    }
+
+    public void ClearCanvas()
+    {
+        IEnumerable<Node> kids = GetChildren().Where(p => p != ExecStart && p != CreationMenu && p is not FunctionSignatureManager);
+        foreach (Node kid in kids)
+        {
+            kid.QueueFree();
+            RemoveChild(kid);
+        }
+        ClearConnections();
+        ExecStart.NextExecutable = null;
+    }
+
+    public void LoadSaveData(NodeCollectionSaveData data)
+    {
+        ScrollOffset = data.ScrollOffset;
+        if (ExecStart != null && data.ExecStartData != null)
+        {
+            ExecStart.CanvasPosition = data.ExecStartData.Position;
+        }
+        foreach (EditorNodeSaveData node in data.GenericNodes)
+        {
+            EditorGraphNode? editorNode = null;
+            if (!string.IsNullOrWhiteSpace(node.FunctionInfoResourcePath))
+            {
+                FunctionInfo info = ResourceLoader.Load<FunctionInfo>(node.FunctionInfoResourcePath);
+                editorNode = MakeNodeFromSignature<EditorGraphNode>(info);
+                if (editorNode == null)
+                {
+                    GD.PrintErr("Failed to create node from signature");
+                    continue;
+                }
+            }
+            editorNode?.LoadData(node);
+        }
+        foreach (EditorNodeSaveData node in data.BranchNodes)
+        {
+            MakeNodeFromSignature<EditorGraphBranchNode>(null)?.LoadData(node);
+        }
+
+        foreach (NodeCollectionSaveData.StoredConnectionInfo conn in data.Connections)
+        {
+            // because of how godots names nodes a node without a name is "@@" and since 
+            // all editor nodes have no name it adds a number to the end
+            // but we load this number becomes the name of the node
+            // so we have to cut it out
+            // technically i could cut it out when saving but there is no real difference
+            ConnectNodes(conn.Source.TrimPrefix("@@"), conn.SourcePort, conn.Destination.TrimPrefix("@@"), conn.DestinationPort);
+        }
+    }
+
     #endregion
 }

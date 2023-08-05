@@ -6,7 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://xt83rs5upyhm" path="res://Editor/FunctionEditControl.tscn" id="4_ik76o"]
 [ext_resource type="Script" path="res://Script/ExecutionManager.cs" id="4_rl06k"]
 
-[node name="ProjectEditorCanvas" type="Control" node_paths=PackedStringArray("TabBar", "MainFunctionEditor", "OutputMessageBox")]
+[node name="ProjectEditorCanvas" type="Control" node_paths=PackedStringArray("TabBar", "MainFunctionEditor", "SaveFileDialog", "LoadFileDialog", "OutputMessageBox")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -17,6 +17,8 @@ grow_vertical = 2
 script = ExtResource("1_rr1ug")
 TabBar = NodePath("TabBar")
 MainFunctionEditor = NodePath("FunctionEditControl")
+SaveFileDialog = NodePath("SaveFileDialog")
+LoadFileDialog = NodePath("LoadFileDialog")
 OutputMessageBox = NodePath("Control/TabContainer/Output/VBoxContainer")
 OutputMessagePrefab = ExtResource("2_n0htl")
 
@@ -40,12 +42,45 @@ layout_mode = 1
 offset_right = 8.0
 offset_bottom = -60.0
 
-[node name="Button" type="Button" parent="."]
+[node name="LaunchCodeButton" type="Button" parent="."]
 layout_mode = 0
 offset_top = -32.0
 offset_right = 107.0
 text = "Lunch(Tasty)"
 
-[connection signal="pressed" from="Button" to="." method="StartUserDebug"]
+[node name="SaveCodeButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 112.0
+offset_top = -32.0
+offset_right = 219.0
+text = "Save"
+
+[node name="LoadCodeButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 232.0
+offset_top = -32.0
+offset_right = 339.0
+text = "Load
+"
+
+[node name="SaveFileDialog" type="FileDialog" parent="."]
+access = 2
+filters = PackedStringArray("*.vl")
+show_hidden_files = true
+
+[node name="LoadFileDialog" type="FileDialog" parent="."]
+title = "Open a File"
+size = Vector2i(312, 157)
+ok_button_text = "Open"
+file_mode = 0
+access = 2
+filters = PackedStringArray("*.vl")
+show_hidden_files = true
+
+[connection signal="pressed" from="LaunchCodeButton" to="." method="StartUserDebug"]
+[connection signal="pressed" from="SaveCodeButton" to="." method="Save"]
+[connection signal="pressed" from="LoadCodeButton" to="." method="Load"]
+[connection signal="file_selected" from="SaveFileDialog" to="." method="SaveCodeToFile"]
+[connection signal="file_selected" from="LoadFileDialog" to="." method="LoadCodeFromFile"]
 
 [editable path="Control"]

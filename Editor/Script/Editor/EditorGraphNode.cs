@@ -34,13 +34,19 @@ public partial class EditorGraphNode : GraphNode
 
     public bool IsExecutable => Info?.IsExecutable ?? false;
 
+    public Vector2 CanvasPosition
+    {
+        get => PositionOffset;
+        set => PositionOffset = value;
+    }
+
     /// <summary>
     /// Node that is connected to be executed next
     /// </summary>
     public EditorGraphNodeInput? NextExecutable { get; set; } = null;
 
     public List<EditorGraphNodeInput?> Inputs { get; set; } = new();
-    public List<EditorGraphInputControl> InputControls { get; private set; } = new();
+    public List<EditorGraphManualInputControl> InputControls { get; private set; } = new();
     public static readonly int ExecTypeId = 0;
     public static readonly int AnyTypeId = 1;
 
@@ -70,7 +76,7 @@ public partial class EditorGraphNode : GraphNode
 
     protected void CreatePort(FunctionInputInfo arg, int slotIndex, bool displayOutput = false, VisLang.ValueType? outputType = null)
     {
-        EditorGraphInputControl inp = new(arg);
+        EditorGraphManualInputControl inp = new(arg, slotIndex);
         InputControls.Add(inp);
         AddChild(inp);
 
@@ -101,6 +107,44 @@ public partial class EditorGraphNode : GraphNode
             );
         }
         Inputs.Add(null);
+    }
+
+    /// <summary>
+    /// Creates a dummy "invalid" port with port type 998
+    /// </summary>
+    /// <param name="name">Name to display as the port name</param>
+    /// <param name="slotIndex">Which slot to use as the base for the port</param>
+    /// <param name="leftSide">Which side should the port be created on</param>
+    /// <param name="overrideOtherSide">If true this will erase port on the side opposite to value in leftSide</param>
+    protected void CreateDummyPort(string name, int slotIndex, bool leftSide, bool overrideOtherSide)
+    {
+        AddChild(new Label() { Text = $"INVALID({name})" });
+        if (leftSide)
+        {
+            SetSlot
+            (
+                slotIndex,
+                true,
+                998,
+                new Color(1f, 0, 0),
+                overrideOtherSide,
+                GetSlotTypeRight(slotIndex),
+                GetSlotColorRight(slotIndex)
+            );
+            return;
+        }
+        SetSlot
+        (
+            slotIndex,
+            overrideOtherSide,
+            GetSlotTypeLeft(slotIndex),
+            GetSlotColorLeft(slotIndex),
+            true,
+            998,
+            new Color(1f, 0, 0, 1)
+        );
+
+        //_invalidOutputPortId = slotIndex;
     }
 
     /// <summary>
@@ -135,7 +179,7 @@ public partial class EditorGraphNode : GraphNode
         // but because all of the connections in this variation are handled inside of the node we don't need to manually create any object
         foreach (FunctionInputInfo arg in info.Inputs)
         {
-            CreatePort(arg, slotIndex, slotIndex == (info.IsExecutable ? 1 : 0) && info.HasOutput, info.OutputArrayType);
+            CreatePort(arg, slotIndex, slotIndex == (info.IsExecutable ? 1 : 0) && info.HasOutput, info.OutputType);
             slotIndex++;
         }
         // if we have no arguments the output generation will be skipped because it uses arg0 for position
@@ -269,6 +313,11 @@ public partial class EditorGraphNode : GraphNode
                     GetSlotColorRight(portId)
                 );
             }
+            // might as well update controls so that user could manually input values
+            if (GetChildren().ElementAtOrDefault(portId) is EditorGraphManualInputControl control)
+            {
+                control.ChangeInputDataType(type, null);
+            }
             portId++;
         }
     }
@@ -305,9 +354,14 @@ public partial class EditorGraphNode : GraphNode
     /// <param name="srcPort">Port on the node from which connection is coming</param>
     public void AddConnection(int dstPort, EditorGraphNode node, int srcPort)
     {
+        int id = IsExecutable ? (dstPort - 1) : dstPort;
+        if (Inputs.Count < id || id < 0)
+        {
+            return;
+        }
         // while ports in godot node count the exec input as port
         // Inputs are only for data connections, so execs port values are shifted by one
-        Inputs[IsExecutable ? (dstPort - 1) : dstPort] = new EditorGraphNodeInput(node, srcPort);
+        Inputs[id] = new EditorGraphNodeInput(node, srcPort);
         if (ArrayTypeListeningPort != null && ArrayTypeListeningPort.Value == dstPort)
         {
             // a node can have only one data output and if we are connecting it's output to our input then we are connecting the output
@@ -317,7 +371,7 @@ public partial class EditorGraphNode : GraphNode
         }
         else
         {
-            InputControls[IsExecutable ? (dstPort - 1) : dstPort].HasManualInput = false;
+            InputControls[id].HasManualInput = false;
         }
     }
 
@@ -425,5 +479,49 @@ public partial class EditorGraphNode : GraphNode
         }
         ApplyAdditionalCreationData(node);
         return node;
+    }
+
+    public virtual Files.EditorNodeSaveData GetSaveData()
+    {
+        List<Files.EditorNodeSaveData.NodeInputSaveData> inputs = new();
+        foreach (EditorGraphManualInputControl input in GetChildren().Where(p => p is EditorGraphManualInputControl))
+        {
+            if (input.InputData != null)
+            {
+                inputs.Add(new Files.EditorNodeSaveData.NodeInputSaveData(input.InputData, input.InputType));
+            }
+        }
+        return new Files.EditorNodeSaveData(Name, Position, Info?.ResourcePath)
+        {
+            ManualInputs = inputs,
+            InvalidInputs = _invalidInputs.Select(p => p.PortName).ToList(),
+            HasInvalidOutput = HasInvalidOutput
+        };
+    }
+
+    public virtual void LoadData(Files.EditorNodeSaveData data)
+    {
+        CanvasPosition = data.Position;
+        Name = data.Name;
+        IEnumerable<EditorGraphManualInputControl> inputControls = GetChildren().Where(p => p is EditorGraphManualInputControl).Cast<EditorGraphManualInputControl>();
+
+        for (int i = 0; i < data.ManualInputs.Count; i++)
+        {
+            inputControls.ElementAtOrDefault(i)?.ChangeInputDataType(data.ManualInputs[i].Type, data.ManualInputs[i].Data);
+        }
+        // using GetChildCount() here cause each child counts as a port so this is good enough
+        int port = GetChildCount();
+        foreach (string invalidInputName in data.InvalidInputs)
+        {
+
+            CreateDummyPort(invalidInputName, port, true, false);
+            _invalidInputs.Add(new InvalidConnectionInfo(port, -1, invalidInputName));
+            port++;
+        }
+        if (data.HasInvalidOutput)
+        {
+            CreateDummyPort("Output", port, false, false);
+            _invalidOutputPortId = port;
+        }
     }
 }

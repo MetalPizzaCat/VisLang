@@ -67,7 +67,7 @@ public static class VisLangParser
     );
 
     private static readonly Parser<VisLang.DataNode> _operand = _variableName.Token().Select(p => new VariableGetNode() { Name = p })
-                    .Or<VisLang.DataNode>(Parse.DecimalInvariant.Or(Parse.Number).Select(num => new VariableGetConstNode() { Value = new Value(new ValueTypeData(ValueType.Float), float.Parse(num)) }));
+                    .Or<VisLang.DataNode>(Parse.DecimalInvariant.Or(Parse.Number).Select(num => new VariableGetConstNode() { Value = new Value(new ValueTypeData(ValueType.Float), double.Parse(num)) }));
 
 
     private static DataNode MakeBinaryExpression(OperationType op, DataNode left, DataNode right)

@@ -11,7 +11,6 @@ public class TextLangTests
         string code = @"program{}";
         Assert.IsNotNull(TextLang.Parser.VisLangParser.ParseCodeNoComments(code));
     }
-
     [TestMethod]
     public void BasicParsingVariableDeclaration()
     {
@@ -68,8 +67,8 @@ public class TextLangTests
         Assert.AreEqual(VisLang.ValueType.Float, system.VisSystemMemory["a"].ValueType);
         Assert.AreEqual(VisLang.ValueType.Float, system.VisSystemMemory["b"].ValueType);
 
-        Assert.AreEqual((float)2, system.VisSystemMemory["a"].Data);
-        Assert.AreEqual((float)2, system.VisSystemMemory["b"].Data);
+        Assert.AreEqual((double)2, system.VisSystemMemory["a"].Data);
+        Assert.AreEqual((double)2, system.VisSystemMemory["b"].Data);
         Assert.AreEqual(system.VisSystemMemory["a"].Data, system.VisSystemMemory["b"].Data);
     }
 
@@ -95,9 +94,9 @@ public class TextLangTests
         Assert.AreEqual(VisLang.ValueType.Float, system.VisSystemMemory["b"].ValueType);
         Assert.AreEqual(VisLang.ValueType.Float, system.VisSystemMemory["c"].ValueType);
 
-        Assert.AreEqual((float)2, system.VisSystemMemory["a"].Data);
-        Assert.AreEqual((float)4, system.VisSystemMemory["b"].Data);
-        Assert.AreEqual((float)0, system.VisSystemMemory["c"].Data);
+        Assert.AreEqual((double)2, system.VisSystemMemory["a"].Data);
+        Assert.AreEqual((double)4, system.VisSystemMemory["b"].Data);
+        Assert.AreEqual((double)0, system.VisSystemMemory["c"].Data);
         Assert.AreNotEqual(system.VisSystemMemory["a"].Data, system.VisSystemMemory["b"].Data);
     }
 }

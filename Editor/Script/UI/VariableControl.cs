@@ -1,7 +1,7 @@
 using Godot;
 using System;
 using System.Text.RegularExpressions;
-
+using VisLang.Editor;
 
 public partial class VariableControl : HBoxContainer
 {
@@ -32,7 +32,22 @@ public partial class VariableControl : HBoxContainer
 
     private VisLang.Editor.VariableInfo _info = new VisLang.Editor.VariableInfo("Default", VisLang.ValueType.Bool, null, false);
 
+    private static readonly int _typeOptionCount = Enum.GetNames(typeof(VisLang.ValueType)).Length;
+
     public VisLang.Editor.VariableInfo Info => _info;
+
+    public void InitWithNewInfo(VariableInitInfo info)
+    {
+        TypeOptionButton.Selected = (int)info.Type.Type;
+        _info.Id = new Guid(info.Id);
+        ArrayTypeOptionButton.Visible = info.Type.Type == VisLang.ValueType.Array;
+        ArrayTypeOptionButton.Selected = (int?)info.Type.ArrayType ?? _typeOptionCount;
+        NameEdit.Text = info.Name;
+
+        SelectType(TypeOptionButton.Selected);
+        SetArrayType(ArrayTypeOptionButton.Selected);
+        ChangeName(info.Name);
+    }
 
     public string VariableName => NameEdit.Text;
 
@@ -162,7 +177,7 @@ public partial class VariableControl : HBoxContainer
     {
         // type is either a type or if 'Any' is selected it is a null value
         // since any exists outside of the enum range we just check for that
-        _info.ArrayDataType = (type < Enum.GetNames(typeof(VisLang.ValueType)).Length) ? ((VisLang.ValueType)type) : null;
+        _info.ArrayDataType = (type < _typeOptionCount) ? ((VisLang.ValueType)type) : null;
         TypeChanged?.Invoke(_info, new VisLang.ValueTypeData(_info.Type, _info.ArrayDataType));
     }
 }

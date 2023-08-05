@@ -15,11 +15,11 @@ public enum ValueType
     /// </summary>
     Char,
     /// <summary>
-    /// Integer number for indexing arrays and loops. Uses c# int
+    /// Integer number for indexing arrays and loops. Uses c# long
     /// </summary>
     Integer,
     /// <summary>
-    /// Floating point number. Uses c# float
+    /// Floating point number. Uses c# double
     /// </summary>
     Float,
     /// <summary>
@@ -117,7 +117,7 @@ public class Value
             case ValueType.Integer:
                 return 0;
             case ValueType.Float:
-                return 0f;
+                return 0.0;
             case ValueType.String:
                 return string.Empty;
             case ValueType.Address:
@@ -157,13 +157,13 @@ public class Value
                     }
                     break;
                 case ValueType.Integer:
-                    if (value.GetType() != typeof(float))
+                    if (value.GetType() != typeof(long))
                     {
                         throw new ValueTypeMismatchException($"Value type mismatch. Expected int got {value.GetType()}", null);
                     }
                     break;
                 case ValueType.Float:
-                    if (value.GetType() != typeof(float))
+                    if (value.GetType() != typeof(double))
                     {
                         throw new ValueTypeMismatchException($"Value type mismatch. Expected float got {value.GetType()}", null);
                     }
@@ -273,12 +273,12 @@ public class Value
     /// <summary>
     ///Tries to convert value stored in object to float. This is meant for simplifying internal conversions and does NOT perform type checks 
     /// </summary>
-    public int? AsInteger() => _data != null ? Convert.ToInt32(_data) : null;
+    public long? AsInteger() => _data != null ? Convert.ToInt64(_data) : null;
 
     /// <summary>
     ///Tries to convert value stored in object to float. This is meant for simplifying internal conversions and does NOT perform type checks 
     /// </summary>
-    public float? AsFloat() => _data != null ? Convert.ToSingle(_data) : null;
+    public double? AsFloat() => _data != null ? Convert.ToDouble(_data) : null;
 
     /// <summary>
     /// Tries to convert value stored in object to bool. This is meant for simplifying internal conversions and does NOT perform type checks 
