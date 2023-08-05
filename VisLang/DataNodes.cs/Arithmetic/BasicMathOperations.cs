@@ -2,12 +2,12 @@ namespace VisLang;
 
 public class ArithmeticOperationNodeBase : DataNode
 {
-    public float DefaultValueLeft { get; set; } = 0f;
-    public float DefaultValueRight { get; set; } = 0f;
+    public double DefaultValueLeft { get; set; } = 0f;
+    public double DefaultValueRight { get; set; } = 0f;
 
-    public float GetValueLeft(NodeContext? context) => Inputs.FirstOrDefault()?.GetValue(context)?.AsFloat() ?? DefaultValueLeft;
+    public double GetValueLeft(NodeContext? context) => Inputs.FirstOrDefault()?.GetValue(context)?.AsFloat() ?? DefaultValueLeft;
 
-    public float GetValueRight(NodeContext? context) => Inputs.ElementAtOrDefault(1)?.GetValue(context)?.AsFloat() ?? DefaultValueRight;
+    public double GetValueRight(NodeContext? context) => Inputs.ElementAtOrDefault(1)?.GetValue(context)?.AsFloat() ?? DefaultValueRight;
 
     public ArithmeticOperationNodeBase(VisSystem? interpreter) : base(interpreter)
     {

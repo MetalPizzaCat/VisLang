@@ -5,7 +5,7 @@ using System.Linq;
 /// <summary>
 /// Control element that handles displaying input name and, if possible, control elements for manual value inputs
 /// </summary>
-public partial class EditorGraphInputControl : HBoxContainer
+public partial class EditorGraphManualInputControl : HBoxContainer
 {
 
     public Label NameDisplayLabel { get; private set; }
@@ -112,6 +112,7 @@ public partial class EditorGraphInputControl : HBoxContainer
             // while any can be any, for the sake of simplicity we will make it a string
             _inputControl = new LineEdit();
             AddChild(_inputControl);
+            _inputControl.Visible = HasManualInput;
             return;
         }
         switch (type)
@@ -150,6 +151,7 @@ public partial class EditorGraphInputControl : HBoxContainer
         if (_inputControl != null)
         {
             AddChild(_inputControl);
+            _inputControl.Visible = HasManualInput;
         }
     }
 
@@ -157,7 +159,7 @@ public partial class EditorGraphInputControl : HBoxContainer
     /// Creates a new instance of the control and if possible adds input controls to itself
     /// </summary>
     /// <param name="info">Input signature to use for generation</param>
-    public EditorGraphInputControl(FunctionInputInfo info, int slot)
+    public EditorGraphManualInputControl(FunctionInputInfo info, int slot)
     {
         Slot = slot;
         _valueType = info.InputType;
