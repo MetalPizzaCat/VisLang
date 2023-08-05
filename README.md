@@ -1,15 +1,17 @@
 # VisLang
 VisLang is an interpreted language inspired by Unreal Engine blueprints, Godot's visual code and Fortran.
 VisLang itself is a simple C# library that contains all the basics needed to execute code, with Editor for the language created using Godot 4 that translates user created visual nodes into executable objects.
+![image](https://github.com/MetalPizzaCat/VisLang/assets/36876492/22f83ea0-0a31-4d0f-a8c8-ecf17cc797fd)
+
 ## VisLang Interpreter
-Interepreter itself is a simple library written in C# that executes its' code by creating a tree of nodes, inspired by the idea of Abstract Syntax Tree, and then going over each node executing it's logic.
+Interepreter itself is a simple library written in C# that executes it's code by storing the code as a one directional linked list, with each node storing it's logic and pointer to the next node.
 ### Value
 Value represents some amount of data that is stored in the memory, value type can not be changed at runtime. 
 Allowed value types are 
 * Bool(true or false)
 * Char(a single character)
-* Interger(32bit int)
-* Float(32bit float)
+* Interger(64bit int)
+* Float(64bit float)
 * String(C# String object)
 * Array (C# List object)
 * Address (32bit unsigned int)
