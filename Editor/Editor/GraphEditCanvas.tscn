@@ -47,5 +47,8 @@ position_offset = Vector2(60, 0)
 overlay = 1
 
 [connection signal="connection_request" from="." to="." method="ConnectNodes"]
+[connection signal="delete_nodes_request" from="." to="." method="DeleteCollectionOfNodes"]
 [connection signal="disconnection_request" from="." to="." method="DisconnectNodes"]
+[connection signal="node_deselected" from="." to="." method="DeselectNode"]
+[connection signal="node_selected" from="." to="." method="SelectNode"]
 [connection signal="popup_request" from="." to="." method="OpenCreationMenu"]

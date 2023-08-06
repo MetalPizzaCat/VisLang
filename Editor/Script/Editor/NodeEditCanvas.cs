@@ -26,6 +26,8 @@ public partial class NodeEditCanvas : GraphEdit
     [Export]
     public ExecStartGraphNode? ExecStart { get; private set; }
 
+    public List<EditorGraphNode> SelectedNodes { get; private set; } = new();
+
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
@@ -220,6 +222,34 @@ public partial class NodeEditCanvas : GraphEdit
                 GetNode<EditorGraphNode>(conn["to"].AsString()),
                 conn["to_port"].AsInt32()
             )).ToList();
+    }
+
+    public void DeleteCollectionOfNodes(Godot.Collections.Array<string> nodes)
+    {
+        foreach (string nodeName in nodes)
+        {
+            EditorGraphNode? node = GetNodeOrNull<EditorGraphNode>(nodeName);
+            if (node != null)
+            {
+                DeleteNode(node);
+            }
+        }
+    }
+
+    public void SelectNode(Node node)
+    {
+        if (node is EditorGraphNode graphNode)
+        {
+            SelectedNodes.Add(graphNode);
+        }
+    }
+
+    public void DeselectNode(Node node)
+    {
+        if (node is EditorGraphNode graphNode)
+        {
+            SelectedNodes.Remove(graphNode);
+        }
     }
 
     // These functions are meant for parsing the tree created by player into usable objects 
