@@ -28,6 +28,11 @@ public partial class NodeEditCanvas : GraphEdit
 
     public List<EditorGraphNode> SelectedNodes { get; private set; } = new();
 
+    /// <summary>
+    /// All of the nodes that have breakpoint flag set
+    /// </summary>
+    public IEnumerable<EditorGraphNode> BreakpointNodes => GetChildren().OfType<EditorGraphNode>().Where(p => p.HasBreakpointEnabled);
+
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
@@ -39,6 +44,15 @@ public partial class NodeEditCanvas : GraphEdit
         }
         CreationMenu.FunctionSelected += SpawnFunction;
         CreationMenu.ConditionalNodeSelected += SpawnConditionalNode;
+    }
+
+    public override void _Input(InputEvent @event)
+    {
+        base._Input(@event);
+        if (Input.IsActionJustPressed("breakpoint"))
+        {
+            ToggleBreakpoint();
+        }
     }
 
     /// <summary>
@@ -249,6 +263,17 @@ public partial class NodeEditCanvas : GraphEdit
         if (node is EditorGraphNode graphNode)
         {
             SelectedNodes.Remove(graphNode);
+        }
+    }
+
+    /// <summary>
+    /// Toggles breakpoint for every node in the selected node array
+    /// </summary>
+    public void ToggleBreakpoint()
+    {
+        foreach (EditorGraphNode node in SelectedNodes)
+        {
+            node.HasBreakpointEnabled = !node.HasBreakpointEnabled;
         }
     }
 

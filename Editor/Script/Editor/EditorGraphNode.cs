@@ -40,6 +40,26 @@ public partial class EditorGraphNode : GraphNode
         set => PositionOffset = value;
     }
 
+    private bool _hasBreakpointEnabled = false;
+
+    /// <summary>
+    /// Is this node marked to pause execution or not.<para/>
+    /// If node is a data node then it always returns false
+    /// </summary>
+    public bool HasBreakpointEnabled
+    {
+        get => _hasBreakpointEnabled && IsExecutable;
+        set
+        {
+            if (!IsExecutable)
+            {
+                return;
+            }
+            _hasBreakpointEnabled = value;
+            Overlay = value ? OverlayEnum.Breakpoint : OverlayEnum.Disabled;
+        }
+    }
+
     /// <summary>
     /// Node that is connected to be executed next
     /// </summary>
