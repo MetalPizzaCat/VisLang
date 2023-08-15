@@ -57,9 +57,9 @@ public partial class EditorGraphManualInputControl : HBoxContainer
                 case VisLang.ValueType.Bool:
                     return (_inputControl as CheckBox)?.ButtonPressed ?? false;
                 case VisLang.ValueType.Float:
-                    return (double)((_inputControl as SpinBox)?.Value ?? 0.0);
+                    return (_inputControl as SpinBox)?.Value ?? 0.0;
                 case VisLang.ValueType.Integer:
-                    return (int)((_inputControl as SpinBox)?.Value ?? 0);
+                    return (long)((_inputControl as SpinBox)?.Value ?? 0);
                 case VisLang.ValueType.String:
                     return (_inputControl as LineEdit)?.Text ?? string.Empty;
                 case VisLang.ValueType.Char:

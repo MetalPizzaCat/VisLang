@@ -6,6 +6,10 @@ public class BinaryOperationNodeBase : DataNode
     {
     }
 
+    public BinaryOperationNodeBase()
+    {
+    }
+
     public Value DefaultValueLeft { get; set; } = new Value(new ValueTypeData(ValueType.Bool), false);
     public Value DefaultValueRight { get; set; } = new Value(new ValueTypeData(ValueType.Bool), false);
 

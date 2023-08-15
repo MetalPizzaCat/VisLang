@@ -32,6 +32,8 @@ public partial class ProjectEditorScene : Control
     [Export]
     public VBoxContainer? OutputMessageBox { get; private set; }
     [Export]
+    public VBoxContainer? ErrorMessageBox { get; private set; }
+    [Export]
     public PackedScene? OutputMessagePrefab { get; private set; }
     [Export]
     public VBoxContainer? VariableDisplayContainer { get; private set; }
@@ -39,9 +41,14 @@ public partial class ProjectEditorScene : Control
     private List<Label> _variableValues = new();
 
     private List<RichTextLabel> _outputMessages = new();
+    private List<RichTextLabel> _errorMessages = new();
 
     private CodeExecutor? _codeExecutor;
 
+    /// <summary>
+    /// Prepares system for execution by conversion all visual nodes into nodes usable for execution, by collection data from all functions
+    /// </summary>
+    /// <returns>Data that can be used to execute use code</returns>
     public Debug.CodeExecutionData PrepareForExecution()
     {
         VisSystem system = new VisSystem();
@@ -53,6 +60,10 @@ public partial class ProjectEditorScene : Control
         return new Debug.CodeExecutionData(system, MainFunctionEditor.NodeCanvas.BreakpointNodes.ToList());
     }
 
+    /// <summary>
+    /// Writes given message to the output box of the ui
+    /// </summary>
+    /// <param name="message">Message to write</param>
     private void PrintOutputMessage(string message)
     {
         GD.Print($"VisLang: {message}");
@@ -62,6 +73,22 @@ public partial class ProjectEditorScene : Control
         OutputMessageBox?.AddChild(label);
     }
 
+    /// <summary>
+    /// Writes given message to the error output box of the ui
+    /// </summary>
+    /// <param name="message">Message to write</param>
+    private void PrintErrorMessage(string message)
+    {
+        GD.Print($"VisLang: {message}");
+        RichTextLabel label = OutputMessagePrefab?.InstantiateOrNull<RichTextLabel>() ?? new RichTextLabel() { BbcodeEnabled = true };
+        label.Text = message;
+        _errorMessages.Add(label);
+        ErrorMessageBox?.AddChild(label);
+    }
+
+    /// <summary>
+    /// Clears both message and error output of the editor removing all messages
+    /// </summary>
     private void ClearOutputs()
     {
         foreach (RichTextLabel label in _outputMessages)
@@ -70,8 +97,17 @@ public partial class ProjectEditorScene : Control
             label.QueueFree();
         }
         _outputMessages.Clear();
+        foreach (RichTextLabel label in _errorMessages)
+        {
+            ErrorMessageBox?.RemoveChild(label);
+            label.QueueFree();
+        }
+        _errorMessages.Clear();
     }
 
+    /// <summary>
+    /// Begin debug of the user code and put system into the execution mode. If this function is called when execution is paused it will cause execution to resume
+    /// </summary>
     private void StartUserDebug()
     {
         if (_codeExecutor != null && _codeExecutor.IsRunning && _codeExecutor.IsPaused)
@@ -84,10 +120,24 @@ public partial class ProjectEditorScene : Control
         _codeExecutor.CodeExecutionData.System.OnOutputAdded += PrintOutputMessage;
         _codeExecutor.BreakpointHit += HandleBreakpointOnNode;
         _codeExecutor.ExecutionOver += HandleExecutionOver;
-        _codeExecutor.Run();
+        try
+        {
+            _codeExecutor.Run();
+        }
+        catch (Interpreter.InterpreterException e)
+        {
+            PrintErrorMessage(e.Message);
+            HandleExecutionOver();
+        }
+
         RuntimeControls.Visible = true;
     }
 
+    /// <summary>
+    /// Handle execution hitting a node that was marked as breakpoint. This will update variable display panel
+    /// </summary>
+    /// <param name="node">Editor node that was marked as breakpoint</param>
+    /// <param name="sourceNode">Internal execution node</param>
     private void HandleBreakpointOnNode(EditorGraphNode node, ExecutionNode sourceNode)
     {
         if (VariableDisplayContainer == null || _codeExecutor == null)
@@ -116,6 +166,9 @@ public partial class ProjectEditorScene : Control
         }
     }
 
+    /// <summary>
+    /// Handle execution completing. Just hides runtime controls
+    /// </summary>
     private void HandleExecutionOver()
     {
         RuntimeControls.Visible = false;

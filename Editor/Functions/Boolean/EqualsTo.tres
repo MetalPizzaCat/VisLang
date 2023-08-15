@@ -1,0 +1,20 @@
+[gd_resource type="Resource" load_steps=3 format=3 uid="uid://d26434tu8nhwe"]
+
+[ext_resource type="Script" path="res://Script/Function/FunctionInfo.cs" id="1_8sn3w"]
+[ext_resource type="Resource" uid="uid://ddwn3h05q6wkm" path="res://Functions/Arguments/Func_Arg_Any.tres" id="1_kvubh"]
+
+[resource]
+script = ExtResource("1_8sn3w")
+FunctionName = "Equals to"
+FunctionDescription = "Returns true if two values are identical"
+IsExecutable = false
+IsArrayTypeDependent = false
+ArrayTypeDefiningArgumentId = 0
+Inputs = [ExtResource("1_kvubh"), ExtResource("1_kvubh")]
+_output = 0
+IsOutputArrayTypeDependent = false
+_isOutputTypeKnown = true
+HasOutput = true
+_hasOutputArrayType = false
+_outputArrayType = 0
+NodeType = "VisLang.EqualsNode"

@@ -6,7 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://xt83rs5upyhm" path="res://Editor/FunctionEditControl.tscn" id="4_ik76o"]
 [ext_resource type="Script" path="res://Script/ExecutionManager.cs" id="4_rl06k"]
 
-[node name="ProjectEditorCanvas" type="Control" node_paths=PackedStringArray("TabBar", "MainFunctionEditor", "RuntimeControls", "SaveFileDialog", "LoadFileDialog", "OutputMessageBox", "VariableDisplayContainer")]
+[node name="ProjectEditorCanvas" type="Control" node_paths=PackedStringArray("TabBar", "MainFunctionEditor", "RuntimeControls", "SaveFileDialog", "LoadFileDialog", "OutputMessageBox", "ErrorMessageBox", "VariableDisplayContainer")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -21,6 +21,7 @@ RuntimeControls = NodePath("RuntimeControls")
 SaveFileDialog = NodePath("SaveFileDialog")
 LoadFileDialog = NodePath("LoadFileDialog")
 OutputMessageBox = NodePath("Control/TabContainer/Output/VBoxContainer")
+ErrorMessageBox = NodePath("Control/TabContainer/Errors/VBoxContainer")
 OutputMessagePrefab = ExtResource("2_n0htl")
 VariableDisplayContainer = NodePath("RuntimeControls/VariableValueDisplayControl/ScrollContainer/VBoxContainer")
 
@@ -99,7 +100,7 @@ visible = false
 anchors_preset = 0
 offset_top = -32.0
 offset_right = 1600.0
-offset_bottom = 864.0
+offset_bottom = 688.0
 mouse_filter = 2
 
 [node name="ColorRect" type="ColorRect" parent="RuntimeControls"]

@@ -110,6 +110,97 @@ public class BasicSystemTest
         Assert.AreEqual(1.0, system.VisSystemMemory["result"].Data);
     }
 
+    [TestMethod]
+    public void TestComparisonEqual()
+    {
+        EqualsNode equalsNode = new EqualsNode(null)
+        {
+            Inputs = new()
+            {
+                new VariableGetConstNode(){Value = new Value(new ValueTypeData(VisLang.ValueType.Integer),1)},
+                new VariableGetConstNode(){Value = new Value(new ValueTypeData(VisLang.ValueType.Integer),1)}
+            }
+        };
+        Assert.IsTrue(equalsNode.GetValue().AsBool());
+
+        equalsNode = new EqualsNode(null)
+        {
+            Inputs = new()
+            {
+                new VariableGetConstNode(){Value = new Value(new ValueTypeData(VisLang.ValueType.Float),1f)},
+                new VariableGetConstNode(){Value = new Value(new ValueTypeData(VisLang.ValueType.Float),1f)}
+            }
+        };
+        Assert.IsTrue(equalsNode.GetValue().AsBool());
+
+
+        equalsNode = new EqualsNode(null)
+        {
+            Inputs = new()
+            {
+                new VariableGetConstNode(){Value = new Value(new ValueTypeData(VisLang.ValueType.Integer),1)},
+                new VariableGetConstNode(){Value = new Value(new ValueTypeData(VisLang.ValueType.Float),1)}
+            }
+        };
+        Assert.ThrowsException<VisLang.Interpreter.ValueTypeMismatchException>(() => equalsNode.GetValue());
+    }
+
+    [TestMethod]
+    public void TestComparisonGreaterAndGreaterEqual()
+    {
+        GreaterThenNode equalsNode = new GreaterThenNode(null)
+        {
+            Inputs = new()
+            {
+                new VariableGetConstNode(){Value = new Value(new ValueTypeData(VisLang.ValueType.Integer),1)},
+                new VariableGetConstNode(){Value = new Value(new ValueTypeData(VisLang.ValueType.Integer),1)}
+            }
+        };
+        Assert.IsFalse(equalsNode.GetValue().AsBool());
+
+        equalsNode = new GreaterThenNode(null)
+        {
+            Inputs = new()
+            {
+                new VariableGetConstNode(){Value = new Value(new ValueTypeData(VisLang.ValueType.Integer),2)},
+                new VariableGetConstNode(){Value = new Value(new ValueTypeData(VisLang.ValueType.Integer),1)}
+            }
+        };
+        Assert.IsTrue(equalsNode.GetValue().AsBool());
+
+        equalsNode = new GreaterThenNode(null)
+        {
+            Inputs = new()
+            {
+                new VariableGetConstNode(){Value = new Value(new ValueTypeData(VisLang.ValueType.Bool),false)},
+                new VariableGetConstNode(){Value = new Value(new ValueTypeData(VisLang.ValueType.Bool),false)}
+            }
+        };
+        Assert.ThrowsException<VisLang.Interpreter.ValueTypeMismatchException>(() => equalsNode.GetValue());
+
+
+        equalsNode = new GreaterThenNode(null)
+        {
+            Inputs = new()
+            {
+                new VariableGetConstNode(){Value = new Value(new ValueTypeData(VisLang.ValueType.Float),55f)},
+                new VariableGetConstNode(){Value = new Value(new ValueTypeData(VisLang.ValueType.Float),1f)}
+            }
+        };
+        Assert.IsTrue(equalsNode.GetValue().AsBool());
+
+
+        equalsNode = new GreaterThenNode(null)
+        {
+            Inputs = new()
+            {
+                new VariableGetConstNode(){Value = new Value(new ValueTypeData(VisLang.ValueType.Integer),2)},
+                new VariableGetConstNode(){Value = new Value(new ValueTypeData(VisLang.ValueType.Float),1)}
+            }
+        };
+        Assert.ThrowsException<VisLang.Interpreter.ValueTypeMismatchException>(() => equalsNode.GetValue());
+    }
+
     /// <summary>
     /// Test if we can get address of a variable
     /// </summary>
