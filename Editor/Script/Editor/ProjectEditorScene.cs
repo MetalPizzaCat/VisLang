@@ -38,6 +38,7 @@ public partial class ProjectEditorScene : Control
     [Export]
     public VBoxContainer? VariableDisplayContainer { get; private set; }
 
+
     private List<Label> _variableValues = new();
 
     private List<RichTextLabel> _outputMessages = new();
