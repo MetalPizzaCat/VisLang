@@ -1,5 +1,6 @@
 using Godot;
-using System;
+using System.Collections.Generic;
+using System.Linq;
 
 public partial class FunctionSignatureManager : Node
 {
@@ -7,6 +8,7 @@ public partial class FunctionSignatureManager : Node
     public Godot.Collections.Array<FunctionInfo> Functions { get; set; } = new();
 
     [Export]
-    public Godot.Collections.Array<SpecialFunctionInfo> SpecialFunctions { get; set; } = new();
+    public FunctionManagementControl UserFunctions { get; set; }
 
+    public IEnumerable<FunctionInfo> UserFunctionSignatures => UserFunctions.CallableFunctions.Select(p => p.Info);
 }

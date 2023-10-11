@@ -22,9 +22,12 @@ public partial class NodeCreationMenu : PopupPanel
     [Export]
     public PackedScene? SpecialButtonPrefab { get; set; }
 
-    public List<NodeCreationButtonBase> Buttons { get; set; } = new();
+    public List<NodeCreationButtonBase> BaseFunctionButtons { get; private set; } = new();
+
+    public List<NodeCreationButtonBase> UserFunctionButtons { get; private set; } = new();
 
     private Button _conditionalNodeSpawnerButton = new Button();
+
 
     public override void _Ready()
     {
@@ -44,22 +47,43 @@ public partial class NodeCreationMenu : PopupPanel
             }
             btn.Selected += NodeSelected;
             btn.Info = function;
-            Buttons.Add(btn);
+            BaseFunctionButtons.Add(btn);
             ItemContainer.AddChild(btn);
         }
-        foreach (SpecialFunctionInfo function in Functions.SpecialFunctions)
+    }
+
+    /// <summary>
+    /// Updates info about functions and display the menu <para/>
+    /// Use this over Popup to keep info up to date
+    /// </summary>
+    public void Display()
+    {
+        if (Functions == null)
         {
-            SpecialNodeCreationButton? btn = SpecialButtonPrefab?.InstantiateOrNull<SpecialNodeCreationButton>();
+            Popup();
+            return;
+        }
+        foreach(var btn in UserFunctionButtons)
+        {
+            ItemContainer.RemoveChild(btn);
+            btn.QueueFree();
+        }
+        UserFunctionButtons.Clear();
+        
+        foreach (FunctionInfo function in Functions.UserFunctionSignatures)
+        {
+            NodeCreationButton? btn = ButtonPrefab?.InstantiateOrNull<NodeCreationButton>();
             if (btn == null)
             {
                 GD.PrintErr("Unable to create button for node creation");
                 return;
             }
-            btn.Selected += SpecialNodeSelected;
+            btn.Selected += NodeSelected;
             btn.Info = function;
-            Buttons.Add(btn);
+            UserFunctionButtons.Add(btn);
             ItemContainer.AddChild(btn);
         }
+        Popup();
     }
 
     private void CreateConditionalSpawnButton()
@@ -72,7 +96,7 @@ public partial class NodeCreationMenu : PopupPanel
 
     private void SearchTextChanged(string text)
     {
-        Buttons.ForEach(p => p.Visible = p.FunctionName?.ToLower().StartsWith(text, true, null) ?? false);
+        BaseFunctionButtons.ForEach(p => p.Visible = p.FunctionName?.ToLower().StartsWith(text, true, null) ?? false);
         // unreal uses 'branch', code uses 'if'  and i want more :3
         _conditionalNodeSpawnerButton.Visible = "If".ToLower().StartsWith(text, true, null) || "Branch".ToLower().StartsWith(text, true, null) || "Conditional".ToLower().StartsWith(text, true, null);
     }

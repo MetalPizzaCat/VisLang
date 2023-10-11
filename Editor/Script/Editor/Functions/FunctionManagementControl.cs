@@ -17,6 +17,7 @@ public partial class FunctionManagementControl : Control
 
 	public List<CallableFunctionInfo> CallableFunctions { get; private set; } = new();
 
+
 	/// <summary>
 	/// Summons controls for creating new function
 	/// </summary>

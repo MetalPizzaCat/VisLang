@@ -20,6 +20,19 @@ public partial class NodeEditCanvas : GraphEdit
     [Export]
     public NodeCreationMenu CreationMenu { get; private set; }
 
+    /// <summary>
+    /// Function signature info
+    /// </summary>
+    /// <value></value>
+    public FunctionSignatureManager? FunctionSignatures
+    {
+        get => CreationMenu.Functions;
+        set
+        {
+            CreationMenu.Functions = value;
+        }
+    }
+
     [Export]
     public CodeColorTheme CodeTheme { get; set; }
 
@@ -119,9 +132,8 @@ public partial class NodeEditCanvas : GraphEdit
     private void OpenCreationMenu(Vector2 position)
     {
         CreationMenu.Position = new Vector2I((int)position.X, (int)position.Y);
-        CreationMenu.Popup();
+        CreationMenu.Display();
     }
-
 
     /// <summary>
     /// Generation function node at runtime based of provided function signature of given node type

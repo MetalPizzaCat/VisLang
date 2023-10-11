@@ -16,6 +16,9 @@ public partial class TabManager : Control
     [Export]
     public Control TabContentParentControl { get; set; }
 
+    [Export]
+    public FunctionSignatureManager Functions { get; set; }
+
     /// <summary>
     ///  Control for editing the main function of the project
     /// it will also be used for calculating positions of any other added tab
@@ -53,8 +56,17 @@ public partial class TabManager : Control
 
     }
 
+    /// <summary>
+    /// Saves information in the data 
+    /// </summary>
+    public void SaveActiveTab()
+    {
+
+    }
+
     public void SwitchTo(long id)
     {
+        SaveActiveTab();
         if (ActiveTabId > 0)
         {
             FunctionEditControls[(int)(ActiveTabId - 1)].Visible = false;
@@ -67,7 +79,7 @@ public partial class TabManager : Control
         }
 
         FunctionEditControls[(int)(id - 1)].Visible = true;
-        
+
     }
 
     public void OpenNewTab()
@@ -81,6 +93,7 @@ public partial class TabManager : Control
         }
         TabContentParentControl.AddChild(control);
         FunctionEditControls.Add(control);
+        control.NodeCanvas.FunctionSignatures = Functions;
 
         TabBar.AddTab("Function");
         TabBar.CurrentTab = TabBar.TabCount - 1;

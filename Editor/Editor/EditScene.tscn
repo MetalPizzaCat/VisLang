@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://cy3ayxdr8tp2a"]
+[gd_scene load_steps=19 format=3 uid="uid://cy3ayxdr8tp2a"]
 
 [ext_resource type="Script" path="res://Script/Editor/ProjectEditorScene.cs" id="1_rr1ug"]
 [ext_resource type="PackedScene" uid="uid://c67wh757rx8s3" path="res://UI/message_label.tscn" id="2_n0htl"]
@@ -7,6 +7,17 @@
 [ext_resource type="Script" path="res://Script/ExecutionManager.cs" id="4_rl06k"]
 [ext_resource type="PackedScene" uid="uid://bcvndhntt3ep0" path="res://Editor/FunctionManagementControl.tscn" id="6_ccdiy"]
 [ext_resource type="Script" path="res://Script/Editor/Tabs/TabManager.cs" id="7_qqv7v"]
+[ext_resource type="PackedScene" uid="uid://wafw1x7x4s1b" path="res://Editor/functions.tscn" id="8_w7ocg"]
+[ext_resource type="Resource" uid="uid://migjfmdltwbc" path="res://Functions/Func_Add_F.tres" id="9_6c2nb"]
+[ext_resource type="Resource" uid="uid://dpkha8n5rkowh" path="res://Functions/Func_Print.tres" id="10_arrgg"]
+[ext_resource type="Resource" uid="uid://l1eetdpg8ut5" path="res://Functions/Func_Array_Append.tres" id="11_sgj20"]
+[ext_resource type="Resource" uid="uid://dpc05ors8lkbo" path="res://Functions/Func_Array_SetElem.tres" id="12_2eytx"]
+[ext_resource type="Resource" uid="uid://b4ca7uc8mn75i" path="res://Functions/Func_Array_GetElem.tres" id="13_ripst"]
+[ext_resource type="Resource" uid="uid://d26434tu8nhwe" path="res://Functions/Boolean/EqualsTo.tres" id="14_dgpw0"]
+[ext_resource type="Resource" uid="uid://bwgym00igdmqj" path="res://Functions/Boolean/GreaterThen.tres" id="15_e4vss"]
+[ext_resource type="Resource" uid="uid://cpn6us8h863if" path="res://Functions/Boolean/GreaterThenOrEquals.tres" id="16_dh6b2"]
+[ext_resource type="Resource" uid="uid://b4gtp1h4xe84" path="res://Functions/Boolean/GreaterThenOrEquals_float.tres" id="17_w5flt"]
+[ext_resource type="Resource" uid="uid://bq1k0g111bwy3" path="res://Functions/Boolean/GreaterThen_float.tres" id="18_qejnw"]
 
 [node name="ProjectEditorCanvas" type="Control" node_paths=PackedStringArray("TabBar", "MainFunctionEditor", "RuntimeControls", "SaveFileDialog", "LoadFileDialog", "OutputMessageBox", "ErrorMessageBox", "VariableDisplayContainer")]
 layout_mode = 3
@@ -47,6 +58,17 @@ offset_bottom = -60.0
 
 [node name="GraphEdit" parent="FunctionEditControl" index="0"]
 scroll_offset = Vector2(0, 0)
+
+[node name="PopupPanel" parent="FunctionEditControl/GraphEdit" index="2" node_paths=PackedStringArray("Functions")]
+Functions = NodePath("../../../Functions")
+
+[node name="ExecNode" parent="FunctionEditControl/GraphEdit" index="3"]
+offset_top = 415.7
+offset_bottom = 495.7
+
+[node name="PositionTeller" parent="FunctionEditControl/GraphEdit" index="4"]
+offset_top = 0.0
+offset_bottom = 54.0
 
 [node name="VariableControl" parent="FunctionEditControl" index="1"]
 offset_top = -72.0
@@ -173,6 +195,10 @@ TabContentParentControl = NodePath("..")
 MainFunctionEditor = NodePath("../FunctionEditControl")
 FunctionEditorPrefab = ExtResource("4_ik76o")
 
+[node name="Functions" parent="." node_paths=PackedStringArray("UserFunctions") instance=ExtResource("8_w7ocg")]
+Functions = [ExtResource("9_6c2nb"), ExtResource("10_arrgg"), ExtResource("11_sgj20"), ExtResource("12_2eytx"), ExtResource("13_ripst"), ExtResource("14_dgpw0"), ExtResource("15_e4vss"), ExtResource("16_dh6b2"), ExtResource("17_w5flt"), ExtResource("18_qejnw")]
+UserFunctions = NodePath("../FunctionManagementControl")
+
 [connection signal="file_selected" from="SaveFileDialog" to="." method="SaveCodeToFile"]
 [connection signal="pressed" from="LaunchCodeButton" to="." method="StartUserDebug"]
 [connection signal="pressed" from="StopCodeButton" to="." method="StartUserDebug"]
@@ -183,4 +209,5 @@ FunctionEditorPrefab = ExtResource("4_ik76o")
 
 [editable path="Control"]
 [editable path="FunctionEditControl"]
+[editable path="FunctionEditControl/GraphEdit"]
 [editable path="FunctionManagementControl"]
