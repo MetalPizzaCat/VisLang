@@ -38,7 +38,7 @@ public partial class FunctionInfo : Resource
     /// Information about all of the function arguments. Using additional class and Godot array due to a bug with c# dictionaries in godot(they don't work :3)
     /// </summary>
     [Export]
-    public Godot.Collections.Array<FunctionInputInfo> Inputs = new();
+    public Godot.Collections.Array<FunctionInputInfo> Inputs { get; set; } = new();
 
     [ExportGroup("Output")]
     [Export]

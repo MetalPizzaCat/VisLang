@@ -17,6 +17,12 @@ public partial class NodeEditCanvas : GraphEdit
     public delegate void NodeDeletedEventHandler(EditorGraphNode node);
     public event NodeDeletedEventHandler? NodeDeleted;
 
+    public delegate void DeclarationSelectedEventHandler(EditorGraphFunctionDeclarationNode node);
+    public event DeclarationSelectedEventHandler? DeclarationSelected;
+
+    public delegate void DeclarationDeselectedEventHandler(EditorGraphFunctionDeclarationNode node);
+    public event DeclarationDeselectedEventHandler? DeclarationDeselected;
+
     [Export]
     public NodeCreationMenu CreationMenu { get; private set; }
 
@@ -44,6 +50,7 @@ public partial class NodeEditCanvas : GraphEdit
         }
         CreationMenu.FunctionSelected += SpawnFunction;
         CreationMenu.ConditionalNodeSelected += SpawnConditionalNode;
+        CreationMenu.NewDeclarationNodeSelected += SpawnFunctionDeclarationNode;
     }
 
     public override void _Input(InputEvent @event)
@@ -148,6 +155,24 @@ public partial class NodeEditCanvas : GraphEdit
     private void SpawnConditionalNode()
     {
         MakeNodeFromSignature<EditorGraphBranchNode>(null);
+    }
+
+    private void SpawnFunctionDeclarationNode()
+    {
+        EditorGraphFunctionDeclarationNode? node = MakeNodeFromSignature<EditorGraphFunctionDeclarationNode>(new FunctionInfo()
+        {
+            FunctionName = "Custom func",
+            Inputs = new()
+            {
+                new FunctionInputInfo("test1", VisLang.ValueType.Float, null),
+                new FunctionInputInfo("test2", VisLang.ValueType.Float, null)
+            }
+        });
+        if (node != null)
+        {
+            node.EditorNodeSelected +=  (EditorGraphNode? edit) => DeclarationSelected?.Invoke(node);
+            node.EditorNodeDeselected +=  (EditorGraphNode? edit) => DeclarationDeselected?.Invoke(node);
+        }
     }
 
     /// <summary>

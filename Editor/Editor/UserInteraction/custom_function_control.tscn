@@ -1,0 +1,63 @@
+[gd_scene load_steps=4 format=3 uid="uid://cwhnwwk8lys3x"]
+
+[ext_resource type="PackedScene" uid="uid://cggls8480xaxq" path="res://Editor/UserInteraction/variable_control.tscn" id="1_4c4k0"]
+[ext_resource type="Script" path="res://Script/UI/CustomFunctionControl.cs" id="1_ge485"]
+[ext_resource type="PackedScene" uid="uid://c5mxyja8mo5y2" path="res://Editor/UserInteraction/ArgumentControl.tscn" id="2_8hvaa"]
+
+[node name="CustomFunctionControl" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_ge485")
+
+[node name="CustomFuncVarControl" parent="." instance=ExtResource("1_4c4k0")]
+layout_mode = 1
+anchors_preset = 0
+anchor_left = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 0.0
+offset_top = 64.0
+offset_right = 256.0
+offset_bottom = 384.0
+grow_horizontal = 1
+grow_vertical = 1
+
+[node name="ArgumentVarControl" parent="." instance=ExtResource("1_4c4k0")]
+layout_mode = 1
+anchors_preset = 0
+anchor_left = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 0.0
+offset_top = 392.0
+offset_right = 256.0
+offset_bottom = 712.0
+grow_horizontal = 1
+grow_vertical = 1
+VariableControlPlaceholder = ExtResource("2_8hvaa")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 1
+offset_right = 256.0
+offset_bottom = 56.0
+color = Color(0, 0, 0, 0.435294)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "Function name: "
+
+[node name="LineEdit" type="LineEdit" parent="VBoxContainer/HBoxContainer"]
+layout_mode = 2
+placeholder_text = "Default"

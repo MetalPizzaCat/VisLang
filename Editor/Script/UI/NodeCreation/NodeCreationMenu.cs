@@ -8,9 +8,11 @@ public partial class NodeCreationMenu : PopupPanel
     public delegate void FunctionSelectedEventHandler(FunctionInfo info);
     public delegate void SpecialFunctionSelectedEventHandler(SpecialFunctionInfo info);
     public delegate void ConditionalNodeSelectedEventHandler();
+    public delegate void NewDeclarationNodeSelectedEventHandler();
     public event FunctionSelectedEventHandler? FunctionSelected;
     public event ConditionalNodeSelectedEventHandler? ConditionalNodeSelected;
     public event SpecialFunctionSelectedEventHandler? SpecialFunctionSelected;
+    public event NewDeclarationNodeSelectedEventHandler? NewDeclarationNodeSelected;
 
     [Export]
     public FunctionSignatureManager? Functions { get; set; }
@@ -24,11 +26,13 @@ public partial class NodeCreationMenu : PopupPanel
 
     public List<NodeCreationButtonBase> Buttons { get; set; } = new();
 
-    private Button _conditionalNodeSpawnerButton = new Button();
+    private Button _conditionalNodeSpawnerButton = new();
+    private Button _declarationSpawnerButton = new();
 
     public override void _Ready()
     {
         base._Ready();
+        CreateDeclarationSpawnButton();
         CreateConditionalSpawnButton();
         if (Functions == null)
         {
@@ -68,6 +72,14 @@ public partial class NodeCreationMenu : PopupPanel
         _conditionalNodeSpawnerButton.Text = "If / Branch";
         _conditionalNodeSpawnerButton.Alignment = HorizontalAlignment.Left;
         ItemContainer.AddChild(_conditionalNodeSpawnerButton);
+    }
+
+    private void CreateDeclarationSpawnButton()
+    {
+        _declarationSpawnerButton.Pressed += () => { NewDeclarationNodeSelected?.Invoke(); };
+        _declarationSpawnerButton.Text = "Add new custom function";
+        _declarationSpawnerButton.Alignment = HorizontalAlignment.Left;
+        ItemContainer.AddChild(_declarationSpawnerButton);
     }
 
     private void SearchTextChanged(string text)
