@@ -1,4 +1,5 @@
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace VisLang.Editor.Debug;
 
@@ -66,6 +67,7 @@ public class CodeExecutor
     {
         IsRunning = true;
         Execute(CodeExecutionData.System.Entrance);
+        
         _codeLoopThread = new Thread(new ThreadStart(Loop));
         _codeLoopThread.Start();
     }

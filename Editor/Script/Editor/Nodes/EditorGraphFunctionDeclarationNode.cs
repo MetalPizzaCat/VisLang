@@ -10,6 +10,10 @@ public partial class EditorGraphFunctionDeclarationNode : EditorGraphNode
         set => Title = value;
     }
 
+    /*
+        Keep all of the function info here
+    */
+
     public override void GenerateFunction(FunctionInfo info)
     {
         /*

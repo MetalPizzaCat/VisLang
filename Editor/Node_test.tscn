@@ -1,7 +1,4 @@
-[gd_scene load_steps=4 format=3 uid="uid://ce2t4gda3qtjw"]
-
-[ext_resource type="Texture2D" uid="uid://csuobr08jgr0j" path="res://Assets/node_basic_style_exec.svg" id="1_c45gi"]
-[ext_resource type="Texture2D" uid="uid://c7xrcd3acougr" path="res://Assets/node_basic_style_exec_base.svg" id="2_vap6l"]
+[gd_scene load_steps=2 format=3 uid="uid://bacg5b0d8uxnl"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_bqhr7"]
 font_color = Color(0, 0, 0, 1)
@@ -12,7 +9,6 @@ font_color = Color(0, 0, 0, 1)
 texture_filter = 1
 position = Vector2(9.53674e-06, -52)
 scale = Vector2(0.253968, 0.315789)
-texture = ExtResource("1_c45gi")
 
 [node name="ColorRect" type="ColorRect" parent="."]
 visible = false
@@ -40,4 +36,3 @@ horizontal_alignment = 1
 [node name="NodeBasicStyleExecBase" type="Sprite2D" parent="."]
 position = Vector2(-0.83898, 12)
 scale = Vector2(0.256188, 0.220339)
-texture = ExtResource("2_vap6l")
