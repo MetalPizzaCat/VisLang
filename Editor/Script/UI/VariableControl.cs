@@ -3,6 +3,7 @@ using System;
 using System.Text.RegularExpressions;
 using VisLang.Editor;
 
+namespace VisLang.Editor;
 public partial class VariableControl : HBoxContainer
 {
     public delegate void SetterRequestedEventHandler(VisLang.Editor.VariableInfo info);

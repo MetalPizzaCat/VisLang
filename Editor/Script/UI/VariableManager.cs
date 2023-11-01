@@ -36,6 +36,7 @@ public partial class VariableManager : Control
     public delegate void VariableDeletedEventHandler(VisLang.Editor.VariableInfo info);
     public delegate void VariableNameChangedEventHandler(VisLang.Editor.VariableInfo info, string name);
     public delegate void VariableTypeChangedEventHandler(VisLang.Editor.VariableInfo info, VisLang.ValueTypeData type);
+    public delegate void VariableCreatedEventHandler(VisLang.Editor.VariableInfo info);
 
     /// <summary>
     /// Invoked when user presses button for creating a setter node
@@ -48,6 +49,11 @@ public partial class VariableManager : Control
 
     public event VariableNameChangedEventHandler? VariableNameChanged;
     public event VariableTypeChangedEventHandler? VariableTypeChanged;
+
+    /// <summary>
+    /// Invoked when user creates a new variable via GUI
+    /// </summary>
+    public event VariableCreatedEventHandler? VariableCreated;
 
     [Export]
     public PackedScene? VariableControlPlaceholder { get; set; }
@@ -76,7 +82,11 @@ public partial class VariableManager : Control
     }
     private void AddVariable()
     {
-        CreateVariableControl();
+        VariableControl? variable = CreateVariableControl();
+        if (variable != null)
+        {
+            VariableCreated?.Invoke(variable.Info);
+        }
     }
 
     public VariableInfo? CreateVariableFromInfo(VariableInitInfo info)

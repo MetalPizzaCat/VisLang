@@ -1,7 +1,13 @@
 using Godot;
 using System;
-using VisLang.Editor;
+using System.Collections.Generic;
 
+namespace VisLang.Editor;
+/// <summary>
+/// Class that represents function declaration object <para/>
+/// Instead of having separate structure for creating functions and to keep the simplicity of the language all user function info lives inside this node<para/>
+/// Any change to function signature should be reflected in this node
+/// </summary>
 public partial class EditorGraphFunctionDeclarationNode : EditorGraphNode
 {
     public string FunctionName
@@ -10,9 +16,11 @@ public partial class EditorGraphFunctionDeclarationNode : EditorGraphNode
         set => Title = value;
     }
 
-    /*
-        Keep all of the function info here
-    */
+    /// <summary>
+    /// All of the variables local to this function
+    /// </summary>
+    public List<VariableInitInfo> Variables { get; set; } = new();
+
 
     public override void GenerateFunction(FunctionInfo info)
     {

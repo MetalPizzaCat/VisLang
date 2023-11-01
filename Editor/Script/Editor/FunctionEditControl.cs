@@ -36,12 +36,14 @@ public partial class FunctionEditControl : Control
     private void DisplayCustomFunctionInfoFor(EditorGraphFunctionDeclarationNode node)
     {
         VariableManager.Visible = false;
+        CustomFunctionControl.CurrentFunction = node;
         CustomFunctionControl.Visible = true;
     }
 
     private void HideCustomFunctionInfo()
     {
         VariableManager.Visible = true;
+        CustomFunctionControl.CurrentFunction = null;
         CustomFunctionControl.Visible = false;
     }
 
