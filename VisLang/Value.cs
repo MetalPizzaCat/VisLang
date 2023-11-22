@@ -145,37 +145,37 @@ public class Value
             switch (ValueType)
             {
                 case ValueType.Bool:
-                    if (value.GetType() != typeof(bool))
+                    if (value is not bool)
                     {
                         throw new ValueTypeMismatchException($"Value type mismatch. Expected bool got {value.GetType()}", null);
                     }
                     break;
                 case ValueType.Char:
-                    if (value.GetType() != typeof(char))
+                    if (value is not char)
                     {
                         throw new ValueTypeMismatchException($"Value type mismatch. Expected char got {value.GetType()}", null);
                     }
                     break;
                 case ValueType.Integer:
-                    if (value.GetType() != typeof(long))
+                    if (value is not long)
                     {
                         throw new ValueTypeMismatchException($"Value type mismatch. Expected int got {value.GetType()}", null);
                     }
                     break;
                 case ValueType.Float:
-                    if (value.GetType() != typeof(double))
+                    if (value is not double)
                     {
                         throw new ValueTypeMismatchException($"Value type mismatch. Expected float got {value.GetType()}", null);
                     }
                     break;
                 case ValueType.String:
-                    if (value.GetType() != typeof(string))
+                    if (value is not string)
                     {
                         throw new ValueTypeMismatchException($"Value type mismatch. Expected string got {value.GetType()}", null);
                     }
                     break;
                 case ValueType.Address:
-                    if (value.GetType() != typeof(uint))
+                    if (value is not uint)
                     {
                         throw new ValueTypeMismatchException($"Value type mismatch. Expected uint got {value.GetType()}", null);
                     }
@@ -200,7 +200,7 @@ public class Value
     public Value(ValueTypeData variableType, uint address, object? data)
     {
         _typeData = variableType;
-        if (IsArray)
+        if (IsArray && data == null)
         {
             // arrays are stored as list of value objects
             // while technically arrays in the language can only store one object type

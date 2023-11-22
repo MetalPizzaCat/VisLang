@@ -59,8 +59,10 @@ public class ProcedureCallNode : ExecutionNode
         ExecutionNode? callSource = this;
         // set new destination to function root
         Interpreter.Current = proc.ProcedureNodesRoot;
+        // we have to provide context to avoid all variables being sort of global
+        NodeContext callContext = new(Interpreter, variables);
         // execute all given nodes
-        while (Interpreter.ExecuteNext(new NodeContext(Interpreter, variables)))
+        while (Interpreter.ExecuteNext(callContext))
         {
             // the whole thing is in the condition idk what do you want me to do here -_-
         }
