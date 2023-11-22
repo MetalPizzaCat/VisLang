@@ -42,7 +42,7 @@ public partial class CustomFunctionControl : Control
 
 	private void UpdateVariableTypeInfo(VariableInfo info, ValueTypeData type)
 	{
-		if (CurrentFunction?.Variables.FirstOrDefault(p => p.Id == info.Id.ToString()) is VariableInitInfo variable)
+		if (CurrentFunction?.Variables.Find(p => p.Id == info.Id.ToString()) is VariableInitInfo variable)
 		{
 			variable.Type = info.FullType;
 		}
@@ -50,7 +50,7 @@ public partial class CustomFunctionControl : Control
 
 	private void UpdateVariableName(VisLang.Editor.VariableInfo info, string name)
 	{
-		if (CurrentFunction?.Variables.FirstOrDefault(p => p.Id == info.Id.ToString()) is VariableInitInfo variable)
+		if (CurrentFunction?.Variables.Find(p => p.Id == info.Id.ToString()) is VariableInitInfo variable)
 		{
 			variable.Name = info.Name;
 		}
