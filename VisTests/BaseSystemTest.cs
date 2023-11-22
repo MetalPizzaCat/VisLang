@@ -688,6 +688,44 @@ public class BasicSystemTest
     }
 
     [TestMethod]
+    public void TestStringGet()
+    {
+        VisSystem system = new VisSystem();
+        system.VisSystemMemory.CreateVariable("arr", new ValueTypeData(VisLang.ValueType.String), "YOURMOM");
+        system.VisSystemMemory.CreateVariable("res", new ValueTypeData(VisLang.ValueType.Char), '0');
+        Assert.IsNotNull(system.VisSystemMemory["arr"]);
+        Assert.IsNotNull(system.VisSystemMemory["res"]);
+        Assert.IsTrue(system.VisSystemMemory["arr"]?.Data is string);
+
+        system.Entrance = new VariableSetNode(system)
+        {
+            Name = "res",
+            Inputs = new()
+            {
+                new StringGetElementAtNode(system)
+                    {
+                        Inputs = new ()
+                        {
+                            // array
+                            new VariableGetNode(system)
+                            {
+                                Name = "arr"
+                            },
+                            // value
+                            new VariableGetConstNode(){Value = new Value(new ValueTypeData(VisLang.ValueType.Integer),0)}
+                        }
+                    }
+            }
+        }; 
+        
+
+        system.Execute();
+        Assert.AreEqual('Y', (system.VisSystemMemory["arr"]?.Data as string)?[0] ?? '0');
+        Assert.AreEqual('Y', system.VisSystemMemory["res"]?.Data);
+        //Assert.AreEqual(69.0, system.VisSystemMemory["i"].Data);
+    }
+
+    [TestMethod]
     public void TestArrayAppendAndGetAndThenSet()
     {
         VisSystem system = new VisSystem();
