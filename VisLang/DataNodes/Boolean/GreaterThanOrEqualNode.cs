@@ -1,12 +1,12 @@
 namespace VisLang;
 
-public class GreaterThenOrEqualNode : BinaryOperationNodeBase
+public class GreaterThanOrEqualNode : BinaryOperationNodeBase
 {
-    public GreaterThenOrEqualNode(VisSystem? interpreter) : base(interpreter)
+    public GreaterThanOrEqualNode(VisSystem? interpreter) : base(interpreter)
     {
     }
 
-    public GreaterThenOrEqualNode()
+    public GreaterThanOrEqualNode()
     {
     }
 
@@ -14,7 +14,7 @@ public class GreaterThenOrEqualNode : BinaryOperationNodeBase
     {
         if (GetValueLeft(context).TypeData.Type != GetValueRight(context).TypeData.Type)
         {
-            throw new Interpreter.ValueTypeMismatchException($"Attempted to compare values but types do no match. Value A is {GetValueLeft(context).TypeData.Type} and value B is {GetValueRight(context).TypeData.Type}", this);
+            throw new Interpreter.ValueTypeMismatchException($"Attempted to compare values but types do no match. Value A is {GetValueLeft(context).GetTypeString()} and value B is {GetValueRight(context).GetTypeString()}", this);
         }
         if (GetValueLeft(context).TypeData.Type == ValueType.Integer)
         {
@@ -24,6 +24,6 @@ public class GreaterThenOrEqualNode : BinaryOperationNodeBase
         {
             return new Value(new ValueTypeData(ValueType.Bool), GetValueLeft(context).AsFloat() >= GetValueRight(context).AsFloat());
         }
-        throw new Interpreter.ValueTypeMismatchException($"Numeric comparisons can only be performed on Integers and Floats,type is {GetValueLeft(context).TypeData.Type}", this);
+        throw new Interpreter.ValueTypeMismatchException($"Numeric comparisons can only be performed on Integers and Floats,type is {GetValueLeft(context).GetTypeString()}", this);
     }
 }

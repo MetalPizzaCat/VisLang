@@ -328,4 +328,13 @@ public class Value
         }
         return ((bool?)_data).Value;
     }
+
+    public string GetTypeString()
+    {
+        if (TypeData.Type == ValueType.Array)
+        {
+            return $"Array[{TypeData.ArrayType}]";
+        }
+        return $"{TypeData.Type}";
+    }
 }

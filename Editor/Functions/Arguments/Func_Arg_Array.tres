@@ -6,5 +6,7 @@
 script = ExtResource("1_6m8vx")
 InputName = "Array"
 InputType = 6
-IsArray = true
-TypeMatchingPermissions = 2
+TypeMatchingPermissions = 1
+IsArrayTypeDependent = false
+HasArrayType = false
+ArrayDataType = 0

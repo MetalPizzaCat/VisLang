@@ -1,0 +1,20 @@
+[gd_resource type="Resource" load_steps=3 format=3 uid="uid://b5swcojgk5rf8"]
+
+[ext_resource type="Resource" uid="uid://7gx641ey4i1g" path="res://Functions/Arguments/Func_Arg_Int.tres" id="1_ilt01"]
+[ext_resource type="Script" path="res://Script/Function/FunctionInfo.cs" id="2_ejxk6"]
+
+[resource]
+script = ExtResource("2_ejxk6")
+FunctionName = "Less than or equals(int)"
+FunctionDescription = "Compares two integer values and returns true if value a is larger than value b"
+IsExecutable = false
+IsArrayTypeDependent = false
+ArrayTypeDefiningArgumentId = 0
+Inputs = [ExtResource("1_ilt01"), ExtResource("1_ilt01")]
+_output = 0
+IsOutputArrayTypeDependent = false
+_isOutputTypeKnown = true
+HasOutput = true
+_hasOutputArrayType = false
+_outputArrayType = 0
+NodeType = "VisLang.LessThanOrEqualNode"

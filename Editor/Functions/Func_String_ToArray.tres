@@ -1,0 +1,20 @@
+[gd_resource type="Resource" load_steps=3 format=3 uid="uid://b8yxhyc2wsbmk"]
+
+[ext_resource type="Resource" uid="uid://p8qn434wwk3d" path="res://Functions/Arguments/Func_Arg_String.tres" id="1_ax56x"]
+[ext_resource type="Script" path="res://Script/Function/FunctionInfo.cs" id="2_q1fi1"]
+
+[resource]
+script = ExtResource("2_q1fi1")
+FunctionName = "Convert string to array"
+FunctionDescription = "Converts string to array of characters"
+IsExecutable = false
+IsArrayTypeDependent = false
+ArrayTypeDefiningArgumentId = 0
+Inputs = [ExtResource("1_ax56x")]
+_output = 6
+IsOutputArrayTypeDependent = false
+_isOutputTypeKnown = true
+HasOutput = true
+_hasOutputArrayType = true
+_outputArrayType = 1
+NodeType = "VisLang.StringToArrayNode"

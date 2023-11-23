@@ -851,6 +851,76 @@ public class BasicSystemTest
     }
 
     [TestMethod]
+    public void TestArrayToString()
+    {
+        List<int> sourceArray = new List<int> { 1, 85, 19891 };
+        VisSystem system = new VisSystem();
+        system.VisSystemMemory.CreateVariable("arr", new ValueTypeData(VisLang.ValueType.Array),
+        sourceArray.Select(p => new Value(new ValueTypeData(VisLang.ValueType.Integer), p)).ToList());
+        Assert.IsNotNull(system.VisSystemMemory["arr"]);
+        Assert.IsTrue(system.VisSystemMemory["arr"]?.Data is List<Value>);
+
+        system.Entrance = new PrintNode(system)
+        {
+            Inputs = new()
+            {
+                new ArrayToStringNode(system)
+                    {
+                        Inputs = new ()
+                        {
+                            // array
+                            new VariableGetNode(system)
+                            {
+                                Name = "arr"
+                            },
+                        }
+                    }
+            }
+        };
+
+
+        system.Execute();
+        Assert.IsTrue(system.Output.Count > 0);
+        Assert.AreEqual(system.Output[0], string.Join(null, sourceArray));
+    }
+
+    [TestMethod]
+    public void TestStringToArray()
+    {
+        VisSystem system = new VisSystem();
+        system.VisSystemMemory.CreateVariable("str", new ValueTypeData(VisLang.ValueType.String), "bobert");
+        system.VisSystemMemory.CreateVariable("arr", new ValueTypeData(VisLang.ValueType.Array, VisLang.ValueType.Char));
+        Assert.IsNotNull(system.VisSystemMemory["arr"]);
+        Assert.IsNotNull(system.VisSystemMemory["str"]);
+        Assert.IsTrue(system.VisSystemMemory["str"]?.Data is string);
+        Assert.IsTrue(system.VisSystemMemory["arr"]?.Data is List<Value>);
+
+        system.Entrance = new VariableSetNode(system)
+        {
+            Name = "arr",
+            Inputs = new()
+            {
+                new StringToArrayNode(system)
+                    {
+                        Inputs = new ()
+                        {
+                            // array
+                            new VariableGetNode(system)
+                            {
+                                Name = "str"
+                            },
+                        }
+                    }
+            }
+        };
+
+        
+        system.Execute();
+
+        CollectionAssert.AreEqual("bobert".Select(p => p).ToArray(), (system.VisSystemMemory["arr"].Data as List<Value>).Select(p => (char)p.Data).ToArray());
+    }
+
+    [TestMethod]
     public void TestArrayAppendAndGetAndThenSet()
     {
         VisSystem system = new VisSystem();
@@ -1064,4 +1134,6 @@ public class BasicSystemTest
         Assert.AreNotEqual(69.0, system.VisSystemMemory["i"].Data);
         Assert.AreEqual(2.0, system.VisSystemMemory["i"].Data);
     }
+
+
 }

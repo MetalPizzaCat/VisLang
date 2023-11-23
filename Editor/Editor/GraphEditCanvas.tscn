@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://xge0jqowey4e"]
+[gd_scene load_steps=25 format=3 uid="uid://xge0jqowey4e"]
 
 [ext_resource type="Script" path="res://Script/Editor/NodeEditCanvas.cs" id="1_6hlyh"]
 [ext_resource type="PackedScene" uid="uid://cuw6xf1wlf0ag" path="res://UI/node_creation_menu.tscn" id="2_42ix0"]
@@ -12,10 +12,18 @@
 [ext_resource type="Resource" uid="uid://dpc05ors8lkbo" path="res://Functions/Func_Array_SetElem.tres" id="7_jn25i"]
 [ext_resource type="Resource" uid="uid://b4ca7uc8mn75i" path="res://Functions/Func_Array_GetElem.tres" id="8_600tb"]
 [ext_resource type="Resource" uid="uid://d26434tu8nhwe" path="res://Functions/Boolean/EqualsTo.tres" id="9_ana4y"]
-[ext_resource type="Resource" uid="uid://bwgym00igdmqj" path="res://Functions/Boolean/GreaterThen.tres" id="10_d8uq1"]
-[ext_resource type="Resource" uid="uid://cpn6us8h863if" path="res://Functions/Boolean/GreaterThenOrEquals.tres" id="11_1y8aq"]
-[ext_resource type="Resource" uid="uid://b4gtp1h4xe84" path="res://Functions/Boolean/GreaterThenOrEquals_float.tres" id="12_0atms"]
-[ext_resource type="Resource" uid="uid://bq1k0g111bwy3" path="res://Functions/Boolean/GreaterThen_float.tres" id="13_2iya1"]
+[ext_resource type="Resource" uid="uid://bwgym00igdmqj" path="res://Functions/Boolean/GreaterThan.tres" id="10_kpodo"]
+[ext_resource type="Resource" uid="uid://cpn6us8h863if" path="res://Functions/Boolean/GreaterThanOrEquals.tres" id="11_qlrd0"]
+[ext_resource type="Resource" uid="uid://b4gtp1h4xe84" path="res://Functions/Boolean/GreaterThanOrEquals_float.tres" id="12_68kn0"]
+[ext_resource type="Resource" uid="uid://bq1k0g111bwy3" path="res://Functions/Boolean/GreaterThan_float.tres" id="13_0f5lx"]
+[ext_resource type="Resource" uid="uid://cccdbed8e73hw" path="res://Functions/Func_Array_ToString.tres" id="14_348wx"]
+[ext_resource type="Resource" uid="uid://b8yxhyc2wsbmk" path="res://Functions/Func_String_ToArray.tres" id="15_e05o3"]
+[ext_resource type="Resource" uid="uid://ma5qkqbpbwum" path="res://Functions/Func_Add_I.tres" id="16_tkk3g"]
+[ext_resource type="Resource" uid="uid://bq0hlh6d85gqm" path="res://Functions/Func_Mod_I.tres" id="17_bmtlc"]
+[ext_resource type="Resource" uid="uid://dw8ppw4t5lglp" path="res://Functions/Func_Array_Len.tres" id="18_83dt5"]
+[ext_resource type="Resource" uid="uid://b8tsop2hhme8d" path="res://Functions/Boolean/LessThan.tres" id="19_4xjfv"]
+[ext_resource type="Resource" uid="uid://b5swcojgk5rf8" path="res://Functions/Boolean/LessThanOrEquals.tres" id="20_l2aiy"]
+[ext_resource type="Resource" uid="uid://dngnpsexmfai0" path="res://Functions/Func_Array_IndexOf.tres" id="21_dy27t"]
 
 [node name="GraphEdit" type="GraphEdit" node_paths=PackedStringArray("CreationMenu", "ExecStart")]
 anchors_preset = -1
@@ -32,7 +40,7 @@ CodeTheme = ExtResource("6_skwwu")
 ExecStart = NodePath("ExecNode")
 
 [node name="Functions" parent="." instance=ExtResource("2_qr85a")]
-Functions = [ExtResource("4_lgacb"), ExtResource("5_j1bpx"), ExtResource("6_86guk"), ExtResource("7_jn25i"), ExtResource("8_600tb"), ExtResource("9_ana4y"), ExtResource("10_d8uq1"), ExtResource("11_1y8aq"), ExtResource("12_0atms"), ExtResource("13_2iya1")]
+Functions = [ExtResource("4_lgacb"), ExtResource("5_j1bpx"), ExtResource("6_86guk"), ExtResource("7_jn25i"), ExtResource("8_600tb"), ExtResource("9_ana4y"), ExtResource("10_kpodo"), ExtResource("11_qlrd0"), ExtResource("12_68kn0"), ExtResource("13_0f5lx"), ExtResource("14_348wx"), ExtResource("15_e05o3"), ExtResource("16_tkk3g"), ExtResource("17_bmtlc"), ExtResource("18_83dt5"), ExtResource("19_4xjfv"), ExtResource("20_l2aiy"), ExtResource("21_dy27t")]
 
 [node name="PopupPanel" parent="." node_paths=PackedStringArray("Functions") instance=ExtResource("2_42ix0")]
 visible = false
