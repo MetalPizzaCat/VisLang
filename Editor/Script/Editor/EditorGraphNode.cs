@@ -519,7 +519,7 @@ public partial class EditorGraphNode : GraphNode
                 inputs.Add(new Files.EditorNodeSaveData.NodeInputSaveData(input.InputData, input.InputType));
             }
         }
-        return new Files.EditorNodeSaveData(Name, Position, Info?.ResourcePath)
+        return new Files.EditorNodeSaveData(Name, CanvasPosition, Info?.ResourcePath)
         {
             ManualInputs = inputs,
             InvalidInputs = _invalidInputs.Select(p => p.PortName).ToList(),
