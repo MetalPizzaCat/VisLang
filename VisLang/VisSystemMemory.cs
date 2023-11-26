@@ -101,7 +101,7 @@ public class VisSystemMemory
     /// <param name="type">Type of the variable</param>
     /// <param name="value">Possible init value or null if default should be used</param>
     /// <returns>True if variable can be created or false if variable name is already taken</returns>
-    public bool CreateVariable(ref Dictionary<string, uint> variableList, string name, ValueTypeData type, object? value = null)
+    public bool CreateVariable(Dictionary<string, uint> variableList, string name, ValueTypeData type, object? value = null)
     {
         // this still works since all values are stored in the system even if variable names are not
         if (variableList.ContainsKey(name) && Memory.ContainsKey(variableList[name]))

@@ -18,7 +18,7 @@ public class BasicSystemTest
     }
 
     /// <summary>
-    /// Test if we can create a variable in the system and then change it 
+    /// Test if we can create a variable in the system and Than change it 
     /// </summary>
     [TestMethod]
     public void TestVariableSet()
@@ -34,7 +34,7 @@ public class BasicSystemTest
     }
 
     /// <summary>
-    /// Test if we can create two variables in the system and then set one to another
+    /// Test if we can create two variables in the system and Than set one to another
     /// </summary>
     [TestMethod]
     public void TestVariableGetSet()
@@ -148,7 +148,7 @@ public class BasicSystemTest
     [TestMethod]
     public void TestComparisonGreaterAndGreaterEqual()
     {
-        GreaterThenNode equalsNode = new GreaterThenNode(null)
+        GreaterThanNode equalsNode = new GreaterThanNode(null)
         {
             Inputs = new()
             {
@@ -158,7 +158,7 @@ public class BasicSystemTest
         };
         Assert.IsFalse(equalsNode.GetValue().AsBool());
 
-        equalsNode = new GreaterThenNode(null)
+        equalsNode = new GreaterThanNode(null)
         {
             Inputs = new()
             {
@@ -168,7 +168,7 @@ public class BasicSystemTest
         };
         Assert.IsTrue(equalsNode.GetValue().AsBool());
 
-        equalsNode = new GreaterThenNode(null)
+        equalsNode = new GreaterThanNode(null)
         {
             Inputs = new()
             {
@@ -179,7 +179,7 @@ public class BasicSystemTest
         Assert.ThrowsException<VisLang.Interpreter.ValueTypeMismatchException>(() => equalsNode.GetValue());
 
 
-        equalsNode = new GreaterThenNode(null)
+        equalsNode = new GreaterThanNode(null)
         {
             Inputs = new()
             {
@@ -190,7 +190,7 @@ public class BasicSystemTest
         Assert.IsTrue(equalsNode.GetValue().AsBool());
 
 
-        equalsNode = new GreaterThenNode(null)
+        equalsNode = new GreaterThanNode(null)
         {
             Inputs = new()
             {
@@ -885,6 +885,41 @@ public class BasicSystemTest
     }
 
     [TestMethod]
+    public void TestForLoop()
+    {
+        VisSystem system = new VisSystem();
+        system.Entrance = new ForNode(system)
+        {
+            IteratorVariableName = "lilly",
+            Inputs = new()
+            {
+                // i = 0
+                new VariableGetConstNode(){Value = new Value(new ValueTypeData(VisLang.ValueType.Integer), 0L)},
+                // i < 10
+                new VariableGetConstNode(){Value = new Value(new ValueTypeData(VisLang.ValueType.Integer), 10L)},
+                // i is i + 1
+                new VariableGetConstNode(){Value = new Value(new ValueTypeData(VisLang.ValueType.Integer), 1L)},
+            },
+            DefaultNext = new PrintNode(system)
+            {
+                Inputs = new()
+                {
+                    new VariableGetNode(system) { Name = "lilly"}
+                }
+            }
+        };
+
+
+        system.Execute();
+        Assert.IsTrue(system.Output.Count > 0);
+        CollectionAssert.AreEqual
+        (
+            Enumerable.Range(0, 10).Select(p => p.ToString()).ToArray(),
+            system.Output.ToArray()
+        );
+    }
+
+    [TestMethod]
     public void TestStringToArray()
     {
         VisSystem system = new VisSystem();
@@ -914,14 +949,14 @@ public class BasicSystemTest
             }
         };
 
-        
+
         system.Execute();
 
         CollectionAssert.AreEqual("bobert".Select(p => p).ToArray(), (system.VisSystemMemory["arr"].Data as List<Value>).Select(p => (char)p.Data).ToArray());
     }
 
     [TestMethod]
-    public void TestArrayAppendAndGetAndThenSet()
+    public void TestArrayAppendAndGetAndThanSet()
     {
         VisSystem system = new VisSystem();
         system.VisSystemMemory.CreateVariable("arr", new ValueTypeData(VisLang.ValueType.Array));

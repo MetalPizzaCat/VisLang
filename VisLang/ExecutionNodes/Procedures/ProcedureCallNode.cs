@@ -1,3 +1,5 @@
+using VisLang.Interpreter;
+
 namespace VisLang;
 
 public class ProcedureCallNode : ExecutionNode
@@ -13,20 +15,16 @@ public class ProcedureCallNode : ExecutionNode
     public override void Execute(NodeContext? context = null)
     {
         // if this function appears overcommented, then it's because i was writing algorithms in comments without code to not  forgoer what i was doing :3
-        base.Execute();
+        base.Execute(context);
         if (Interpreter == null)
         {
-            throw new NullReferenceException("Unable to perform procedure call because no system is available");
+            throw new VisLangNullException("Unable to perform procedure call because no system is available", this);
         }
         if (string.IsNullOrWhiteSpace(ProcedureName))
         {
-            throw new NullReferenceException("Unable to call procedure because no name was given");
+            throw new VisLangNullException("Unable to call procedure because no name was given", this);
         }
-        VisProcedure? proc = Interpreter.GetProcedure(ProcedureName);
-        if (proc == null)
-        {
-            throw new NullReferenceException("Interpreter system does not contain a function with a given name");
-        }
+        VisProcedure? proc = Interpreter.GetProcedure(ProcedureName) ?? throw new VisLangNullException("Interpreter system does not contain a function with a given name", this);
         Dictionary<string, uint> variables = new Dictionary<string, uint>();
 
         // to pass arguments we also use a simple solution of just creating variables inside new system
@@ -35,14 +33,14 @@ public class ProcedureCallNode : ExecutionNode
         int currentArgumentId = 0;
         foreach ((string argName, ValueTypeData argType) in proc.Arguments)
         {
-            Interpreter.VisSystemMemory.CreateVariable(ref variables, argName, argType, Inputs.ElementAtOrDefault(currentArgumentId)?.GetValue(context)?.Data);
+            Interpreter.VisSystemMemory.CreateVariable(variables, argName, argType, Inputs.ElementAtOrDefault(currentArgumentId)?.GetValue(context)?.Data);
             // this solution could cause issues if arguments are messed up and don't match function signature
             // but will make editors and parsers deal with this problem :3
             currentArgumentId++;
         }
         foreach ((string argName, ValueTypeData argType) in proc.DefaultVariables)
         {
-            Interpreter.VisSystemMemory.CreateVariable(ref variables, argName, argType, null);
+            Interpreter.VisSystemMemory.CreateVariable(variables, argName, argType, null);
         }
         // a bit of a cheaty way to create variable returns 
         // technically this leaves the door open for functions that return multiple values
@@ -51,7 +49,7 @@ public class ProcedureCallNode : ExecutionNode
         // If ANY procedure wants to have return value it WILL have to write into @output variable 
         if (proc.OutputValueType != null)
         {
-            Interpreter.VisSystemMemory.CreateVariable(ref variables, "@output", proc.OutputValueType.Value);
+            Interpreter.VisSystemMemory.CreateVariable(variables, "@output", proc.OutputValueType.Value);
         }
         // TODO: Figure out how to point system to this node specifically
         // record where we were called from, like putting return address on the stack

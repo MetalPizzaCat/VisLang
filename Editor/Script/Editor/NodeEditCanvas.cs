@@ -357,6 +357,10 @@ public partial class NodeEditCanvas : GraphEdit
             // nothing was created, logic can not continue
             return null;
         }
+        // if(node is ForeachNode)
+        // {
+            
+        // }
         node.Interpreter = system;
         node.DebugData = sourceNode;
         node.Inputs = GenerateDataTreeForNode(sourceNode, system);
@@ -378,7 +382,7 @@ public partial class NodeEditCanvas : GraphEdit
         {
             // we hit a node that we processed already
             // but we still want to continue towards this node
-            if (nodes.Any(p => p.Node == next))
+            if (nodes.Exists(p => p.Node == next))
             {
                 if (prev != null)
                 {
@@ -427,7 +431,6 @@ public partial class NodeEditCanvas : GraphEdit
     /// <returns>A single root node</returns>
     public VisLang.ExecutionNode? GenerateNodeTree(VisSystem system)
     {
-        List<Parsing.ConnectionInfo> connections = GetNodeConnections();
         // in future there could be an option of finding exec on the go
         // but this seems unnecessary at least for now
         if (ExecStart == null)
@@ -445,7 +448,7 @@ public partial class NodeEditCanvas : GraphEdit
             {
                 break;
             }
-            if (nodes.FirstOrDefault(p => p.Node == start).CompiledNode is VisLang.FlowControlIfNode branch)
+            if (nodes.Find(p => p.Node == start).CompiledNode is VisLang.FlowControlIfNode branch)
             {
                 VisLang.ExecutionNode? failLine = ProcessLineOfExecutables(ref branches, ref nodes, start.FailureNextExecutable?.Node, system);
                 branch.FailureNext = failLine;

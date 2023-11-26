@@ -1,0 +1,59 @@
+namespace VisLang;
+
+/// <summary>
+/// Base node for all "for" based loops
+/// </summary>
+public class ForNode : ForNodeBase
+{
+    public ForNode()
+    {
+    }
+
+    public ForNode(VisSystem? interpreter) : base(interpreter)
+    {
+
+    }
+
+    public Value GetStartValue(NodeContext? context) => Inputs.FirstOrDefault()?.GetValue(context) ?? new Value(new ValueTypeData(ValueType.Integer), 0);
+    public Value GetStopValue(NodeContext? context) => Inputs.ElementAtOrDefault(1)?.GetValue(context) ?? new Value(new ValueTypeData(ValueType.Integer), 0);
+    public Value GetStepValue(NodeContext? context) => Inputs.ElementAtOrDefault(2)?.GetValue(context) ?? new Value(new ValueTypeData(ValueType.Integer), 0);
+
+    public override void Execute(NodeContext? context = null)
+    {
+        base.Execute(context);
+        if (Interpreter == null)
+        {
+            throw new Interpreter.VisLangNullException("Interpreter is invalid", this);
+        }
+        Value? val = Interpreter?.VisSystemMemory.GetValue(IteratorVariableName, context?.Variables);
+        if (val == null)
+        {
+            if (context == null)
+            {
+                Interpreter?.VisSystemMemory.CreateVariable(IteratorVariableName, GetStartValue(context).TypeData, GetStartValue(context).Data);
+            }
+            else
+            {
+                Interpreter?.VisSystemMemory.CreateVariable(context.Variables, IteratorVariableName, GetStartValue(context).TypeData, GetStartValue(context).Data);
+            }
+            return;
+        }
+        if (val.ValueType == ValueType.Integer)
+        {
+            val.Data = (long)(val.Data ?? 0) + (long)(GetStepValue(context).Data ?? 0);
+            if ((long)val.Data >= (long)(GetStopValue(context).Data ?? 0))
+            {
+                WasFinished = true;
+            }
+        }
+        if (val.ValueType == ValueType.Float)
+        {
+            val.Data = (double)(val.Data ?? 0) + (double)(GetStepValue(context).Data ?? 0);
+            if ((double)val.Data >= (double)(GetStopValue(context).Data ?? 0))
+            {
+                WasFinished = true;
+            }
+        }
+    }
+
+}
