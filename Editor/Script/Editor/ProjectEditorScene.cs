@@ -117,9 +117,16 @@ public partial class ProjectEditorScene : Control
         }
         ClearOutputs();
         _codeExecutor = new CodeExecutor(PrepareForExecution());
-        _codeExecutor.CodeExecutionData.System.OnOutputAdded += PrintOutputMessage;
-        _codeExecutor.BreakpointHit += HandleBreakpointOnNode;
-        _codeExecutor.ExecutionOver += HandleExecutionOver;
+        _codeExecutor.CodeExecutionData.System.OnOutputAdded += (string msg) =>
+        {
+            CallDeferred(nameof(PrintOutputMessage), msg);
+        };
+
+        _codeExecutor.BreakpointHit += (EditorGraphNode node, ExecutionNode sourceNode) =>
+        {
+            CallDeferred(nameof(HandleBreakpointOnNode), node, new ExecutionNodeData(sourceNode));
+        };
+        _codeExecutor.ExecutionOver += () => { CallDeferred(nameof(HandleExecutionOver)); };
         try
         {
             _codeExecutor.Run();
@@ -138,7 +145,7 @@ public partial class ProjectEditorScene : Control
     /// </summary>
     /// <param name="node">Editor node that was marked as breakpoint</param>
     /// <param name="sourceNode">Internal execution node</param>
-    private void HandleBreakpointOnNode(EditorGraphNode node, ExecutionNode sourceNode)
+    private void HandleBreakpointOnNode(EditorGraphNode node, ExecutionNodeData sourceNode)
     {
         if (VariableDisplayContainer == null || _codeExecutor == null)
         {
@@ -159,7 +166,7 @@ public partial class ProjectEditorScene : Control
             }
             Label label = new Label()
             {
-                Text = $"({address}) {name} [{value.ValueType}] = {value?.Data}"
+                Text = $"({address}) {name} [{value.ValueType}] = {value.TryAsString()}"
             };
             VariableDisplayContainer.AddChild(label);
             _variableValues.Add(label);

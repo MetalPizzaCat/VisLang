@@ -14,6 +14,10 @@ public partial class FunctionEditControl : Control
     public VariableManager VariableManager { get; private set; }
 
     [Export]
+    public CustomFunctionControl CustomFunctionControl { get; private set; }
+
+
+    [Export]
     public NodeEditCanvas NodeCanvas { get; private set; }
 
     private List<EditorGraphVariableNode> _variableNodes = new();
@@ -25,6 +29,22 @@ public partial class FunctionEditControl : Control
         VariableManager.VariableNameChanged += UpdateVariableNodeNames;
         VariableManager.VariableTypeChanged += (VisLang.Editor.VariableInfo info, VisLang.ValueTypeData type) => { UpdateVariableNodes(info); };
         NodeCanvas.NodeDeleted += RemoveVariableNode;
+        NodeCanvas.DeclarationSelected += DisplayCustomFunctionInfoFor;
+        NodeCanvas.DeclarationDeselected += (EditorGraphFunctionDeclarationNode node) => HideCustomFunctionInfo();
+    }
+
+    private void DisplayCustomFunctionInfoFor(EditorGraphFunctionDeclarationNode node)
+    {
+        VariableManager.Visible = false;
+        CustomFunctionControl.CurrentFunction = node;
+        CustomFunctionControl.Visible = true;
+    }
+
+    private void HideCustomFunctionInfo()
+    {
+        VariableManager.Visible = true;
+        CustomFunctionControl.CurrentFunction = null;
+        CustomFunctionControl.Visible = false;
     }
 
     private void RemoveVariableNode(EditorGraphNode node)

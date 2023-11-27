@@ -69,7 +69,7 @@ public partial class EditorGraphVariableNode : EditorGraphNode
     public Files.VariableNodeSaveData GetVariableSaveData()
     {
         Files.EditorNodeSaveData data = GetSaveData();
-        return new Files.VariableNodeSaveData(Variable.Id, IsGetter, Name, GlobalPosition)
+        return new Files.VariableNodeSaveData(Variable.Id, IsGetter, Name, CanvasPosition)
         {
             ManualInputs = data.ManualInputs,
             InvalidInputs = data.InvalidInputs,

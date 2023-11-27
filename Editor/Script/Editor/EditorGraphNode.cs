@@ -25,6 +25,12 @@ public partial class EditorGraphNode : GraphNode
     public delegate void DeleteRequestedEventHandler(EditorGraphNode? sender);
     public event DeleteRequestedEventHandler? DeleteRequested;
 
+    public delegate void NodeSelectedEventHandler(EditorGraphNode? sender);
+    public event NodeSelectedEventHandler? EditorNodeSelected;
+
+    public delegate void NodeDeselectedEventHandler(EditorGraphNode? sender);
+    public event NodeDeselectedEventHandler? EditorNodeDeselected;
+
     [Export]
     public FunctionInfo? Info { get; set; }
     [Export]
@@ -300,6 +306,8 @@ public partial class EditorGraphNode : GraphNode
         {
             CloseRequest += () => DeleteRequested?.Invoke(this);
         }
+        NodeSelected += () => EditorNodeSelected?.Invoke(this);
+        NodeDeselected += () => EditorNodeDeselected?.Invoke(this);
     }
 
     /// <summary>
@@ -511,7 +519,7 @@ public partial class EditorGraphNode : GraphNode
                 inputs.Add(new Files.EditorNodeSaveData.NodeInputSaveData(input.InputData, input.InputType));
             }
         }
-        return new Files.EditorNodeSaveData(Name, Position, Info?.ResourcePath)
+        return new Files.EditorNodeSaveData(Name, CanvasPosition, Info?.ResourcePath)
         {
             ManualInputs = inputs,
             InvalidInputs = _invalidInputs.Select(p => p.PortName).ToList(),

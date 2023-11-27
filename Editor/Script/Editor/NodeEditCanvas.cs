@@ -17,6 +17,12 @@ public partial class NodeEditCanvas : GraphEdit
     public delegate void NodeDeletedEventHandler(EditorGraphNode node);
     public event NodeDeletedEventHandler? NodeDeleted;
 
+    public delegate void DeclarationSelectedEventHandler(EditorGraphFunctionDeclarationNode node);
+    public event DeclarationSelectedEventHandler? DeclarationSelected;
+
+    public delegate void DeclarationDeselectedEventHandler(EditorGraphFunctionDeclarationNode node);
+    public event DeclarationDeselectedEventHandler? DeclarationDeselected;
+
     [Export]
     public NodeCreationMenu CreationMenu { get; private set; }
 
@@ -44,6 +50,8 @@ public partial class NodeEditCanvas : GraphEdit
         }
         CreationMenu.FunctionSelected += SpawnFunction;
         CreationMenu.ConditionalNodeSelected += SpawnConditionalNode;
+        CreationMenu.ForLoopNodeSelected += SpawnForLoopNode;
+        CreationMenu.NewDeclarationNodeSelected += SpawnFunctionDeclarationNode;
     }
 
     public override void _Input(InputEvent @event)
@@ -148,6 +156,29 @@ public partial class NodeEditCanvas : GraphEdit
     private void SpawnConditionalNode()
     {
         MakeNodeFromSignature<EditorGraphBranchNode>(null);
+    }
+
+    private void SpawnForLoopNode()
+    {
+        MakeNodeFromSignature<EditorGraphForLoopNode>(null);
+    }
+
+    private void SpawnFunctionDeclarationNode()
+    {
+        EditorGraphFunctionDeclarationNode? node = MakeNodeFromSignature<EditorGraphFunctionDeclarationNode>(new FunctionInfo()
+        {
+            FunctionName = "Custom func",
+            Inputs = new()
+            {
+                new FunctionInputInfo("test1", VisLang.ValueType.Float, null),
+                new FunctionInputInfo("test2", VisLang.ValueType.Float, null)
+            }
+        });
+        if (node != null)
+        {
+            node.EditorNodeSelected += (EditorGraphNode? edit) => DeclarationSelected?.Invoke(node);
+            node.EditorNodeDeselected += (EditorGraphNode? edit) => DeclarationDeselected?.Invoke(node);
+        }
     }
 
     /// <summary>
@@ -308,7 +339,19 @@ public partial class NodeEditCanvas : GraphEdit
             // can choose between solutions based on how many connections exec has
             if (input.Node.IsExecutable)
             {
-                throw new NotImplementedException("Support for passing result of exec node to exec node is not added yet");
+                // temp solution before functions are fully implemented is to only handle loops
+                if (input.Node is EditorGraphForLoopNode loop)
+                {
+                    inputs.Add(new VariableGetNode(system)
+                    {
+                        Name = loop.InternalIteratorVariableName
+                    });
+                    continue;
+                }
+                else
+                {
+                    throw new NotImplementedException("Support for passing result of exec node to exec node is not added yet");
+                }
             }
             // for data nodes we have to implement tree parsing that goes from left to right
             VisLang.DataNode? data = input.Node.CreateInterpretableNode<VisLang.DataNode>();
@@ -340,7 +383,7 @@ public partial class NodeEditCanvas : GraphEdit
 
     private VisLang.ExecutionNode? ProcessLineOfExecutables
     (
-        ref List<EditorGraphBranchNode> branches, // these might not need to be passed as references but i'll still mark them as such to make it clear that these WILL be edited
+        ref List<EditorGraphSplitExecutionNode> branches, // these might not need to be passed as references but i'll still mark them as such to make it clear that these WILL be edited
         ref List<ProcessedNodeInfo> nodes,
         EditorGraphNode? start,
         VisSystem system
@@ -353,7 +396,7 @@ public partial class NodeEditCanvas : GraphEdit
         {
             // we hit a node that we processed already
             // but we still want to continue towards this node
-            if (nodes.Any(p => p.Node == next))
+            if (nodes.Exists(p => p.Node == next))
             {
                 if (prev != null)
                 {
@@ -366,10 +409,10 @@ public partial class NodeEditCanvas : GraphEdit
 
             }
             EditorGraphNode? nodeToSwitchTo = null;
-            if (next is EditorGraphBranchNode branch)
+            if (next is EditorGraphSplitExecutionNode branch)
             {
                 branches.Add(branch);
-                nodeToSwitchTo = branch.SuccessNextExecutable?.Node;
+                nodeToSwitchTo = branch.UpperNextExecutable?.Node;
             }
             else
             {
@@ -402,7 +445,6 @@ public partial class NodeEditCanvas : GraphEdit
     /// <returns>A single root node</returns>
     public VisLang.ExecutionNode? GenerateNodeTree(VisSystem system)
     {
-        List<Parsing.ConnectionInfo> connections = GetNodeConnections();
         // in future there could be an option of finding exec on the go
         // but this seems unnecessary at least for now
         if (ExecStart == null)
@@ -410,20 +452,25 @@ public partial class NodeEditCanvas : GraphEdit
             return null;
         }
         List<ProcessedNodeInfo> nodes = new();
-        List<EditorGraphBranchNode> branches = new();
+        List<EditorGraphSplitExecutionNode> branches = new();
         VisLang.ExecutionNode? root = ProcessLineOfExecutables(ref branches, ref nodes, ExecStart.NextExecutable?.Node, system);
 
         while (branches.Count > 0)
         {
-            EditorGraphBranchNode? start = branches.FirstOrDefault();
+            EditorGraphSplitExecutionNode? start = branches.FirstOrDefault();
             if (start == null)
             {
                 break;
             }
-            if (nodes.FirstOrDefault(p => p.Node == start).CompiledNode is VisLang.FlowControlIfNode branch)
+            if (nodes.Find(p => p.Node == start).CompiledNode is VisLang.FlowControlIfNode branch)
             {
-                VisLang.ExecutionNode? failLine = ProcessLineOfExecutables(ref branches, ref nodes, start.FailureNextExecutable?.Node, system);
+                VisLang.ExecutionNode? failLine = ProcessLineOfExecutables(ref branches, ref nodes, start.LowerNextExecutable?.Node, system);
                 branch.FailureNext = failLine;
+            }
+            if (nodes.Find(p => p.Node == start).CompiledNode is VisLang.ForNodeBase loop)
+            {
+                VisLang.ExecutionNode? finishLine = ProcessLineOfExecutables(ref branches, ref nodes, start.LowerNextExecutable?.Node, system);
+                loop.FinishedNext = finishLine;
             }
             branches.Remove(start);
         }
@@ -443,9 +490,13 @@ public partial class NodeEditCanvas : GraphEdit
             {
                 data.VariableNodes.Add(variableNode.GetVariableSaveData());
             }
-            if (node is EditorGraphBranchNode branch)
+            if (node is EditorGraphBranchNode)
             {
                 data.BranchNodes.Add(node.GetSaveData());
+            }
+            if (node is EditorGraphForLoopNode)
+            {
+                data.LoopNodes.Add(node.GetSaveData());
             }
             else
             {
@@ -501,6 +552,10 @@ public partial class NodeEditCanvas : GraphEdit
         foreach (EditorNodeSaveData node in data.BranchNodes)
         {
             MakeNodeFromSignature<EditorGraphBranchNode>(null)?.LoadData(node);
+        }
+        foreach (EditorNodeSaveData node in data.LoopNodes)
+        {
+            MakeNodeFromSignature<EditorGraphForLoopNode>(null)?.LoadData(node);
         }
 
         foreach (NodeCollectionSaveData.StoredConnectionInfo conn in data.Connections)

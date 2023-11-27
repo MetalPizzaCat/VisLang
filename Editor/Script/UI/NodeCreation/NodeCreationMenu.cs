@@ -8,9 +8,13 @@ public partial class NodeCreationMenu : PopupPanel
     public delegate void FunctionSelectedEventHandler(FunctionInfo info);
     public delegate void SpecialFunctionSelectedEventHandler(SpecialFunctionInfo info);
     public delegate void ConditionalNodeSelectedEventHandler();
+    public delegate void ForLoopNodeSelectedEventHandler();
+    public delegate void NewDeclarationNodeSelectedEventHandler();
     public event FunctionSelectedEventHandler? FunctionSelected;
     public event ConditionalNodeSelectedEventHandler? ConditionalNodeSelected;
+    public event ForLoopNodeSelectedEventHandler? ForLoopNodeSelected;
     public event SpecialFunctionSelectedEventHandler? SpecialFunctionSelected;
+    public event NewDeclarationNodeSelectedEventHandler? NewDeclarationNodeSelected;
 
     [Export]
     public FunctionSignatureManager? Functions { get; set; }
@@ -24,12 +28,16 @@ public partial class NodeCreationMenu : PopupPanel
 
     public List<NodeCreationButtonBase> Buttons { get; set; } = new();
 
-    private Button _conditionalNodeSpawnerButton = new Button();
+    private Button _conditionalNodeSpawnerButton = new();
+    private Button _declarationSpawnerButton = new();
+     private Button _loopSpawnerButton = new();
 
     public override void _Ready()
     {
         base._Ready();
+        CreateDeclarationSpawnButton();
         CreateConditionalSpawnButton();
+        CreateForLoopSpawnButton();
         if (Functions == null)
         {
             return;
@@ -68,6 +76,22 @@ public partial class NodeCreationMenu : PopupPanel
         _conditionalNodeSpawnerButton.Text = "If / Branch";
         _conditionalNodeSpawnerButton.Alignment = HorizontalAlignment.Left;
         ItemContainer.AddChild(_conditionalNodeSpawnerButton);
+    }
+
+    private void CreateForLoopSpawnButton()
+    {
+        _loopSpawnerButton.Pressed += () => { ForLoopNodeSelected?.Invoke(); };
+        _loopSpawnerButton.Text = "For loop";
+        _loopSpawnerButton.Alignment = HorizontalAlignment.Left;
+        ItemContainer.AddChild(_loopSpawnerButton);
+    }
+
+    private void CreateDeclarationSpawnButton()
+    {
+        _declarationSpawnerButton.Pressed += () => { NewDeclarationNodeSelected?.Invoke(); };
+        _declarationSpawnerButton.Text = "Add new custom function";
+        _declarationSpawnerButton.Alignment = HorizontalAlignment.Left;
+        ItemContainer.AddChild(_declarationSpawnerButton);
     }
 
     private void SearchTextChanged(string text)

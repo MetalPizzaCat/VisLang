@@ -25,4 +25,11 @@ public class NodeContext
     /// This can be used to create local variables, for example variables for a function
     /// </summary>
     public Dictionary<string, uint>? Variables { get; set; }
+
+
+    /// <summary>
+    /// The stack used to store levels of loops to be able to resume from the loop node instead of just quitting<para/>
+    /// This has to be stored in the context because otherwise loops gain power to mangle execution flow
+    /// </summary>
+    public Stack<ExecutionNode> LoopNodeStack { get; private set; } = new();
 }

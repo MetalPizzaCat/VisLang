@@ -1,0 +1,80 @@
+[gd_scene load_steps=3 format=3 uid="uid://c5mxyja8mo5y2"]
+
+[ext_resource type="Script" path="res://Script/UI/VariableControl.cs" id="1_ilhb0"]
+[ext_resource type="Texture2D" uid="uid://cwgvbucmd5jax" path="res://Assets/UI/warning.svg" id="2_sl3i4"]
+
+[node name="VariableControl" type="HBoxContainer" node_paths=PackedStringArray("NameEdit", "TypeOptionButton", "ArrayTypeOptionButton", "ContextMenu", "ErrorDisplayControl")]
+offset_right = 332.0
+offset_bottom = 31.0
+script = ExtResource("1_ilhb0")
+NameEdit = NodePath("LineEdit")
+TypeOptionButton = NodePath("BaseTypeOptionButton")
+ArrayTypeOptionButton = NodePath("ArrayTypeOptionButton")
+ContextMenu = NodePath("PopupMenu")
+ErrorDisplayControl = NodePath("WarningLabel")
+
+[node name="WarningLabel" type="TextureRect" parent="."]
+visible = false
+layout_mode = 2
+texture = ExtResource("2_sl3i4")
+expand_mode = 3
+
+[node name="GetButton" type="Button" parent="."]
+layout_mode = 2
+text = "Get"
+
+[node name="GetButton2" type="Button" parent="."]
+visible = false
+layout_mode = 2
+text = "Get"
+
+[node name="SetButton" type="Button" parent="."]
+visible = false
+layout_mode = 2
+text = "Set"
+
+[node name="LineEdit" type="LineEdit" parent="."]
+custom_minimum_size = Vector2(125, 0)
+layout_mode = 2
+mouse_filter = 1
+text = "Default"
+placeholder_text = "Variable name"
+context_menu_enabled = false
+clear_button_enabled = true
+
+[node name="BaseTypeOptionButton" type="OptionButton" parent="."]
+layout_mode = 2
+
+[node name="ArrayTypeOptionButton" type="OptionButton" parent="."]
+visible = false
+layout_mode = 2
+
+[node name="DeleteVariableButton" type="Button" parent="."]
+layout_mode = 2
+text = "X"
+
+[node name="PopupMenu" type="PopupMenu" parent="."]
+size = Vector2i(147, 170)
+item_count = 6
+item_0/text = "Default"
+item_0/id = 0
+item_0/separator = true
+item_1/text = "Get"
+item_1/id = 1
+item_2/text = "Set"
+item_2/id = 2
+item_3/text = "Array"
+item_3/id = 3
+item_3/separator = true
+item_4/text = "Get element at"
+item_4/id = 4
+item_5/text = "Set element at"
+item_5/id = 5
+
+[connection signal="pressed" from="GetButton" to="." method="CreateGetter"]
+[connection signal="pressed" from="GetButton2" to="." method="ShowContextMenu"]
+[connection signal="pressed" from="SetButton" to="." method="CreateSetter"]
+[connection signal="text_changed" from="LineEdit" to="." method="ChangeName"]
+[connection signal="item_selected" from="BaseTypeOptionButton" to="." method="SelectType"]
+[connection signal="item_selected" from="ArrayTypeOptionButton" to="." method="SetArrayType"]
+[connection signal="index_pressed" from="PopupMenu" to="." method="ContextMenuItemSelected"]

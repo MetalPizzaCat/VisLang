@@ -101,7 +101,7 @@ public class VisSystemMemory
     /// <param name="type">Type of the variable</param>
     /// <param name="value">Possible init value or null if default should be used</param>
     /// <returns>True if variable can be created or false if variable name is already taken</returns>
-    public bool CreateVariable(ref Dictionary<string, uint> variableList, string name, ValueTypeData type, object? value = null)
+    public bool CreateVariable(Dictionary<string, uint> variableList, string name, ValueTypeData type, object? value = null)
     {
         // this still works since all values are stored in the system even if variable names are not
         if (variableList.ContainsKey(name) && Memory.ContainsKey(variableList[name]))
@@ -139,6 +139,22 @@ public class VisSystemMemory
     public void FreeAddress(uint address)
     {
         Memory.Remove(address);
+    }
+
+    /// <summary>
+    /// Free memory used by a variable if variable is present in the memory
+    /// </summary>
+    /// <param name="name">Name of the variable to free</param>
+    /// <param name="variableList">Which variable list to use to find variables, null for global</param>
+    public void FreeVariable(string name, Dictionary<string, uint>? variableList = null)
+    {
+        uint address = 0;
+        Dictionary<string, uint> variables = variableList ?? Variables;
+        if (variables.TryGetValue(name, out address))
+        {
+            FreeAddress(address);
+            variables.Remove(name);
+        }
     }
 
     /// <summary>

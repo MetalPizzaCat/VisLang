@@ -1,4 +1,5 @@
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace VisLang.Editor.Debug;
 
@@ -14,6 +15,7 @@ public class CodeExecutor
     public event BreakpointHitEventHandler? BreakpointHit;
 
     public CodeExecutionData CodeExecutionData { get; set; }
+
 
     public bool IsRunning { get; private set; }
 
@@ -32,28 +34,27 @@ public class CodeExecutor
         IsPaused = false;
     }
 
-    private void Execute(ExecutionNode? node)
+    private void Execute()
     {
-        if (node?.DebugData is EditorGraphNode editorNode && CodeExecutionData.BreakpointNodes.Contains(editorNode) && _lastHitBreakpoint != editorNode)
+        if (Current?.DebugData is EditorGraphNode editorNode && CodeExecutionData.BreakpointNodes.Contains(editorNode) && _lastHitBreakpoint != editorNode)
         {
             _lastHitBreakpoint = editorNode;
-            BreakpointHit?.Invoke(editorNode, node);
+            BreakpointHit?.Invoke(editorNode, Current);
             IsPaused = true;
             return;
         }
         // no breakpoint hit so reference is null
         _lastHitBreakpoint = null;
-        node?.Execute();
-        CodeExecutionData.System.Current = node?.GetNext();
+        CodeExecutionData.System.ExecuteNext(null);
     }
 
     private void Loop()
     {
         while (Current != null && IsRunning && !IsPaused)
         {
-            Execute(Current);
+            Execute();
         }
-        if(Current == null)
+        if (Current == null)
         {
             IsRunning = false;
             ExecutionOver?.Invoke();
@@ -65,7 +66,9 @@ public class CodeExecutor
     public void Run()
     {
         IsRunning = true;
-        Execute(CodeExecutionData.System.Entrance);
+        CodeExecutionData.System.Current = CodeExecutionData.System.Entrance;
+        CodeExecutionData.System.ExecuteNext(null);
+
         _codeLoopThread = new Thread(new ThreadStart(Loop));
         _codeLoopThread.Start();
     }
@@ -75,7 +78,7 @@ public class CodeExecutor
     /// </summary>
     public void RunDisconnected()
     {
-
+        CodeExecutionData.System.Execute();
     }
 
     public void Resume()

@@ -28,4 +28,6 @@ public class VariableInfo
 
     public VisLang.ValueType? ArrayDataType { get; set; } = null;
     public bool IsArray { get; set; } = false;
+
+    public VisLang.ValueTypeData FullType => new ValueTypeData(Type, ArrayDataType); 
 }
