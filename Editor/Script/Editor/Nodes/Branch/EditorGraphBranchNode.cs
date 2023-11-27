@@ -6,13 +6,8 @@ using System.Collections.Generic;
 /// Node that represents "If" operation on code<para></para>
 /// Due to the fact that it represents not a function but a code structure object it has it's own way of creating the ports
 /// </summary>
-public partial class EditorGraphBranchNode : EditorGraphNode
+public partial class EditorGraphBranchNode : EditorGraphSplitExecutionNode
 {
-
-    public EditorGraphNodeInput? SuccessNextExecutable { get; set; }
-
-    public EditorGraphNodeInput? FailureNextExecutable { get; set; }
-
     public override void GenerateFunction(FunctionInfo info)
     {
         Title = "Branch";
@@ -39,11 +34,11 @@ public partial class EditorGraphBranchNode : EditorGraphNode
     {
         if (dstPort == 0)
         {
-            SuccessNextExecutable = new EditorGraphNodeInput(node, srcPort);
+            UpperNextExecutable = new EditorGraphNodeInput(node, srcPort);
         }
         else if (dstPort == 1)
         {
-            FailureNextExecutable = new EditorGraphNodeInput(node, srcPort);
+            LowerNextExecutable = new EditorGraphNodeInput(node, srcPort);
         }
     }
 
@@ -51,11 +46,11 @@ public partial class EditorGraphBranchNode : EditorGraphNode
     {
         if (port == 0)
         {
-            return SuccessNextExecutable == null;
+            return UpperNextExecutable == null;
         }
         else if (port == 1)
         {
-            return FailureNextExecutable == null;
+            return LowerNextExecutable == null;
         }
         return false;
     }
@@ -70,11 +65,11 @@ public partial class EditorGraphBranchNode : EditorGraphNode
         }
         if (port == 0)
         {
-            SuccessNextExecutable = null;
+            UpperNextExecutable = null;
         }
         else if (port == 1)
         {
-            FailureNextExecutable = null;
+            LowerNextExecutable = null;
         }
     }
 }

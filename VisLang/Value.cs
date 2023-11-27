@@ -300,7 +300,7 @@ public class Value
         {
             return $"[{string.Join(',', arr.Select(i => i.IsArray ? i.TryAsString() : i.Data))}]";
         }
-        return _data?.ToString() ?? "you some how managed to bypass null check in TryAsString(), fascinating. You get a cookie :3";
+        return _data.ToString() ?? throw new VisLangNullException("Tried to parse value as string but value is null", null);
     }
 
     public int TryAsInt()

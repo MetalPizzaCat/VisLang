@@ -12,6 +12,8 @@ public class VisSystem
     public delegate void OutputAddedEventHandler(string output);
     public event OutputAddedEventHandler? OnOutputAdded;
 
+    public bool ShouldExecuteNext { get; set; } = true;
+
     public VisSystemMemory VisSystemMemory { get; set; } = new();
 
     /// <summary>
@@ -98,7 +100,7 @@ public class VisSystem
         Current = Entrance?.GetNext();
         // we do we execute both in condition AND body?
         // i've written this long time ago and i do not remember why it is like this
-        while (ExecuteNext(null) && Current != null)
+        while (ExecuteNext(null) && Current != null && ShouldExecuteNext)
         {
             ExecutionNode? temp = null;
             LoopNodeStack.TryPeek(out temp);

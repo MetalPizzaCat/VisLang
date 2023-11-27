@@ -28,6 +28,12 @@ public class ForNode : ForNodeBase
         Value? val = Interpreter?.VisSystemMemory.GetValue(IteratorVariableName, context?.Variables);
         if (val == null)
         {
+            // skip execution of a loop that starts and ends with the same value
+            // if (GetStartValue(context).Data == GetStopValue(context))
+            // {
+            //     FinishLoop(context);
+            //     return;
+            // }
             // if we don't have our iterator variable created we assume that we are starting the iteration raw
             // other solution could be to reset this flag elsewhere but this requires understanding whether we already finished execution or not
             WasFinished = false;
@@ -39,6 +45,7 @@ public class ForNode : ForNodeBase
             {
                 Interpreter?.VisSystemMemory.CreateVariable(context.Variables, IteratorVariableName, GetStartValue(context).TypeData, GetStartValue(context).Data);
             }
+            
             return;
         }
         if (val.ValueType == ValueType.Integer)
