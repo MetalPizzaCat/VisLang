@@ -28,6 +28,9 @@ public class ForNode : ForNodeBase
         Value? val = Interpreter?.VisSystemMemory.GetValue(IteratorVariableName, context?.Variables);
         if (val == null)
         {
+            // if we don't have our iterator variable created we assume that we are starting the iteration raw
+            // other solution could be to reset this flag elsewhere but this requires understanding whether we already finished execution or not
+            WasFinished = false;
             if (context == null)
             {
                 Interpreter?.VisSystemMemory.CreateVariable(IteratorVariableName, GetStartValue(context).TypeData, GetStartValue(context).Data);
@@ -43,7 +46,7 @@ public class ForNode : ForNodeBase
             val.Data = (long)(val.Data ?? 0) + (long)(GetStepValue(context).Data ?? 0);
             if ((long)val.Data >= (long)(GetStopValue(context).Data ?? 0))
             {
-                WasFinished = true;
+                FinishLoop(context);
             }
         }
         if (val.ValueType == ValueType.Float)
@@ -51,7 +54,7 @@ public class ForNode : ForNodeBase
             val.Data = (double)(val.Data ?? 0) + (double)(GetStepValue(context).Data ?? 0);
             if ((double)val.Data >= (double)(GetStopValue(context).Data ?? 0))
             {
-                WasFinished = true;
+                FinishLoop(context);
             }
         }
     }

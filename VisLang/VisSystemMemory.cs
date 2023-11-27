@@ -142,6 +142,22 @@ public class VisSystemMemory
     }
 
     /// <summary>
+    /// Free memory used by a variable if variable is present in the memory
+    /// </summary>
+    /// <param name="name">Name of the variable to free</param>
+    /// <param name="variableList">Which variable list to use to find variables, null for global</param>
+    public void FreeVariable(string name, Dictionary<string, uint>? variableList = null)
+    {
+        uint address = 0;
+        Dictionary<string, uint> variables = variableList ?? Variables;
+        if (variables.TryGetValue(name, out address))
+        {
+            FreeAddress(address);
+            variables.Remove(name);
+        }
+    }
+
+    /// <summary>
     /// Resets all storage and counters to default values. Does not actually check if data is in use or if data is actually destroyed
     /// </summary>
     public void Clear()

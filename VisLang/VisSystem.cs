@@ -66,7 +66,6 @@ public class VisSystem
         // the check is there to prevent creating more loops by returning to the head of the loop
         if (Current is ForNodeBase && Current != temp)
         {
-            //TODO: pop from stack till we run out of loops or find the one still executing
             stack.Push(Current);
         }
         Current.Execute(context);
@@ -91,7 +90,7 @@ public class VisSystem
     {
         Entrance?.Execute();
         // after we execute we should check if it's a loop because otherwise programs starting with a loop
-        // will not work as well(although should not be possible in current configuration)
+        // will not work as well
         if (Entrance is ForNodeBase)
         {
             LoopNodeStack.Push(Entrance);

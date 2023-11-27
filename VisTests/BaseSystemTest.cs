@@ -912,9 +912,75 @@ public class BasicSystemTest
 
         system.Execute();
         Assert.IsTrue(system.Output.Count > 0);
+        Assert.IsNull(system.VisSystemMemory["lilly"]);
         CollectionAssert.AreEqual
         (
             Enumerable.Range(0, 10).Select(p => p.ToString()).ToArray(),
+            system.Output.ToArray()
+        );
+    }
+
+    [TestMethod]
+    public void TestNestedForLoop()
+    {
+        VisSystem system = new VisSystem();
+        PrintNode internalExec = new PrintNode(system)
+        {
+            Inputs = new()
+            {
+                new AdditionIntNode(system)
+                {
+                    Inputs = new()
+                    {
+                        new VariableGetNode(system) { Name = "lilly"},
+                        new VariableGetNode(system) { Name = "azalea"}
+                    }
+                }
+
+            }
+        };
+        system.Entrance = new ForNode(system)
+        {
+            IteratorVariableName = "lilly",
+            Inputs = new()
+            {
+                // i = 0
+                new VariableGetConstNode(){Value = new Value(new ValueTypeData(VisLang.ValueType.Integer), 0L)},
+                // i < 10
+                new VariableGetConstNode(){Value = new Value(new ValueTypeData(VisLang.ValueType.Integer), 10L)},
+                // i is i + 1
+                new VariableGetConstNode(){Value = new Value(new ValueTypeData(VisLang.ValueType.Integer), 1L)},
+            },
+            DefaultNext = new ForNode(system)
+            {
+                IteratorVariableName = "azalea",
+                Inputs = new()
+                {
+                    // i = 0
+                    new VariableGetConstNode(){Value = new Value(new ValueTypeData(VisLang.ValueType.Integer), 1L)},
+                    // i < 10
+                    new VariableGetConstNode(){Value = new Value(new ValueTypeData(VisLang.ValueType.Integer), 11L)},
+                    // i is i + 1
+                    new VariableGetConstNode(){Value = new Value(new ValueTypeData(VisLang.ValueType.Integer), 1L)},
+                },
+                DefaultNext = internalExec
+            }
+        };
+
+        List<string> outputs = new();
+        for (int i = 0; i < 10; i++)
+        {
+            for (int j = 1; j < 11; j++)
+            {
+                outputs.Add((i + j).ToString());
+            }
+        }
+        system.Execute();
+        Assert.IsTrue(system.Output.Count > 0);
+        Assert.IsNull(system.VisSystemMemory["lilly"]);
+        CollectionAssert.AreEqual
+        (
+            outputs,
             system.Output.ToArray()
         );
     }
