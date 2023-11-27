@@ -490,9 +490,13 @@ public partial class NodeEditCanvas : GraphEdit
             {
                 data.VariableNodes.Add(variableNode.GetVariableSaveData());
             }
-            if (node is EditorGraphBranchNode branch)
+            if (node is EditorGraphBranchNode)
             {
                 data.BranchNodes.Add(node.GetSaveData());
+            }
+            if (node is EditorGraphForLoopNode)
+            {
+                data.LoopNodes.Add(node.GetSaveData());
             }
             else
             {
@@ -548,6 +552,10 @@ public partial class NodeEditCanvas : GraphEdit
         foreach (EditorNodeSaveData node in data.BranchNodes)
         {
             MakeNodeFromSignature<EditorGraphBranchNode>(null)?.LoadData(node);
+        }
+        foreach (EditorNodeSaveData node in data.LoopNodes)
+        {
+            MakeNodeFromSignature<EditorGraphForLoopNode>(null)?.LoadData(node);
         }
 
         foreach (NodeCollectionSaveData.StoredConnectionInfo conn in data.Connections)

@@ -20,8 +20,8 @@ public class ArrayLengthNode : DataNode
     {
         if (GetInputArray(context)?.Data is List<Value> arr)
         {
-            return new Value(new ValueTypeData(ValueType.Integer), arr.Count);
+            return new Value(new ValueTypeData(ValueType.Integer), (long)arr.Count);
         }
-        return new Value(new ValueTypeData(ValueType.Integer), 0);
+        return new Value(new ValueTypeData(ValueType.Integer), 0L);
     }
 }

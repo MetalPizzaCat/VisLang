@@ -166,7 +166,7 @@ public partial class ProjectEditorScene : Control
             }
             Label label = new Label()
             {
-                Text = $"({address}) {name} [{value.ValueType}] = {value?.Data}"
+                Text = $"({address}) {name} [{value.ValueType}] = {value.TryAsString()}"
             };
             VariableDisplayContainer.AddChild(label);
             _variableValues.Add(label);

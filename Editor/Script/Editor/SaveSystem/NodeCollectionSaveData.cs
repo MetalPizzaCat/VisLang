@@ -12,4 +12,5 @@ public class NodeCollectionSaveData
     public List<EditorNodeSaveData> GenericNodes { get; set; } = new();
     public List<VariableNodeSaveData> VariableNodes { get; set; } = new();
     public List<EditorNodeSaveData> BranchNodes { get; set; } = new();
+    public List<EditorNodeSaveData> LoopNodes { get; set; } = new();
 }
