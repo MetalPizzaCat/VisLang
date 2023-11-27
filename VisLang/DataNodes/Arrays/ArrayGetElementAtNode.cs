@@ -24,6 +24,10 @@ public class ArrayGetElementAtNode : DataNode
         {
             return arr[(int)GetInputIndex(context)];
         }
+        else if (GetInputArray(context)?.Data is string str)
+        {
+            return new Value(new ValueTypeData(ValueType.Char), str[(int)GetInputIndex(context)]);
+        }
         return null;
     }
 }

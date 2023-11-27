@@ -1,3 +1,5 @@
+using VisLang.Interpreter;
+
 namespace VisLang;
 
 /// <summary>
@@ -21,34 +23,31 @@ public class ArrayAppendElement : ExecutionNode
     {
         if (Interpreter == null)
         {
-            throw new NullReferenceException("Interpreter system is null");
+            throw new VisLangNullException("Interpreter system is null", this);
         }
         Value? arr = GetInputArray(context);
         object? value = GetInputValue(context);
         ValueTypeData? type = GetValueToSetType(context);
         if (arr == null)
         {
-            throw new NullReferenceException("Attempted set value of the array element but array is null");
+            throw new VisLangNullException("Attempted set value of the array element but array is null", this);
         }
         if (value == null)
         {
-            throw new NullReferenceException("Attempted set value of the array element but provided value is null");
+            throw new VisLangNullException("Attempted set value of the array element but provided value is null", this);
         }
         if (arr.ValueType != ValueType.Array)
         {
-            throw new Interpreter.ValueTypeMismatchException($"Attempted to append to array but given value is not an array. Value type: {arr.ValueType}", this);
+            throw new ValueTypeMismatchException($"Attempted to append to array but given value is not an array. Value type: {arr.ValueType}", this);
         }
-        if (arr.ArrayDataType != null && type != null)
+        if (arr.ArrayDataType != null && type != null && arr.ArrayDataType.Value != type.Value.Type)
         {
-            if (arr.ArrayDataType.Value != type.Value.Type)
-            {
-                throw new Interpreter.ValueTypeMismatchException($"Attempted to add element to the array but type does not match array data. Expected {arr.ArrayDataType.Value}, got {type.Value.Type}", this);
-            }
+            throw new ValueTypeMismatchException($"Attempted to add element to the array but type does not match array data. Expected {arr.ArrayDataType.Value}, got {type.Value.Type}", this);
         }
 
         if (arr.Data is List<Value> internalArray && type != null)
         {
-            //TODO: account for appending arrays
+            //TODO: Add ability to append an array to array
             internalArray.Add(new Value(type.Value, GetInputValue(context)));
         }
     }

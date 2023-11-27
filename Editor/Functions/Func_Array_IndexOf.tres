@@ -1,0 +1,21 @@
+[gd_resource type="Resource" load_steps=4 format=3 uid="uid://dngnpsexmfai0"]
+
+[ext_resource type="Resource" uid="uid://ef36r8dt8b7w" path="res://Functions/Arguments/Func_Arg_Array.tres" id="1_gkeiu"]
+[ext_resource type="Resource" uid="uid://ddwn3h05q6wkm" path="res://Functions/Arguments/Func_Arg_Any.tres" id="2_spx4r"]
+[ext_resource type="Script" path="res://Script/Function/FunctionInfo.cs" id="3_44i6k"]
+
+[resource]
+script = ExtResource("3_44i6k")
+FunctionName = "Index of"
+FunctionDescription = "Returns index of an element or -1 if not found"
+IsExecutable = false
+IsArrayTypeDependent = true
+ArrayTypeDefiningArgumentId = 0
+Inputs = [ExtResource("1_gkeiu"), ExtResource("2_spx4r")]
+_output = 2
+IsOutputArrayTypeDependent = false
+_isOutputTypeKnown = false
+HasOutput = true
+_hasOutputArrayType = false
+_outputArrayType = 0
+NodeType = "VisLang.ArrayIndexOfNode"

@@ -18,10 +18,10 @@ public class VariableSetNode : ExecutionNode
 
     public override void Execute(NodeContext? context = null)
     {
-        VisSystem? sys = (context?.Interpreter ?? Interpreter);
+        VisSystem? sys = context?.Interpreter ?? Interpreter;
         if (sys == null)
         {
-            throw new NullReferenceException("Interpreter system is null");
+            throw new Interpreter.VisLangNullException("Interpreter system is null", this);
         }
         Value? value = context?.Variables == null ? (sys.VisSystemMemory.GetValue(Name, null)) : (sys.VisSystemMemory.Memory[context.Variables[Name]]);
 

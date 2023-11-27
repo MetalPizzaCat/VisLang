@@ -1,3 +1,5 @@
+using VisLang.Interpreter;
+
 namespace VisLang;
 
 /// <summary>
@@ -16,16 +18,16 @@ public class FunctionCallNode : DataNode
     {
         if (Interpreter == null)
         {
-            throw new NullReferenceException("Unable to perform function call because no system is available");
+            throw new VisLangNullException("Unable to perform function call because no system is available", this);
         }
         if (string.IsNullOrWhiteSpace(FunctionName))
         {
-            throw new NullReferenceException("Unable to call function because no name was given");
+            throw new VisLangNullException("Unable to call function because no name was given", this);
         }
         VisFunction? proc = Interpreter.GetFunction(FunctionName);
         if (proc == null)
         {
-            throw new NullReferenceException("Interpreter system does not contain a function with a given name");
+            throw new VisLangNullException("Interpreter system does not contain a function with a given name", this);
         }
         Dictionary<string, uint> variables = new Dictionary<string, uint>();
 
@@ -35,7 +37,7 @@ public class FunctionCallNode : DataNode
         int currentArgumentId = 0;
         foreach ((string argName, ValueTypeData argType) in proc.Arguments)
         {
-            Interpreter.VisSystemMemory.CreateVariable(ref variables, argName, argType, Inputs.ElementAtOrDefault(currentArgumentId)?.GetValue(context)?.Data);
+            Interpreter.VisSystemMemory.CreateVariable(variables, argName, argType, Inputs.ElementAtOrDefault(currentArgumentId)?.GetValue(context)?.Data);
             // this solution could cause issues if arguments are messed up and don't match function signature
             // but will make editors and parsers deal with this problem :3
             currentArgumentId++;
