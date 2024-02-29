@@ -7,9 +7,9 @@ namespace VisLang.Editor;
 
 enum ContextMenuOptions
 {
-    Getter = 1,
+    Getter,
     Setter,
-    OpenEditWindow,
+    OpenEditWindow = 3,
     Delete
 }
 
@@ -42,6 +42,9 @@ public partial class VariableControl : HBoxContainer
 
     [Export]
     public PopupPanel? SettingsPanel { get; set; }
+
+    [Export]
+    public Button? ActionButton { get; set; }
 
     private VisLang.Editor.VariableInfo _info = new VisLang.Editor.VariableInfo("Default", VisLang.ValueType.Bool, null, false);
 
@@ -117,6 +120,10 @@ public partial class VariableControl : HBoxContainer
             }
         }
 
+        if (ActionButton != null)
+        {
+            ActionButton.Text = newName;
+        }
         _info.Name = newName;
         NameChanged?.Invoke(_info, newName);
     }
