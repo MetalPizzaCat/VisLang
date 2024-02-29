@@ -3,15 +3,16 @@
 [ext_resource type="Script" path="res://Script/UI/VariableControl.cs" id="1_yt57h"]
 [ext_resource type="Texture2D" uid="uid://cwgvbucmd5jax" path="res://Assets/UI/warning.svg" id="2_x3pui"]
 
-[node name="VariableControl" type="HBoxContainer" node_paths=PackedStringArray("NameEdit", "TypeOptionButton", "ArrayTypeOptionButton", "ContextMenu", "ErrorDisplayControl")]
+[node name="VariableControl" type="HBoxContainer" node_paths=PackedStringArray("NameEdit", "TypeOptionButton", "ArrayTypeOptionButton", "ContextMenu", "ErrorDisplayControl", "SettingsPanel")]
 offset_right = 332.0
 offset_bottom = 31.0
 script = ExtResource("1_yt57h")
-NameEdit = NodePath("LineEdit")
-TypeOptionButton = NodePath("BaseTypeOptionButton")
-ArrayTypeOptionButton = NodePath("ArrayTypeOptionButton")
+NameEdit = NodePath("SettingsPopup/VBoxContainer/LineEdit")
+TypeOptionButton = NodePath("SettingsPopup/VBoxContainer/BaseTypeOptionButton")
+ArrayTypeOptionButton = NodePath("SettingsPopup/VBoxContainer/ArrayTypeOptionButton")
 ContextMenu = NodePath("PopupMenu")
 ErrorDisplayControl = NodePath("WarningLabel")
+SettingsPanel = NodePath("SettingsPopup")
 
 [node name="WarningLabel" type="TextureRect" parent="."]
 visible = false
@@ -19,7 +20,12 @@ layout_mode = 2
 texture = ExtResource("2_x3pui")
 expand_mode = 3
 
+[node name="ActionButton" type="Button" parent="."]
+layout_mode = 2
+text = "Default"
+
 [node name="GetButton" type="Button" parent="."]
+visible = false
 layout_mode = 2
 text = "Get"
 
@@ -29,10 +35,44 @@ layout_mode = 2
 text = "Get"
 
 [node name="SetButton" type="Button" parent="."]
+visible = false
 layout_mode = 2
 text = "Set"
 
-[node name="LineEdit" type="LineEdit" parent="."]
+[node name="DeleteVariableButton" type="Button" parent="."]
+visible = false
+layout_mode = 2
+text = "X"
+
+[node name="PopupMenu" type="PopupMenu" parent="."]
+size = Vector2i(137, 125)
+item_count = 5
+item_0/text = "Get"
+item_0/id = 1
+item_1/text = "Set"
+item_1/id = 2
+item_2/text = ""
+item_2/id = 3
+item_2/separator = true
+item_3/text = "Edit"
+item_3/id = 3
+item_4/text = "Delete"
+item_4/id = 4
+
+[node name="SettingsPopup" type="PopupPanel" parent="."]
+title = "Variable settings"
+initial_position = 2
+size = Vector2i(200, 100)
+borderless = false
+always_on_top = true
+
+[node name="VBoxContainer" type="VBoxContainer" parent="SettingsPopup"]
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 196.0
+offset_bottom = 96.0
+
+[node name="LineEdit" type="LineEdit" parent="SettingsPopup/VBoxContainer"]
 custom_minimum_size = Vector2(125, 0)
 layout_mode = 2
 mouse_filter = 1
@@ -41,39 +81,18 @@ placeholder_text = "Variable name"
 context_menu_enabled = false
 clear_button_enabled = true
 
-[node name="BaseTypeOptionButton" type="OptionButton" parent="."]
+[node name="BaseTypeOptionButton" type="OptionButton" parent="SettingsPopup/VBoxContainer"]
 layout_mode = 2
 
-[node name="ArrayTypeOptionButton" type="OptionButton" parent="."]
+[node name="ArrayTypeOptionButton" type="OptionButton" parent="SettingsPopup/VBoxContainer"]
 visible = false
 layout_mode = 2
 
-[node name="DeleteVariableButton" type="Button" parent="."]
-layout_mode = 2
-text = "X"
-
-[node name="PopupMenu" type="PopupMenu" parent="."]
-size = Vector2i(147, 170)
-item_count = 6
-item_0/text = "Default"
-item_0/id = 0
-item_0/separator = true
-item_1/text = "Get"
-item_1/id = 1
-item_2/text = "Set"
-item_2/id = 2
-item_3/text = "Array"
-item_3/id = 3
-item_3/separator = true
-item_4/text = "Get element at"
-item_4/id = 4
-item_5/text = "Set element at"
-item_5/id = 5
-
+[connection signal="pressed" from="ActionButton" to="." method="ShowContextMenu"]
 [connection signal="pressed" from="GetButton" to="." method="CreateGetter"]
 [connection signal="pressed" from="GetButton2" to="." method="ShowContextMenu"]
 [connection signal="pressed" from="SetButton" to="." method="CreateSetter"]
-[connection signal="text_changed" from="LineEdit" to="." method="ChangeName"]
-[connection signal="item_selected" from="BaseTypeOptionButton" to="." method="SelectType"]
-[connection signal="item_selected" from="ArrayTypeOptionButton" to="." method="SetArrayType"]
 [connection signal="index_pressed" from="PopupMenu" to="." method="ContextMenuItemSelected"]
+[connection signal="text_changed" from="SettingsPopup/VBoxContainer/LineEdit" to="." method="ChangeName"]
+[connection signal="item_selected" from="SettingsPopup/VBoxContainer/BaseTypeOptionButton" to="." method="SelectType"]
+[connection signal="item_selected" from="SettingsPopup/VBoxContainer/ArrayTypeOptionButton" to="." method="SetArrayType"]

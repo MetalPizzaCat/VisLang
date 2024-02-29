@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3 uid="uid://xge0jqowey4e"]
+[gd_scene load_steps=24 format=3 uid="uid://xge0jqowey4e"]
 
 [ext_resource type="Script" path="res://Script/Editor/NodeEditCanvas.cs" id="1_6hlyh"]
 [ext_resource type="PackedScene" uid="uid://cuw6xf1wlf0ag" path="res://UI/node_creation_menu.tscn" id="2_42ix0"]
@@ -6,7 +6,6 @@
 [ext_resource type="Resource" uid="uid://migjfmdltwbc" path="res://Functions/Func_Add_F.tres" id="4_lgacb"]
 [ext_resource type="Resource" uid="uid://dpkha8n5rkowh" path="res://Functions/Func_Print.tres" id="5_j1bpx"]
 [ext_resource type="Resource" uid="uid://l1eetdpg8ut5" path="res://Functions/Func_Array_Append.tres" id="6_86guk"]
-[ext_resource type="PackedScene" uid="uid://ckatxsxy41ym8" path="res://UI/position_teller.tscn" id="6_88v62"]
 [ext_resource type="PackedScene" uid="uid://ckx01i2b2svjf" path="res://Editor/Nodes/exec_node.tscn" id="6_f2f1b"]
 [ext_resource type="Resource" uid="uid://d3qpdfwf0ne30" path="res://Assets/DefaultCodeTheme.tres" id="6_skwwu"]
 [ext_resource type="Resource" uid="uid://dpc05ors8lkbo" path="res://Functions/Func_Array_SetElem.tres" id="7_jn25i"]
@@ -54,16 +53,6 @@ offset_right = 135.0
 offset_bottom = 496.0
 mouse_filter = 1
 position_offset = Vector2(64, 415.7)
-
-[node name="PositionTeller" parent="." instance=ExtResource("6_88v62")]
-layout_mode = 0
-offset_left = 60.0
-offset_top = 0.299988
-offset_right = 96.0
-offset_bottom = 54.3
-mouse_filter = 1
-position_offset = Vector2(60, 0)
-overlay = 1
 
 [connection signal="connection_request" from="." to="." method="ConnectNodes"]
 [connection signal="delete_nodes_request" from="." to="." method="DeleteCollectionOfNodes"]

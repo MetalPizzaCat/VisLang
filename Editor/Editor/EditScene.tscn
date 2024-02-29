@@ -6,7 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://xt83rs5upyhm" path="res://Editor/FunctionEditControl.tscn" id="4_ik76o"]
 [ext_resource type="Script" path="res://Script/ExecutionManager.cs" id="4_rl06k"]
 
-[node name="ProjectEditorCanvas" type="Control" node_paths=PackedStringArray("TabBar", "MainFunctionEditor", "RuntimeControls", "SaveFileDialog", "LoadFileDialog", "OutputMessageBox", "ErrorMessageBox", "VariableDisplayContainer")]
+[node name="ProjectEditorCanvas" type="Control" node_paths=PackedStringArray("MainFunctionEditor", "RuntimeControls", "SaveFileDialog", "LoadFileDialog", "OutputMessageBox", "ErrorMessageBox", "VariableDisplayContainer")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -15,7 +15,6 @@ offset_top = 32.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_rr1ug")
-TabBar = NodePath("TabBar")
 MainFunctionEditor = NodePath("FunctionEditControl")
 RuntimeControls = NodePath("RuntimeControls")
 SaveFileDialog = NodePath("SaveFileDialog")
@@ -25,17 +24,22 @@ ErrorMessageBox = NodePath("Control/TabContainer/Errors/VBoxContainer")
 OutputMessagePrefab = ExtResource("2_n0htl")
 VariableDisplayContainer = NodePath("RuntimeControls/VariableValueDisplayControl/ScrollContainer/VBoxContainer")
 
-[node name="TabBar" type="TabBar" parent="."]
-layout_mode = 0
-offset_top = 24.0
-offset_right = 40.0
-offset_bottom = 64.0
-clip_tabs = false
-tab_close_display_policy = 1
-tab_count = 1
-tab_0/title = "Main"
-
 [node name="Control" parent="." instance=ExtResource("3_fbxd7")]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.793
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -8.32404
+offset_right = 0.0
+offset_bottom = -4.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TabContainer" parent="Control" index="0"]
+layout_mode = 1
+offset_top = 8.0
+offset_bottom = 192.0
 
 [node name="Interpreter" type="Node" parent="."]
 script = ExtResource("4_rl06k")

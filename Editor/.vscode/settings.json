@@ -1,3 +1,5 @@
 {
-    "dotnet.defaultSolution": "Vis.sln"
+    "dotnet.defaultSolution": "Vis.sln",
+    "godot.csharp.executablePath": "/home/metal/Apps/Godot_v4.1-stable_mono_linux_x86_64/Godot_v4.1-stable_mono_linux.x86_64",
+    "godotTools.editorPath.godot4": "/home/metal/Apps/Godot_v4.1-stable_mono_linux_x86_64/Godot_v4.1-stable_mono_linux.x86_64"
 }

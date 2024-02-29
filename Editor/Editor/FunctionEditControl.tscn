@@ -23,9 +23,11 @@ layout_mode = 1
 
 [node name="VariableControl" parent="." instance=ExtResource("2_qfxht")]
 layout_mode = 1
-offset_left = 128.0
+anchor_left = 0.84
+anchor_bottom = 0.418
+offset_left = 0.0
 offset_top = 0.0
-offset_bottom = 40.3
+offset_bottom = -0.200043
 
 [node name="CustomFunctionControl" parent="." instance=ExtResource("4_rtmp6")]
 visible = false

@@ -4,6 +4,15 @@ using System.Text.RegularExpressions;
 using VisLang.Editor;
 
 namespace VisLang.Editor;
+
+enum ContextMenuOptions
+{
+    Getter = 1,
+    Setter,
+    OpenEditWindow,
+    Delete
+}
+
 public partial class VariableControl : HBoxContainer
 {
     public delegate void SetterRequestedEventHandler(VisLang.Editor.VariableInfo info);
@@ -30,6 +39,9 @@ public partial class VariableControl : HBoxContainer
 
     [Export]
     public Control? ErrorDisplayControl { get; set; }
+
+    [Export]
+    public PopupPanel? SettingsPanel { get; set; }
 
     private VisLang.Editor.VariableInfo _info = new VisLang.Editor.VariableInfo("Default", VisLang.ValueType.Bool, null, false);
 
@@ -171,7 +183,25 @@ public partial class VariableControl : HBoxContainer
             ContextMenu.Position = new Vector2I((int)GetGlobalMousePosition().X, (int)GetGlobalMousePosition().Y);
             ContextMenu.Popup();
         }
+    }
 
+    private void ContextMenuItemSelected(int item)
+    {
+        switch ((ContextMenuOptions)item)
+        {
+            case ContextMenuOptions.Getter:
+                CreateGetter();
+                break;
+            case ContextMenuOptions.Setter:
+                CreateSetter();
+                break;
+            case ContextMenuOptions.OpenEditWindow:
+                SettingsPanel?.Popup();
+                break;
+            case ContextMenuOptions.Delete:
+                throw new NotImplementedException("Deletion is not implemented yet");
+                break;
+        }
     }
 
     private void SetArrayType(int type)

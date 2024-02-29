@@ -1,0 +1,38 @@
+[gd_scene load_steps=2 format=3 uid="uid://c2w6ovvn4pntq"]
+
+[ext_resource type="Script" path="res://UI/TestPopup.cs" id="1_oqe74"]
+
+[node name="Control" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_oqe74")
+
+[node name="PopupPanel" type="PopupPanel" parent="."]
+title = "Test window"
+position = Vector2i(220, 235)
+visible = true
+borderless = false
+always_on_top = true
+
+[node name="Label" type="Label" parent="PopupPanel"]
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 96.0
+offset_bottom = 96.0
+text = "test!"
+
+[node name="Button" type="Button" parent="."]
+layout_mode = 0
+offset_right = 8.0
+offset_bottom = 8.0
+text = "Show!"
+
+[node name="Window" type="Window" parent="."]
+title = "TESST!"
+position = Vector2i(395, 285)
+
+[connection signal="pressed" from="Button" to="." method="OnButtonPressed"]
