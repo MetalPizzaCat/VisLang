@@ -34,7 +34,7 @@ text = "Show!"
 
 [node name="Window" type="Window" parent="."]
 title = "TESST!"
-position = Vector2i(900, -10)
+position = Vector2i(432, 0)
 size = Vector2i(700, 870)
 transient = true
 borderless = true

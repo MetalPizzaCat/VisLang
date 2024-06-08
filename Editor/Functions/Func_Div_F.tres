@@ -1,0 +1,20 @@
+[gd_resource type="Resource" load_steps=3 format=3 uid="uid://ba5r7qdmyg7w8"]
+
+[ext_resource type="Resource" uid="uid://b77ne4h638yht" path="res://Functions/Arguments/Func_Add_Arg.tres" id="1_pvdp2"]
+[ext_resource type="Script" path="res://Script/Function/FunctionInfo.cs" id="2_1064l"]
+
+[resource]
+script = ExtResource("2_1064l")
+FunctionName = "Divide(Float)"
+FunctionDescription = "Divides a by b"
+IsExecutable = false
+IsArrayTypeDependent = false
+ArrayTypeDefiningArgumentId = 0
+Inputs = [ExtResource("1_pvdp2"), ExtResource("1_pvdp2")]
+_output = 3
+IsOutputArrayTypeDependent = false
+_isOutputTypeKnown = true
+HasOutput = true
+_hasOutputArrayType = false
+_outputArrayType = 0
+NodeType = "VisLang.DivisionNode"

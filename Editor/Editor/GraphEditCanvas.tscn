@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=3 uid="uid://xge0jqowey4e"]
+[gd_scene load_steps=28 format=3 uid="uid://xge0jqowey4e"]
 
 [ext_resource type="Script" path="res://Script/Editor/NodeEditCanvas.cs" id="1_6hlyh"]
 [ext_resource type="PackedScene" uid="uid://cuw6xf1wlf0ag" path="res://UI/node_creation_menu.tscn" id="2_42ix0"]
@@ -23,6 +23,10 @@
 [ext_resource type="Resource" uid="uid://b8tsop2hhme8d" path="res://Functions/Boolean/LessThan.tres" id="19_4xjfv"]
 [ext_resource type="Resource" uid="uid://b5swcojgk5rf8" path="res://Functions/Boolean/LessThanOrEquals.tres" id="20_l2aiy"]
 [ext_resource type="Resource" uid="uid://dngnpsexmfai0" path="res://Functions/Func_Array_IndexOf.tres" id="21_dy27t"]
+[ext_resource type="Resource" uid="uid://dwaany18rhhn3" path="res://Functions/Func_Sqrt_F.tres" id="22_0v6i4"]
+[ext_resource type="Resource" uid="uid://b6w31t636hspt" path="res://Functions/Func_Mul_F.tres" id="23_pavj7"]
+[ext_resource type="Resource" uid="uid://dixfqk57at8xa" path="res://Functions/Func_Sub_F.tres" id="24_njh25"]
+[ext_resource type="Resource" uid="uid://ba5r7qdmyg7w8" path="res://Functions/Func_Div_F.tres" id="25_4x1tf"]
 
 [node name="GraphEdit" type="GraphEdit" node_paths=PackedStringArray("CreationMenu", "ExecStart")]
 anchors_preset = -1
@@ -39,7 +43,7 @@ CodeTheme = ExtResource("6_skwwu")
 ExecStart = NodePath("ExecNode")
 
 [node name="Functions" parent="." instance=ExtResource("2_qr85a")]
-Functions = [ExtResource("4_lgacb"), ExtResource("5_j1bpx"), ExtResource("6_86guk"), ExtResource("7_jn25i"), ExtResource("8_600tb"), ExtResource("9_ana4y"), ExtResource("10_kpodo"), ExtResource("11_qlrd0"), ExtResource("12_68kn0"), ExtResource("13_0f5lx"), ExtResource("14_348wx"), ExtResource("15_e05o3"), ExtResource("16_tkk3g"), ExtResource("17_bmtlc"), ExtResource("18_83dt5"), ExtResource("19_4xjfv"), ExtResource("20_l2aiy"), ExtResource("21_dy27t")]
+Functions = [ExtResource("4_lgacb"), ExtResource("5_j1bpx"), ExtResource("6_86guk"), ExtResource("7_jn25i"), ExtResource("8_600tb"), ExtResource("9_ana4y"), ExtResource("10_kpodo"), ExtResource("11_qlrd0"), ExtResource("12_68kn0"), ExtResource("13_0f5lx"), ExtResource("14_348wx"), ExtResource("15_e05o3"), ExtResource("16_tkk3g"), ExtResource("17_bmtlc"), ExtResource("18_83dt5"), ExtResource("19_4xjfv"), ExtResource("20_l2aiy"), ExtResource("21_dy27t"), ExtResource("22_0v6i4"), ExtResource("23_pavj7"), ExtResource("24_njh25"), ExtResource("25_4x1tf")]
 
 [node name="PopupPanel" parent="." node_paths=PackedStringArray("Functions") instance=ExtResource("2_42ix0")]
 visible = false

@@ -5,7 +5,7 @@
 
 [node name="Button" type="Button" node_paths=PackedStringArray("FunctionNameLabel")]
 tooltip_text = "Your mom"
-text = "Print"
+text = "   "
 alignment = 0
 script = ExtResource("1_xrttj")
 FunctionNameLabel = NodePath("HBoxContainer/NameLabel")
@@ -16,6 +16,7 @@ offset_right = 40.0
 offset_bottom = 40.0
 
 [node name="Icon" type="TextureRect" parent="HBoxContainer"]
+visible = false
 layout_mode = 2
 texture = ExtResource("1_kdc1y")
 expand_mode = 3
