@@ -1,12 +1,14 @@
-[gd_scene load_steps=6 format=3 uid="uid://cy3ayxdr8tp2a"]
+[gd_scene load_steps=7 format=3 uid="uid://cy3ayxdr8tp2a"]
 
 [ext_resource type="Script" path="res://Script/Editor/ProjectEditorScene.cs" id="1_rr1ug"]
+[ext_resource type="Theme" uid="uid://s5q4yaopr0bo" path="res://Assets/CanvasTheme.tres" id="1_ybuqf"]
 [ext_resource type="PackedScene" uid="uid://c67wh757rx8s3" path="res://UI/message_label.tscn" id="2_n0htl"]
 [ext_resource type="PackedScene" uid="uid://4i8ijrxpht43" path="res://Editor/UserInteraction/OutputBox.tscn" id="3_fbxd7"]
 [ext_resource type="PackedScene" uid="uid://xt83rs5upyhm" path="res://Editor/FunctionEditControl.tscn" id="4_ik76o"]
 [ext_resource type="Script" path="res://Script/ExecutionManager.cs" id="4_rl06k"]
 
 [node name="ProjectEditorCanvas" type="Control" node_paths=PackedStringArray("MainFunctionEditor", "RuntimeControls", "SaveFileDialog", "LoadFileDialog", "OutputMessageBox", "ErrorMessageBox", "VariableDisplayContainer")]
+texture_filter = 1
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -14,6 +16,7 @@ anchor_bottom = 1.0
 offset_top = 32.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = ExtResource("1_ybuqf")
 script = ExtResource("1_rr1ug")
 MainFunctionEditor = NodePath("FunctionEditControl")
 RuntimeControls = NodePath("RuntimeControls")
@@ -46,6 +49,7 @@ script = ExtResource("4_rl06k")
 
 [node name="FunctionEditControl" parent="." instance=ExtResource("4_ik76o")]
 layout_mode = 1
+offset_top = 16.0
 offset_bottom = -60.0
 
 [node name="SaveFileDialog" type="FileDialog" parent="."]
@@ -53,40 +57,51 @@ access = 2
 filters = PackedStringArray("*.vl")
 show_hidden_files = true
 
+[node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 0
+offset_top = -32.0
+offset_right = 1600.0
+offset_bottom = 16.0
+
 [node name="LaunchCodeButton" type="Button" parent="."]
 layout_mode = 0
-offset_left = 1232.0
-offset_top = -32.0
-offset_right = 1339.0
+offset_left = 1236.0
+offset_top = -29.0
+offset_right = 1343.0
+offset_bottom = 13.0
 text = "Run"
 
 [node name="StopCodeButton" type="Button" parent="."]
 layout_mode = 0
-offset_left = 1008.0
-offset_top = -32.0
-offset_right = 1115.0
+offset_left = 1012.0
+offset_top = -29.0
+offset_right = 1119.0
+offset_bottom = 13.0
 text = "Stop"
 
 [node name="StepCodeButton" type="Button" parent="."]
 editor_description = "what  are you doing step code owo"
 layout_mode = 0
-offset_left = 1120.0
-offset_top = -32.0
-offset_right = 1227.0
+offset_left = 1124.0
+offset_top = -29.0
+offset_right = 1231.0
+offset_bottom = 13.0
 text = "Step"
 
 [node name="SaveCodeButton" type="Button" parent="."]
 layout_mode = 0
-offset_left = 112.0
-offset_top = -32.0
-offset_right = 219.0
+offset_left = 116.0
+offset_top = -29.0
+offset_right = 223.0
+offset_bottom = 13.0
 text = "Save"
 
 [node name="LoadCodeButton" type="Button" parent="."]
 layout_mode = 0
-offset_left = 232.0
-offset_top = -32.0
-offset_right = 339.0
+offset_left = 236.0
+offset_top = -29.0
+offset_right = 343.0
+offset_bottom = 13.0
 text = "Load
 "
 

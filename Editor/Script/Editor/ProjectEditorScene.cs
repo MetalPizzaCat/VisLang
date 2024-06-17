@@ -68,7 +68,7 @@ public partial class ProjectEditorScene : Control
     {
         GD.Print($"VisLang: {message}");
         RichTextLabel label = OutputMessagePrefab?.InstantiateOrNull<RichTextLabel>() ?? new RichTextLabel() { BbcodeEnabled = true };
-        label.Text = message;
+        label.Text = $"[color=black]{message}[/color]";
         _outputMessages.Add(label);
         OutputMessageBox?.AddChild(label);
     }

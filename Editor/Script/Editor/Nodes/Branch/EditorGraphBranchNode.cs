@@ -23,10 +23,10 @@ public partial class EditorGraphBranchNode : EditorGraphSplitExecutionNode
         );
         // we have to hijack entire function creation process because If is not a function
         AddChild(new Label() { Text = "Exec Success", HorizontalAlignment = HorizontalAlignment.Center });
-        SetSlot(0, true, ExecTypeId, new Color(1, 1, 1), true, ExecTypeId, new Color(1, 1, 1));
+        SetSlot(0, true, ExecTypeId, new Color(0,0,0), true, ExecTypeId, new Color(0,0,0));
         //AddChild(new Label() { Text = "Condition Failure", HorizontalAlignment = HorizontalAlignment.Center });
         CreatePort(new("Condition", ValueType.Bool, null), 1, false, null);
-        SetSlot(1, true, GetTypeIdForValueType(ValueType.Bool), CodeTheme?.GetColorForType(ValueType.Bool) ?? new Color(), true, ExecTypeId, new Color(1, 1, 1));
+        SetSlot(1, true, GetTypeIdForValueType(ValueType.Bool), CodeTheme?.GetColorForType(ValueType.Bool) ?? new Color(), true, ExecTypeId, new Color(0,0,0));
 
     }
 

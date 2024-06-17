@@ -34,12 +34,12 @@ public partial class EditorGraphFunctionDeclarationNode : EditorGraphNode
         //base.GenerateFunction(new FunctionInfo() { FunctionName = "Function declaration test", IsExecutable = true });
         FunctionName = info.FunctionName;
         AddChild(new Label() { Text = "Exec" });
-        SetSlot(0, false, 0, new Color(1, 1, 1), true, ExecTypeId, new Color(1, 1, 1));
+        SetSlot(0, false, 0, new Color(0,0,0), true, ExecTypeId, new Color(0,0,0));
         int slotId = 1;
         foreach (FunctionInputInfo input in info.Inputs)
         {
             AddChild(new Label() { Text = input.InputName });
-            SetSlot(slotId, false, 0, new Color(1, 1, 1), true, GetTypeIdForValueType(input.InputType), CodeTheme?.GetColorForType(input.InputType) ?? new Color());
+            SetSlot(slotId, false, 0, new Color(0,0,0), true, GetTypeIdForValueType(input.InputType), CodeTheme?.GetColorForType(input.InputType) ?? new Color());
             slotId++;
         }
     }

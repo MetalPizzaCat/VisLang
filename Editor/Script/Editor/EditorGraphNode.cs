@@ -113,10 +113,10 @@ public partial class EditorGraphNode : GraphNode
                 slotIndex,
                 true,
                 arg.TypeMatchingPermissions == FunctionInputInfo.TypePermissions.AllowAny ? AnyTypeId : GetTypeIdForValueType(arg.InputType),
-                (arg.TypeMatchingPermissions == FunctionInputInfo.TypePermissions.AllowAny ? CodeTheme?.AnyColor : CodeTheme?.GetColorForType(arg.InputType)) ?? new Color(1, 1, 1),
+                (arg.TypeMatchingPermissions == FunctionInputInfo.TypePermissions.AllowAny ? CodeTheme?.AnyColor : CodeTheme?.GetColorForType(arg.InputType)) ?? new Color(0,0,0),
                 true,
                 GetTypeIdForValueType(outputType.Value),
-                CodeTheme?.GetColorForType(outputType ?? VisLang.ValueType.Bool) ?? new Color(1, 1, 1)
+                CodeTheme?.GetColorForType(outputType ?? VisLang.ValueType.Bool) ?? new Color(0,0,0)
             );
         }
         else
@@ -126,7 +126,7 @@ public partial class EditorGraphNode : GraphNode
                 slotIndex,
                 true,
                 arg.TypeMatchingPermissions == FunctionInputInfo.TypePermissions.AllowAny ? AnyTypeId : GetTypeIdForValueType(arg.InputType),
-                (arg.TypeMatchingPermissions == FunctionInputInfo.TypePermissions.AllowAny ? CodeTheme?.AnyColor : CodeTheme?.GetColorForType(arg.InputType)) ?? new Color(1, 1, 1),
+                (arg.TypeMatchingPermissions == FunctionInputInfo.TypePermissions.AllowAny ? CodeTheme?.AnyColor : CodeTheme?.GetColorForType(arg.InputType)) ?? new Color(0,0,0),
                 false,
                 0,
                 new Color()
@@ -198,7 +198,7 @@ public partial class EditorGraphNode : GraphNode
         if (info.IsExecutable)
         {
             AddChild(new Label() { Text = "Exec", HorizontalAlignment = HorizontalAlignment.Center });
-            SetSlot(slotIndex, true, ExecTypeId, new Color(1, 1, 1), true, ExecTypeId, new Color(1, 1, 1));
+            SetSlot(slotIndex, true, ExecTypeId, new Color(0,0,0), true, ExecTypeId, new Color(0,0,0));
             slotIndex++;
         }
         // in the original node implementation we created a special input object and listened to it
@@ -220,7 +220,7 @@ public partial class EditorGraphNode : GraphNode
                     new Color(),
                     true,
                     GetTypeIdForValueType(info.OutputType.Value),
-                    CodeTheme?.GetColorForType(info.OutputType ?? VisLang.ValueType.Bool) ?? new Color(1, 1, 1)
+                    CodeTheme?.GetColorForType(info.OutputType ?? VisLang.ValueType.Bool) ?? new Color(0, 0, 0)
                 );
             slotIndex++;
         }

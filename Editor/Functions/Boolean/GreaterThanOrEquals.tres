@@ -17,4 +17,4 @@ _isOutputTypeKnown = true
 HasOutput = true
 _hasOutputArrayType = false
 _outputArrayType = 0
-NodeType = "VisLang.GreaterThenOrEqualNode"
+NodeType = "VisLang.GreaterThanOrEqualNode"

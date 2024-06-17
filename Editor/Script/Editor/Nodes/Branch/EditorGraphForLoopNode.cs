@@ -39,13 +39,13 @@ public partial class EditorGraphForLoopNode : EditorGraphSplitExecutionNode
         );
         // we have to hijack entire function creation process because If is not a function
         AddChild(new Label() { Text = "Exec Body", HorizontalAlignment = HorizontalAlignment.Center });
-        SetSlot(BodyExecPortId, true, ExecTypeId, new Color(1, 1, 1), true, ExecTypeId, new Color(1, 1, 1));
+        SetSlot(BodyExecPortId, true, ExecTypeId, new Color(0,0,0), true, ExecTypeId, new Color(0,0,0));
 
         //AddChild(new Label() { Text = "Condition Failure", HorizontalAlignment = HorizontalAlignment.Center });
         CreatePort(new("Start", ValueType.Integer, null), 1, true, ValueType.Integer);
         CreatePort(new("Stop", ValueType.Integer, null), 2, false, null);
         CreatePort(new("Step", ValueType.Integer, null), 3, false, null);
-        SetSlot(FinishedExecPortId, true, GetTypeIdForValueType(ValueType.Integer), CodeTheme?.GetColorForType(ValueType.Integer) ?? new Color(), true, ExecTypeId, new Color(1, 1, 1));
+        SetSlot(FinishedExecPortId, true, GetTypeIdForValueType(ValueType.Integer), CodeTheme?.GetColorForType(ValueType.Integer) ?? new Color(), true, ExecTypeId, new Color(0,0,0));
 
     }
 
